@@ -4,6 +4,8 @@ import 'package:taskflow/app/app.bottomsheets.dart';
 import 'package:taskflow/app/app.locator.dart';
 import 'package:taskflow/app/app.router.dart';
 import 'package:taskflow/models/task.dart';
+import 'package:taskflow/ui/screens/statistics/statistics_view.dart';
+import 'package:taskflow/ui/screens/task_details/task_details_view.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 enum TaskFilter {
@@ -13,7 +15,6 @@ enum TaskFilter {
 }
 
 class HomeViewModel extends BaseViewModel {
-  final _navigationService = locator<NavigationService>();
   final _bottomSheetService = locator<BottomSheetService>();
 
   final TextEditingController searchController = TextEditingController();
@@ -103,15 +104,37 @@ class HomeViewModel extends BaseViewModel {
   }
 
   void navigateToTaskDetails(Task task) {
-    _navigationService.navigateToTaskDetailsView(taskId: task.id);
+    Navigator.of(StackedService.navigatorKey!.currentContext!).push(
+      MaterialPageRoute(
+        builder: (context) => TaskDetailsView(
+          taskId: task.id,
+          heroTag: 'task_${task.id}',
+        ),
+        settings: const RouteSettings(name: Routes.taskDetailsView),
+      ),
+    );
   }
 
   void navigateToAddTask() {
-    _navigationService.navigateToTaskDetailsView();
+    Navigator.of(StackedService.navigatorKey!.currentContext!).push(
+      MaterialPageRoute(
+        builder: (context) => const TaskDetailsView(
+          heroTag: 'add_task_fab',
+        ),
+        settings: const RouteSettings(name: Routes.taskDetailsView),
+      ),
+    );
   }
 
   void navigateToStatistics() {
-    _navigationService.navigateToStatisticsView();
+    Navigator.of(StackedService.navigatorKey!.currentContext!).push(
+      MaterialPageRoute(
+        builder: (context) => const StatisticsView(
+          heroTag: 'statistics_view',
+        ),
+        settings: const RouteSettings(name: Routes.statisticsView),
+      ),
+    );
   }
 
   void toggleTaskComplete(Task task) {

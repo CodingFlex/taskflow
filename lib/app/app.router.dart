@@ -69,14 +69,18 @@ class StackedRouter extends _i1.RouterBase {
         orElse: () => const TaskDetailsViewArguments(),
       );
       return _i6.MaterialPageRoute<dynamic>(
-        builder: (context) =>
-            _i4.TaskDetailsView(key: args.key, taskId: args.taskId),
+        builder: (context) => _i4.TaskDetailsView(
+            key: args.key, taskId: args.taskId, heroTag: args.heroTag),
         settings: data,
       );
     },
     _i5.StatisticsView: (data) {
+      final args = data.getArgs<StatisticsViewArguments>(
+        orElse: () => const StatisticsViewArguments(),
+      );
       return _i6.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i5.StatisticsView(),
+        builder: (context) =>
+            _i5.StatisticsView(key: args.key, heroTag: args.heroTag),
         settings: data,
       );
     },
@@ -93,26 +97,58 @@ class TaskDetailsViewArguments {
   const TaskDetailsViewArguments({
     this.key,
     this.taskId,
+    this.heroTag,
   });
 
   final _i6.Key? key;
 
   final int? taskId;
 
+  final String? heroTag;
+
   @override
   String toString() {
-    return '{"key": "$key", "taskId": "$taskId"}';
+    return '{"key": "$key", "taskId": "$taskId", "heroTag": "$heroTag"}';
   }
 
   @override
   bool operator ==(covariant TaskDetailsViewArguments other) {
     if (identical(this, other)) return true;
-    return other.key == key && other.taskId == taskId;
+    return other.key == key &&
+        other.taskId == taskId &&
+        other.heroTag == heroTag;
   }
 
   @override
   int get hashCode {
-    return key.hashCode ^ taskId.hashCode;
+    return key.hashCode ^ taskId.hashCode ^ heroTag.hashCode;
+  }
+}
+
+class StatisticsViewArguments {
+  const StatisticsViewArguments({
+    this.key,
+    this.heroTag,
+  });
+
+  final _i6.Key? key;
+
+  final String? heroTag;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "heroTag": "$heroTag"}';
+  }
+
+  @override
+  bool operator ==(covariant StatisticsViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key && other.heroTag == heroTag;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ heroTag.hashCode;
   }
 }
 
@@ -148,6 +184,7 @@ extension NavigatorStateExtension on _i7.NavigationService {
   Future<dynamic> navigateToTaskDetailsView({
     _i6.Key? key,
     int? taskId,
+    String? heroTag,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -155,21 +192,25 @@ extension NavigatorStateExtension on _i7.NavigationService {
         transition,
   }) async {
     return navigateTo<dynamic>(Routes.taskDetailsView,
-        arguments: TaskDetailsViewArguments(key: key, taskId: taskId),
+        arguments: TaskDetailsViewArguments(
+            key: key, taskId: taskId, heroTag: heroTag),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
         transition: transition);
   }
 
-  Future<dynamic> navigateToStatisticsView([
+  Future<dynamic> navigateToStatisticsView({
+    _i6.Key? key,
+    String? heroTag,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return navigateTo<dynamic>(Routes.statisticsView,
+        arguments: StatisticsViewArguments(key: key, heroTag: heroTag),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -207,6 +248,7 @@ extension NavigatorStateExtension on _i7.NavigationService {
   Future<dynamic> replaceWithTaskDetailsView({
     _i6.Key? key,
     int? taskId,
+    String? heroTag,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -214,21 +256,25 @@ extension NavigatorStateExtension on _i7.NavigationService {
         transition,
   }) async {
     return replaceWith<dynamic>(Routes.taskDetailsView,
-        arguments: TaskDetailsViewArguments(key: key, taskId: taskId),
+        arguments: TaskDetailsViewArguments(
+            key: key, taskId: taskId, heroTag: heroTag),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
         transition: transition);
   }
 
-  Future<dynamic> replaceWithStatisticsView([
+  Future<dynamic> replaceWithStatisticsView({
+    _i6.Key? key,
+    String? heroTag,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return replaceWith<dynamic>(Routes.statisticsView,
+        arguments: StatisticsViewArguments(key: key, heroTag: heroTag),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

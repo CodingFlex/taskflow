@@ -8,7 +8,9 @@ import 'package:taskflow/viewmodels/statistics_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
 class StatisticsView extends StackedView<StatisticsViewModel> {
-  const StatisticsView({super.key});
+  final String? heroTag;
+
+  const StatisticsView({super.key, this.heroTag});
 
   @override
   Widget builder(
@@ -33,37 +35,24 @@ class StatisticsView extends StackedView<StatisticsViewModel> {
             fontSize: 20,
           ),
         ),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: IconButton(
-              icon: Icon(
-                Theme.of(context).brightness == Brightness.dark
-                    ? FontAwesomeIcons.sun
-                    : FontAwesomeIcons.moon,
-                color: Colors.white,
-                size: 18,
-              ),
-              onPressed: viewModel.toggleTheme,
+      ),
+      body: Hero(
+        tag: heroTag ?? 'statistics_view',
+        child: Material(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _StatsOverview(viewModel: viewModel),
+                verticalSpaceLarge,
+                _CategoryStats(viewModel: viewModel),
+                verticalSpaceLarge,
+                _CompletionChart(viewModel: viewModel),
+              ],
             ),
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _StatsOverview(viewModel: viewModel),
-            verticalSpaceLarge,
-            _CategoryStats(viewModel: viewModel),
-            verticalSpaceLarge,
-            _CompletionChart(viewModel: viewModel),
-          ],
         ),
       ),
     );

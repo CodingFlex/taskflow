@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:heroine/heroine.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:taskflow/ui/common/taskflow_input_field.dart';
+import 'package:taskflow/ui/common/date_input_field.dart';
 import 'package:taskflow/ui/screens/task_details/widgets/category_selector.dart';
 import 'package:taskflow/viewmodels/task_details_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
 class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
   final int? taskId;
+  final String? heroTag;
 
-  const TaskDetailsView({super.key, this.taskId});
+  const TaskDetailsView({super.key, this.taskId, this.heroTag});
 
   @override
   Widget builder(
@@ -20,70 +21,56 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
     TaskDetailsViewModel viewModel,
     Widget? child,
   ) {
-    return Heroine(
-      tag: taskId != null ? 'task_$taskId' : 'new_task',
-      child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: AppBar(
-          backgroundColor: kcPrimaryColor,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(FontAwesomeIcons.arrowLeft, color: Colors.white),
-            onPressed: viewModel.navigateBack,
-          ),
-          title: const Text(
-            'Task Details',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
-              fontSize: 20,
-            ),
-          ),
-          actions: [
-            Container(
-              margin: const EdgeInsets.only(right: 8),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: IconButton(
-                icon: const Icon(FontAwesomeIcons.trash,
-                    color: Colors.white, size: 18),
-                onPressed: viewModel.showDeleteDialog,
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(right: 8),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: IconButton(
-                icon: Icon(
-                  Theme.of(context).brightness == Brightness.dark
-                      ? FontAwesomeIcons.sun
-                      : FontAwesomeIcons.moon,
-                  color: Colors.white,
-                  size: 18,
-                ),
-                onPressed: viewModel.toggleTheme,
-              ),
-            ),
-          ],
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: kcPrimaryColor,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(FontAwesomeIcons.arrowLeft, color: Colors.white),
+          onPressed: viewModel.navigateBack,
         ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _TitleSection(viewModel: viewModel),
-              verticalSpaceMedium,
-              _CategorySection(viewModel: viewModel),
-              verticalSpaceMedium,
-              _DueDateSection(viewModel: viewModel),
-              verticalSpaceMedium,
-              _DescriptionSection(viewModel: viewModel),
-            ],
+        title: const Text(
+          'Task Details',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+            fontSize: 20,
+          ),
+        ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+              icon: const Icon(FontAwesomeIcons.trash,
+                  color: Colors.white, size: 18),
+              onPressed: viewModel.showDeleteDialog,
+            ),
+          ),
+        ],
+      ),
+      body: Hero(
+        tag: heroTag ?? (taskId != null ? 'task_$taskId' : 'add_task_fab'),
+        child: Material(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _TitleSection(viewModel: viewModel),
+                verticalSpaceMedium,
+                _CategorySection(viewModel: viewModel),
+                verticalSpaceMedium,
+                _DueDateSection(viewModel: viewModel),
+                verticalSpaceMedium,
+                _DescriptionSection(viewModel: viewModel),
+              ],
+            ),
           ),
         ),
       ),
@@ -177,12 +164,18 @@ class _DueDateSection extends StatelessWidget {
           ),
         ),
         verticalSpaceSmall,
-        TaskflowInputField(
+        DateInputField(
           controller: viewModel.dueDateController,
           placeholder: 'Select due date',
-          leading: const Icon(FontAwesomeIcons.calendar),
-          enabled: false,
-          onChanged: (_) {},
+          initialDate: viewModel.selectedDueDate,
+          minDate: DateTime.now().subtract(const Duration(days: 365)),
+          maxDate: DateTime.now().add(const Duration(days: 365 * 5)),
+          onDateSelected: (date) {
+            viewModel.setDueDate(date);
+          },
+          onChanged: () {
+            viewModel.clearDueDate();
+          },
         ),
         if (isOverdue) ...[
           verticalSpaceTiny,

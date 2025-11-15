@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:heroine/heroine.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
@@ -23,100 +22,103 @@ class TaskCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isCompleted = task.status == TaskStatus.completed;
 
-    return Heroine(
+    return Hero(
       tag: 'task_${task.id}',
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isDark ? kcDarkGreyColor2 : Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border(
-              left: BorderSide(
-                color: task.category.color,
-                width: 4,
+      child: Material(
+        color: Colors.transparent,
+        child: GestureDetector(
+          onTap: onTap,
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isDark ? kcDarkGreyColor2 : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border(
+                left: BorderSide(
+                  color: task.category.color,
+                  width: 4,
+                ),
               ),
             ),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              GestureDetector(
-                onTap: onToggleComplete,
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: isCompleted
-                          ? Colors.green
-                          : (isDark ? Colors.white38 : Colors.black26),
-                      width: 2,
-                    ),
-                    color: isCompleted ? Colors.green : Colors.transparent,
-                  ),
-                  child: isCompleted
-                      ? const Icon(
-                          Icons.check,
-                          size: 16,
-                          color: Colors.white,
-                        )
-                      : null,
-                ),
-              ),
-              horizontalSpaceSmall,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      task.title,
-                      style: AppTextStyles.heading3(context).copyWith(
-                        decoration: isCompleted
-                            ? TextDecoration.lineThrough
-                            : TextDecoration.none,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: onToggleComplete,
+                  child: Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
                         color: isCompleted
-                            ? (isDark ? Colors.white54 : Colors.black54)
-                            : null,
+                            ? Colors.green
+                            : (isDark ? Colors.white38 : Colors.black26),
+                        width: 2,
                       ),
+                      color: isCompleted ? Colors.green : Colors.transparent,
                     ),
-                    if (task.description.isNotEmpty) ...[
-                      verticalSpaceTiny,
+                    child: isCompleted
+                        ? const Icon(
+                            Icons.check,
+                            size: 16,
+                            color: Colors.white,
+                          )
+                        : null,
+                  ),
+                ),
+                horizontalSpaceSmall,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Text(
-                        task.description,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.body(context).copyWith(
-                          color: isDark ? Colors.white70 : Colors.black87,
-                          fontSize: 14,
+                        task.title,
+                        style: AppTextStyles.heading3(context).copyWith(
+                          decoration: isCompleted
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                          color: isCompleted
+                              ? (isDark ? Colors.white54 : Colors.black54)
+                              : null,
                         ),
                       ),
-                    ],
-                    verticalSpaceSmall,
-                    Row(
-                      children: [
-                        _CategoryTag(category: task.category),
-                        horizontalSpaceSmall,
-                        if (task.dueDate != null)
-                          _DueDateTag(
-                            task: task,
-                            isOverdue: task.isOverdue,
+                      if (task.description.isNotEmpty) ...[
+                        verticalSpaceTiny,
+                        Text(
+                          task.description,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.body(context).copyWith(
+                            color: isDark ? Colors.white70 : Colors.black87,
+                            fontSize: 14,
                           ),
+                        ),
                       ],
-                    ),
-                  ],
+                      verticalSpaceSmall,
+                      Row(
+                        children: [
+                          _CategoryTag(category: task.category),
+                          horizontalSpaceSmall,
+                          if (task.dueDate != null)
+                            _DueDateTag(
+                              task: task,
+                              isOverdue: task.isOverdue,
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              if (task.isOverdue)
-                const Icon(
-                  FontAwesomeIcons.circleExclamation,
-                  color: Colors.red,
-                  size: 20,
-                ),
-            ],
+                if (task.isOverdue)
+                  const Icon(
+                    FontAwesomeIcons.circleExclamation,
+                    color: Colors.red,
+                    size: 20,
+                  ),
+              ],
+            ),
           ),
         ),
       ),

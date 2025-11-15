@@ -62,7 +62,23 @@ class TaskDetailsViewModel extends BaseViewModel {
     if (_selectedDueDate != null) {
       dueDateController.text =
           DateFormat('MM/dd/yyyy').format(_selectedDueDate!);
+    } else {
+      dueDateController.clear();
     }
+  }
+
+  DateTime? get selectedDueDate => _selectedDueDate;
+
+  void setDueDate(DateTime date) {
+    _selectedDueDate = date;
+    _updateDueDateController();
+    rebuildUi();
+  }
+
+  void clearDueDate() {
+    _selectedDueDate = null;
+    _updateDueDateController();
+    rebuildUi();
   }
 
   void setCategory(TaskCategory category) {

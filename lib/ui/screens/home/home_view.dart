@@ -16,35 +16,84 @@ class HomeView extends StackedView<HomeViewModel> {
 
   @override
   Widget builder(BuildContext context, HomeViewModel viewModel, Widget? child) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _HeaderSection(
-              onThemeToggle: viewModel.toggleTheme,
-              onStatisticsTap: viewModel.navigateToStatistics,
+      appBar: AppBar(
+        backgroundColor: kcPrimaryColor,
+        elevation: 0,
+        title: Text(
+          'TaskFlow',
+          style: GoogleFonts.nunitoSans(
+            fontSize: 24,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+            letterSpacing: -0.5,
+          ),
+        ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SearchField(
-                      controller: viewModel.searchController,
-                      hintText: 'Search tasks...',
-                      onChanged: viewModel.onSearchChanged,
-                    ),
-                    verticalSpaceMedium,
-                    _FilterSection(viewModel: viewModel),
-                    verticalSpaceMedium,
-                    _TasksSection(viewModel: viewModel),
-                  ],
+            child: IconButton(
+              icon: const Icon(
+                FontAwesomeIcons.chartBar,
+                color: Colors.white,
+                size: 18,
+              ),
+              onPressed: viewModel.navigateToStatistics,
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+              icon: Icon(
+                isDark ? FontAwesomeIcons.sun : FontAwesomeIcons.moon,
+                color: Colors.white,
+                size: 18,
+              ),
+              onPressed: viewModel.toggleTheme,
+            ),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Hero(
+                tag: 'statistics_view',
+                child: Material(
+                  color: Colors.transparent,
+                  child: SearchField(
+                    controller: viewModel.searchController,
+                    hintText: 'Search tasks...',
+                    onChanged: viewModel.onSearchChanged,
+                  ),
                 ),
               ),
-            ),
-          ],
+              verticalSpaceMedium,
+              _FilterSection(viewModel: viewModel),
+              verticalSpaceMedium,
+              _TasksSection(viewModel: viewModel),
+              const Hero(
+                tag: 'add_task_fab',
+                child: Material(
+                  color: Colors.transparent,
+                  child: SizedBox.shrink(),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -57,86 +106,6 @@ class HomeView extends StackedView<HomeViewModel> {
 
   @override
   HomeViewModel viewModelBuilder(BuildContext context) => HomeViewModel();
-}
-
-class _HeaderSection extends StatelessWidget {
-  final VoidCallback onThemeToggle;
-  final VoidCallback onStatisticsTap;
-
-  const _HeaderSection({
-    required this.onThemeToggle,
-    required this.onStatisticsTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      decoration: BoxDecoration(
-        color: kcPrimaryColor,
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(24),
-          bottomRight: Radius.circular(24),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: kcPrimaryColor.withOpacity(0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'TaskFlow',
-            style: GoogleFonts.nunitoSans(
-              fontSize: 32,
-              fontWeight: FontWeight.w900,
-              color: Colors.white,
-              letterSpacing: -0.5,
-            ),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: IconButton(
-                  onPressed: onStatisticsTap,
-                  icon: const Icon(
-                    FontAwesomeIcons.chartBar,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: IconButton(
-                  onPressed: onThemeToggle,
-                  icon: Icon(
-                    isDark ? FontAwesomeIcons.sun : FontAwesomeIcons.moon,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _FilterSection extends StatelessWidget {
