@@ -15,8 +15,11 @@ dependencies:
   google_fonts: ^6.2.1
   logger: ^2.4.0
   sizer: ^2.0.15
-  skeletonizer: ^1.2.0
+  skeletonizer: ^2.1.0+1
   flutter_spinkit: ^5.2.1
+  font_awesome_flutter: ^10.7.0
+  heroine: ^0.5.0+2
+  intl: ^0.19.0
   stacked: ^3.4.0
   stacked_services: ^1.1.0
   toastification: ^3.0.3

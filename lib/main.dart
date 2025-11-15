@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:toastification/toastification.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:heroine/heroine.dart' show HeroineController;
+import 'package:sizer/sizer.dart';
 import 'package:taskflow/app/app.bottomsheets.dart';
 import 'package:taskflow/app/app.dialogs.dart';
 import 'package:taskflow/app/app.locator.dart';
@@ -42,15 +44,22 @@ class MainApp extends StatelessWidget {
             statusBarBrightness: brightness,
           ),
         );
-        return ToastificationWrapper(
-          child: MaterialApp(
-            initialRoute: Routes.splashView,
-            onGenerateRoute: StackedRouter().onGenerateRoute,
-            navigatorKey: StackedService.navigatorKey,
-            navigatorObservers: [StackedService.routeObserver],
-            theme: theme,
-            darkTheme: darkTheme,
-          ),
+        return Sizer(
+          builder: (context, orientation, deviceType) {
+            return ToastificationWrapper(
+              child: MaterialApp(
+                initialRoute: Routes.splashView,
+                onGenerateRoute: StackedRouter().onGenerateRoute,
+                navigatorKey: StackedService.navigatorKey,
+                navigatorObservers: [
+                  StackedService.routeObserver,
+                  HeroineController(),
+                ],
+                theme: theme,
+                darkTheme: darkTheme,
+              ),
+            );
+          },
         );
       },
     );

@@ -1,51 +1,34 @@
-/// Single-flavor configuration (no multi-flavor support).
+/// Single-flavor configuration for Taskflow.
 ///
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-/// Keep the minimal API surface so existing code can read `FlavorConfig.instance.values`.
 enum Flavor { single }
 
 class FlavorValues {
-  // We allow fallback to dotenv for Supabase credentials if not provided in apiKeys.
-  // This keeps existing usage intact while enabling direct .env reads.
-  // ignore: unused_field
   final String baseUrl;
   final String appTitle;
   final bool enableLogging;
-  final Map<String, String> apiKeys;
 
   const FlavorValues({
-    this.baseUrl = '',
-    this.appTitle = 'App',
+    required this.baseUrl,
+    this.appTitle = 'Taskflow',
     this.enableLogging = true,
-    this.apiKeys = const {},
   });
 
-  /// Get Supabase URL from apiKeys.
-  /// Returns empty string if not configured.
-  String get supabaseUrl {
-    final fromMap = apiKeys['supabase_url']?.trim();
-    if (fromMap != null && fromMap.isNotEmpty) return fromMap;
-    // Fallback to .env if available
+  factory FlavorValues.fromEnv() {
     try {
-      // Import locally to avoid hard requirement during codegen or non-Flutter contexts.
-      // ignore: avoid_dynamic_calls
-      final env = (dotenv.env['SUPABASE_URL'] ?? '').trim();
-      return env;
+      return FlavorValues(
+        baseUrl: dotenv.env['BASE_URL'] ?? '',
+        appTitle: 'Taskflow',
+        enableLogging: kDebugMode,
+      );
     } catch (_) {
-      return '';
-    }
-  }
-
-  /// Get Supabase anonymous key from apiKeys.
-  /// Returns empty string if not configured.
-  String get supabaseAnonKey {
-    try {
-      // ignore: avoid_dynamic_calls
-      final env = (dotenv.env['SUPABASE_ANON_KEY'] ?? '').trim();
-      return env;
-    } catch (_) {
-      return '';
+      return const FlavorValues(
+        baseUrl: '',
+        appTitle: 'Taskflow',
+        enableLogging: true,
+      );
     }
   }
 }
@@ -58,7 +41,7 @@ class FlavorConfig {
   factory FlavorConfig({FlavorValues? values}) {
     _instance ??= FlavorConfig._internal(
       Flavor.single,
-      values ?? const FlavorValues(),
+      values ?? FlavorValues.fromEnv(),
     );
     return _instance!;
   }
@@ -68,5 +51,9 @@ class FlavorConfig {
   static FlavorConfig get instance {
     _instance ??= FlavorConfig();
     return _instance!;
+  }
+
+  static bool isProduction() {
+    return !kDebugMode;
   }
 }
