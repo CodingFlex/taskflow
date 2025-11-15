@@ -44,7 +44,7 @@ class MainApp extends StatelessWidget {
         );
         return ToastificationWrapper(
           child: MaterialApp(
-            initialRoute: Routes.startupView,
+            initialRoute: Routes.splashView,
             onGenerateRoute: StackedRouter().onGenerateRoute,
             navigatorKey: StackedService.navigatorKey,
             navigatorObservers: [StackedService.routeObserver],
