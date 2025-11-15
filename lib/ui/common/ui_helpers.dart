@@ -59,6 +59,8 @@ double quarterScreenWidth(BuildContext context) =>
 
 double getResponsiveHorizontalSpaceMedium(BuildContext context) =>
     screenWidthFraction(context, dividedBy: 10);
+double getResponsiveHorizontalSpaceSmall(BuildContext context) =>
+    screenWidthFraction(context, dividedBy: 20);
 double getResponsiveSmallFontSize(BuildContext context) =>
     getResponsiveFontSize(context, fontSize: 14, max: 15);
 
