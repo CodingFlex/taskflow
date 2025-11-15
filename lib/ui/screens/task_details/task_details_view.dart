@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:heroine/heroine.dart';
+import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:taskflow/ui/common/taskflow_input_field.dart';
@@ -24,23 +25,49 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: const Color(0xFF4A90E2),
+          backgroundColor: kcPrimaryColor,
+          elevation: 0,
           leading: IconButton(
             icon: const Icon(FontAwesomeIcons.arrowLeft, color: Colors.white),
             onPressed: viewModel.navigateBack,
           ),
           title: const Text(
             'Task Details',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 20,
+            ),
           ),
           actions: [
-            IconButton(
-              icon: const Icon(FontAwesomeIcons.trash, color: Colors.white),
-              onPressed: viewModel.showDeleteDialog,
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: IconButton(
+                icon: const Icon(FontAwesomeIcons.trash,
+                    color: Colors.white, size: 18),
+                onPressed: viewModel.showDeleteDialog,
+              ),
             ),
-            IconButton(
-              icon: const Icon(FontAwesomeIcons.sun, color: Colors.white),
-              onPressed: viewModel.toggleTheme,
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: IconButton(
+                icon: Icon(
+                  Theme.of(context).brightness == Brightness.dark
+                      ? FontAwesomeIcons.sun
+                      : FontAwesomeIcons.moon,
+                  color: Colors.white,
+                  size: 18,
+                ),
+                onPressed: viewModel.toggleTheme,
+              ),
             ),
           ],
         ),

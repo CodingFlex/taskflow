@@ -40,7 +40,9 @@ class CategoryFilterChip extends StatelessWidget {
               height: 8,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: category?.color ?? Colors.grey,
+                color: isSelected
+                    ? Colors.white
+                    : (category?.color ?? Colors.grey),
               ),
             ),
             const SizedBox(width: 8),

@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:taskflow/models/task.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:taskflow/ui/common/search_field.dart';
 import 'package:taskflow/ui/screens/home/widgets/task_card.dart';
 import 'package:taskflow/ui/screens/home/widgets/filter_chip_widget.dart';
-import 'package:taskflow/ui/screens/home/widgets/category_filter_chip.dart';
-import 'package:taskflow/viewmodels/home_viewmodel.dart';
+import 'package:taskflow/viewmodels/home_viewmodel.dart'
+    show HomeViewModel, TaskFilter;
 import 'package:stacked/stacked.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -37,12 +36,8 @@ class HomeView extends StackedView<HomeViewModel> {
                       hintText: 'Search tasks...',
                       onChanged: viewModel.onSearchChanged,
                     ),
-                    verticalSpaceSmall,
+                    verticalSpaceMedium,
                     _FilterSection(viewModel: viewModel),
-                    verticalSpaceMedium,
-                    _SortBySection(viewModel: viewModel),
-                    verticalSpaceMedium,
-                    _CategorySection(viewModel: viewModel),
                     verticalSpaceMedium,
                     _TasksSection(viewModel: viewModel),
                   ],
@@ -77,13 +72,20 @@ class _HeaderSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: Color(0xFF4A90E2),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(20),
-          bottomRight: Radius.circular(20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: BoxDecoration(
+        color: kcPrimaryColor,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(24),
+          bottomRight: Radius.circular(24),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: kcPrimaryColor.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -91,25 +93,42 @@ class _HeaderSection extends StatelessWidget {
           Text(
             'TaskFlow',
             style: GoogleFonts.nunitoSans(
-              fontSize: 28,
+              fontSize: 32,
               fontWeight: FontWeight.w900,
               color: Colors.white,
+              letterSpacing: -0.5,
             ),
           ),
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(
-                onPressed: onStatisticsTap,
-                icon: const Icon(
-                  FontAwesomeIcons.chartBar,
-                  color: Colors.white,
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: IconButton(
+                  onPressed: onStatisticsTap,
+                  icon: const Icon(
+                    FontAwesomeIcons.chartBar,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
               ),
-              IconButton(
-                onPressed: onThemeToggle,
-                icon: Icon(
-                  isDark ? FontAwesomeIcons.sun : FontAwesomeIcons.moon,
-                  color: Colors.white,
+              const SizedBox(width: 8),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: IconButton(
+                  onPressed: onThemeToggle,
+                  icon: Icon(
+                    isDark ? FontAwesomeIcons.sun : FontAwesomeIcons.moon,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
               ),
             ],
@@ -127,52 +146,11 @@ class _FilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          FilterChipWidget(
-            label: 'All',
-            isSelected: viewModel.selectedFilter == TaskFilter.all,
-            onTap: () => viewModel.setFilter(TaskFilter.all),
-          ),
-          horizontalSpaceSmall,
-          FilterChipWidget(
-            label: 'Completed',
-            isSelected: viewModel.selectedFilter == TaskFilter.completed,
-            onTap: () => viewModel.setFilter(TaskFilter.completed),
-          ),
-          horizontalSpaceSmall,
-          FilterChipWidget(
-            label: 'Pending',
-            isSelected: viewModel.selectedFilter == TaskFilter.pending,
-            onTap: () => viewModel.setFilter(TaskFilter.pending),
-          ),
-          horizontalSpaceSmall,
-          FilterChipWidget(
-            label: 'More',
-            isSelected: false,
-            onTap: viewModel.showMoreFilters,
-            icon: FontAwesomeIcons.filter,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SortBySection extends StatelessWidget {
-  final HomeViewModel viewModel;
-
-  const _SortBySection({required this.viewModel});
-
-  @override
-  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'SORT BY',
+          'FILTER BY',
           style: AppTextStyles.caption(context).copyWith(
             fontSize: 12,
             fontWeight: FontWeight.w700,
@@ -185,68 +163,28 @@ class _SortBySection extends StatelessWidget {
           child: Row(
             children: [
               FilterChipWidget(
-                label: 'Date Created',
-                isSelected: viewModel.sortOption == SortOption.dateCreated,
-                onTap: () => viewModel.setSortOption(SortOption.dateCreated),
+                label: 'All',
+                isSelected: viewModel.selectedFilter == TaskFilter.all,
+                onTap: () => viewModel.setFilter(TaskFilter.all),
               ),
               horizontalSpaceSmall,
               FilterChipWidget(
-                label: 'Title (A-Z)',
-                isSelected: viewModel.sortOption == SortOption.title,
-                onTap: () => viewModel.setSortOption(SortOption.title),
+                label: 'Completed',
+                isSelected: viewModel.selectedFilter == TaskFilter.completed,
+                onTap: () => viewModel.setFilter(TaskFilter.completed),
               ),
               horizontalSpaceSmall,
               FilterChipWidget(
-                label: 'Due Date',
-                isSelected: viewModel.sortOption == SortOption.dueDate,
-                onTap: () => viewModel.setSortOption(SortOption.dueDate),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _CategorySection extends StatelessWidget {
-  final HomeViewModel viewModel;
-
-  const _CategorySection({required this.viewModel});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'CATEGORY',
-          style: AppTextStyles.caption(context).copyWith(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.2,
-          ),
-        ),
-        verticalSpaceSmall,
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              CategoryFilterChip(
-                category: null,
-                isSelected: viewModel.selectedCategory == null,
-                onTap: () => viewModel.setCategory(null),
+                label: 'Pending',
+                isSelected: viewModel.selectedFilter == TaskFilter.pending,
+                onTap: () => viewModel.setFilter(TaskFilter.pending),
               ),
               horizontalSpaceSmall,
-              ...TaskCategory.values.map(
-                (category) => Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: CategoryFilterChip(
-                    category: category,
-                    isSelected: viewModel.selectedCategory == category,
-                    onTap: () => viewModel.setCategory(category),
-                  ),
-                ),
+              FilterChipWidget(
+                label: 'More',
+                isSelected: false,
+                onTap: viewModel.showMoreFilters,
+                icon: FontAwesomeIcons.filter,
               ),
             ],
           ),

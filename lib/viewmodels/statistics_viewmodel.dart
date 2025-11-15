@@ -2,6 +2,7 @@ import 'package:stacked/stacked.dart';
 import 'package:taskflow/app/app.locator.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:adaptive_theme/adaptive_theme.dart';
 
 class StatisticsViewModel extends BaseViewModel {
   final _navigationService = locator<NavigationService>();
@@ -20,6 +21,11 @@ class StatisticsViewModel extends BaseViewModel {
 
   void navigateBack() {
     _navigationService.back();
+  }
+
+  void toggleTheme() {
+    AdaptiveTheme.of(StackedService.navigatorKey!.currentContext!)
+        .toggleThemeMode();
   }
 
   void loadStatistics() {
@@ -48,4 +54,3 @@ class StatisticsViewModel extends BaseViewModel {
     setBusy(false);
   }
 }
-

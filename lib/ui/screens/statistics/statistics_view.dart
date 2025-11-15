@@ -19,15 +19,39 @@ class StatisticsView extends StackedView<StatisticsViewModel> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF4A90E2),
-        title: const Text(
-          'Statistics',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-        ),
+        backgroundColor: kcPrimaryColor,
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(FontAwesomeIcons.arrowLeft, color: Colors.white),
           onPressed: viewModel.navigateBack,
         ),
+        title: const Text(
+          'Statistics',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+            fontSize: 20,
+          ),
+        ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+              icon: Icon(
+                Theme.of(context).brightness == Brightness.dark
+                    ? FontAwesomeIcons.sun
+                    : FontAwesomeIcons.moon,
+                color: Colors.white,
+                size: 18,
+              ),
+              onPressed: viewModel.toggleTheme,
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
