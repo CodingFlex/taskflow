@@ -104,7 +104,7 @@ class _AnimatedTaskflowTextState extends State<_AnimatedTaskflowText>
             scale: _scaleAnimation.value,
             child: Text(
               'Taskflow',
-              style: GoogleFonts.shadowsIntoLight(
+              style: GoogleFonts.nunitoSans(
                 fontSize: 48,
                 fontWeight: FontWeight.w900,
                 color: Theme.of(context).brightness == Brightness.dark

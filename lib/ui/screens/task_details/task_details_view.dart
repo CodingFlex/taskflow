@@ -70,6 +70,10 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
                   _CategorySection(viewModel: viewModel),
                   verticalSpaceMedium,
                   _DueDateSection(viewModel: viewModel),
+                  if (viewModel.taskId != null) ...[
+                    verticalSpaceMedium,
+                    _CompletionToggleSection(viewModel: viewModel),
+                  ],
                   verticalSpaceMedium,
                   _DescriptionSection(viewModel: viewModel),
                   verticalSpaceLarge,
@@ -95,6 +99,59 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
   @override
   TaskDetailsViewModel viewModelBuilder(BuildContext context) =>
       TaskDetailsViewModel(taskId: taskId);
+}
+
+class _CompletionToggleSection extends StatelessWidget {
+  final TaskDetailsViewModel viewModel;
+
+  const _CompletionToggleSection({required this.viewModel});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isCompleted = viewModel.isCompleted;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Mark as completed',
+                style: AppTextStyles.body(context).copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              verticalSpaceTiny,
+              Text(
+                isCompleted
+                    ? 'This task is completed'
+                    : 'Toggle to mark this task as completed',
+                style: AppTextStyles.caption(context).copyWith(
+                  fontSize: 12,
+                  color: isDark ? Colors.white70 : Colors.black54,
+                ),
+              ),
+            ],
+          ),
+        ),
+        horizontalSpaceMedium,
+        Switch(
+          thumbColor: WidgetStateProperty.all(Colors.white),
+          inactiveTrackColor:
+              isDark ? kcDarkGreyColor2 : const Color(0xFFE4E7EC),
+          trackOutlineColor: isDark
+              ? WidgetStateProperty.all(kcDarkGreyColor2)
+              : WidgetStateProperty.all(const Color(0xFFE4E7EC)),
+          value: isCompleted,
+          onChanged: (_) => viewModel.toggleCompletion(),
+          activeThumbColor: Colors.green,
+        ),
+      ],
+    );
+  }
 }
 
 class _TitleSection extends StatelessWidget {

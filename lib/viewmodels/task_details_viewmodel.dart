@@ -21,6 +21,7 @@ class TaskDetailsViewModel extends BaseViewModel {
 
   Task? get task => _task;
   TaskCategory get selectedCategory => _selectedCategory;
+  bool get isCompleted => _task?.status == TaskStatus.completed;
 
   TaskDetailsViewModel({this.taskId}) {
     _initialize();
@@ -83,6 +84,20 @@ class TaskDetailsViewModel extends BaseViewModel {
 
   void setCategory(TaskCategory category) {
     _selectedCategory = category;
+    rebuildUi();
+  }
+
+  void toggleCompletion() {
+    if (_task == null) return;
+
+    final newStatus = _task!.status == TaskStatus.completed
+        ? TaskStatus.pending
+        : TaskStatus.completed;
+
+    _task = _task!.copyWith(
+      status: newStatus,
+      completedAt: newStatus == TaskStatus.completed ? DateTime.now() : null,
+    );
     rebuildUi();
   }
 
