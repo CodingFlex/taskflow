@@ -102,7 +102,9 @@ class TaskCard extends StatelessWidget {
                         children: [
                           _CategoryTag(category: task.category),
                           horizontalSpaceSmall,
-                          if (task.dueDate != null)
+                          if (isCompleted && task.completedAt != null)
+                            _CompletedTag(completedAt: task.completedAt!)
+                          else if (!isCompleted && task.dueDate != null)
                             _DueDateTag(
                               task: task,
                               isOverdue: task.isOverdue,
@@ -209,6 +211,66 @@ class _DueDateTag extends StatelessWidget {
           Text(
             text,
             style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CompletedTag extends StatelessWidget {
+  final DateTime completedAt;
+
+  const _CompletedTag({required this.completedAt});
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final difference = now.difference(completedAt);
+    String text;
+
+    if (difference.inDays == 0) {
+      text = 'Completed today';
+    } else if (difference.inDays == 1) {
+      text = 'Completed yesterday';
+    } else if (difference.inDays < 7) {
+      text = 'Completed ${difference.inDays}d ago';
+    } else {
+      final months = (difference.inDays / 30).floor();
+      if (months == 0) {
+        final weeks = (difference.inDays / 7).floor();
+        text = 'Completed ${weeks}w ago';
+      } else if (months == 1) {
+        text = 'Completed 1mo ago';
+      } else {
+        text = 'Completed ${months}mo ago';
+      }
+    }
+
+    const color = Colors.green;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            FontAwesomeIcons.check,
+            size: 10,
+            color: color,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: color,

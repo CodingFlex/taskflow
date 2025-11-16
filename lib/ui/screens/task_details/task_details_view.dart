@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
+import 'package:taskflow/ui/common/keyboard_unfocus_wrapper.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:taskflow/ui/common/taskflow_input_field.dart';
@@ -58,30 +59,32 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
         tag: heroTag ?? (taskId != null ? 'task_$taskId' : 'add_task_fab'),
         child: Material(
           color: Theme.of(context).scaffoldBackgroundColor,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _TitleSection(viewModel: viewModel),
-                verticalSpaceMedium,
-                _CategorySection(viewModel: viewModel),
-                verticalSpaceMedium,
-                _DueDateSection(viewModel: viewModel),
-                verticalSpaceMedium,
-                _DescriptionSection(viewModel: viewModel),
-                verticalSpaceLarge,
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Center(
-                    child: TaskflowButton(
-                      title: 'Save',
-                      onTap: viewModel.saveTask,
-                      width: screenWidth(context) * 0.8,
+          child: KeyboardUnfocusWrapper(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _TitleSection(viewModel: viewModel),
+                  verticalSpaceMedium,
+                  _CategorySection(viewModel: viewModel),
+                  verticalSpaceMedium,
+                  _DueDateSection(viewModel: viewModel),
+                  verticalSpaceMedium,
+                  _DescriptionSection(viewModel: viewModel),
+                  verticalSpaceLarge,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Center(
+                      child: TaskflowButton(
+                        title: 'Save',
+                        onTap: viewModel.saveTask,
+                        width: screenWidth(context) * 0.8,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

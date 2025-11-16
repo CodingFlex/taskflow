@@ -60,7 +60,7 @@ class TaskflowInputField extends StatelessWidget {
           keyboardType: keyboardType,
           inputFormatters: inputFormatters,
           style: AppTextStyles.body(context).copyWith(
-            fontSize: 16.sp,
+            fontSize: 14.sp,
             fontWeight: FontWeight.w600,
             color: isDark ? Colors.white : Colors.black,
           ),

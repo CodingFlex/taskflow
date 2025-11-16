@@ -41,13 +41,13 @@ class SearchField extends StatelessWidget {
       child: TextField(
         controller: controller,
         style: AppTextStyles.body(context).copyWith(
-          fontSize: 16.sp,
+          fontSize: 14.sp,
           fontWeight: FontWeight.w500,
         ),
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: AppTextStyles.body(context).copyWith(
-            fontSize: 16.sp,
+            fontSize: 14.sp,
             fontWeight: FontWeight.w500,
             color: kcMediumGrey,
           ),
