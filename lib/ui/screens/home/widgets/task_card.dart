@@ -98,10 +98,12 @@ class TaskCard extends StatelessWidget {
                         ),
                       ],
                       verticalSpaceSmall,
-                      Row(
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
                         children: [
                           _CategoryTag(category: task.category),
-                          horizontalSpaceSmall,
+                          _CreatedDateTag(createdAt: task.createdAt),
                           if (isCompleted && task.completedAt != null)
                             _CompletedTag(completedAt: task.completedAt!)
                           else if (!isCompleted && task.dueDate != null)
@@ -211,6 +213,66 @@ class _DueDateTag extends StatelessWidget {
           Text(
             text,
             style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CreatedDateTag extends StatelessWidget {
+  final DateTime createdAt;
+
+  const _CreatedDateTag({required this.createdAt});
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final difference = now.difference(createdAt);
+    String text;
+
+    if (difference.inDays == 0) {
+      text = 'Created today';
+    } else if (difference.inDays == 1) {
+      text = 'Created yesterday';
+    } else if (difference.inDays < 7) {
+      text = 'Created ${difference.inDays}d ago';
+    } else {
+      final months = (difference.inDays / 30).floor();
+      if (months == 0) {
+        final weeks = (difference.inDays / 7).floor();
+        text = 'Created ${weeks}w ago';
+      } else if (months == 1) {
+        text = 'Created 1mo ago';
+      } else {
+        text = 'Created ${months}mo ago';
+      }
+    }
+
+    const color = Colors.grey;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            FontAwesomeIcons.clock,
+            size: 10,
+            color: color,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: color,
