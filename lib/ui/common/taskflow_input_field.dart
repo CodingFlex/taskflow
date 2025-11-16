@@ -40,17 +40,13 @@ class TaskflowInputField extends StatelessWidget {
     this.inputFormatters,
     this.enabled = true,
     this.maxLines,
-    this.borderRadius = 8,
+    this.borderRadius = 26,
     this.prefixConstraints,
   });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final circularBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(borderRadius),
-    );
 
     return Theme(
       data: ThemeData(primaryColor: kcPrimaryColor),
@@ -75,7 +71,7 @@ class TaskflowInputField extends StatelessWidget {
             hintText: placeholder,
             hintStyle: AppTextStyles.body(context).copyWith(
               color: isDark ? Colors.white70 : kcMediumGrey,
-              fontSize: 16.sp,
+              fontSize: 14.sp,
             ),
             contentPadding: EdgeInsets.symmetric(
               horizontal: 20,
@@ -84,7 +80,7 @@ class TaskflowInputField extends StatelessWidget {
                   : (height != null ? height! / 4 : 16),
             ),
             filled: true,
-            fillColor: isDark ? kcDarkGreyColor : Colors.white,
+            fillColor: isDark ? kcDarkGreyColor2 : Colors.white,
             prefixIcon: leading,
             prefixIconConstraints: prefixConstraints,
             suffixIcon: trailing != null
@@ -102,39 +98,30 @@ class TaskflowInputField extends StatelessWidget {
                     ),
                   )
                 : null,
-            border: isDark
-                ? OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                    borderSide: BorderSide.none,
-                  )
-                : circularBorder.copyWith(
-                    borderSide: const BorderSide(color: kcMediumGrey, width: 1),
-                  ),
-            errorBorder: isDark
-                ? OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                    borderSide: BorderSide.none,
-                  )
-                : circularBorder.copyWith(
-                    borderSide: const BorderSide(color: Colors.red, width: 1),
-                  ),
-            focusedBorder: isDark
-                ? OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                    borderSide: BorderSide.none,
-                  )
-                : circularBorder.copyWith(
-                    borderSide:
-                        const BorderSide(color: kcPrimaryColor, width: 1),
-                  ),
-            enabledBorder: isDark
-                ? OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                    borderSide: BorderSide.none,
-                  )
-                : circularBorder.copyWith(
-                    borderSide: const BorderSide(color: kcMediumGrey, width: 1),
-                  ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+              borderSide: BorderSide(
+                color:
+                    isDark ? Colors.transparent : Colors.grey.withOpacity(0.2),
+                width: 1.5,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+              borderSide: const BorderSide(color: Colors.red, width: 1.5),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+              borderSide: const BorderSide(color: kcPrimaryColor, width: 2),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+              borderSide: BorderSide(
+                color:
+                    isDark ? Colors.transparent : Colors.grey.withOpacity(0.2),
+                width: 1.5,
+              ),
+            ),
             errorText: validator != null ? validator!(controller.text) : null,
           ),
         ),

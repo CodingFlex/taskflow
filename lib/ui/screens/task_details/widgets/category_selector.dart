@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
-import 'package:taskflow/ui/common/ui_helpers.dart';
 
 class CategorySelector extends StatelessWidget {
   final TaskCategory? selectedCategory;
@@ -25,7 +24,7 @@ class CategorySelector extends StatelessWidget {
         return GestureDetector(
           onTap: () => onCategorySelected(category),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: isSelected
                   ? category.color
@@ -43,19 +42,24 @@ class CategorySelector extends StatelessWidget {
               children: [
                 Icon(
                   FontAwesomeIcons.tag,
-                  size: 14,
+                  size: 12,
                   color: isSelected ? Colors.white : category.color,
                 ),
-                horizontalSpaceSmall,
-                Text(
-                  category.displayName,
-                  style: AppTextStyles.body(context).copyWith(
-                    color: isSelected
-                        ? Colors.white
-                        : (Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black87),
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    category.displayName,
+                    style: AppTextStyles.body(context).copyWith(
+                      fontSize: 14,
+                      color: isSelected
+                          ? Colors.white
+                          : (Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black87),
+                      fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],

@@ -38,7 +38,7 @@ class AppTextStyles {
   static TextStyle heading3(BuildContext context, {Color? color}) =>
       GoogleFonts.nunitoSans(
         fontWeight: FontWeight.w600,
-        fontSize: 18.sp,
+        fontSize: 15.sp,
         color: color ?? _textColor(context),
       );
 
@@ -80,7 +80,7 @@ class AppTextStyles {
   static TextStyle body(BuildContext context, {Color? color}) =>
       GoogleFonts.nunitoSans(
         fontWeight: FontWeight.normal,
-        fontSize: 16.sp,
+        fontSize: 15.sp,
         color: color ?? _textColor(context),
       );
 

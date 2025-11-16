@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:sizer/sizer.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
@@ -92,7 +93,7 @@ class TaskCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: AppTextStyles.body(context).copyWith(
                             color: isDark ? Colors.white70 : Colors.black87,
-                            fontSize: 14,
+                            fontSize: 13.sp,
                           ),
                         ),
                       ],
@@ -150,10 +151,10 @@ class _CategoryTag extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             category.displayName,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: category.color,
             ),
           ),
         ],

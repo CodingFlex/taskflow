@@ -100,6 +100,24 @@ class TaskDetailsViewModel extends BaseViewModel {
     );
   }
 
+  Future<void> saveTask() async {
+    if (titleController.text.trim().isEmpty) {
+      // TODO: Show error message
+      return;
+    }
+
+    setBusy(true);
+    try {
+      // TODO: Save task to API
+      await Future.delayed(const Duration(milliseconds: 500));
+      navigateBack();
+    } catch (e) {
+      // TODO: Handle error
+    } finally {
+      setBusy(false);
+    }
+  }
+
   @override
   void dispose() {
     titleController.dispose();

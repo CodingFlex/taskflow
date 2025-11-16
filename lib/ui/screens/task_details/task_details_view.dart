@@ -4,6 +4,7 @@ import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:taskflow/ui/common/taskflow_input_field.dart';
+import 'package:taskflow/ui/common/taskflow_button.dart';
 import 'package:taskflow/ui/common/date_input_field.dart';
 import 'package:taskflow/ui/screens/task_details/widgets/category_selector.dart';
 import 'package:taskflow/viewmodels/task_details_viewmodel.dart';
@@ -47,7 +48,7 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
             ),
             child: IconButton(
               icon: const Icon(FontAwesomeIcons.trash,
-                  color: Colors.white, size: 18),
+                  color: Colors.red, size: 18),
               onPressed: viewModel.showDeleteDialog,
             ),
           ),
@@ -69,6 +70,17 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
                 _DueDateSection(viewModel: viewModel),
                 verticalSpaceMedium,
                 _DescriptionSection(viewModel: viewModel),
+                verticalSpaceLarge,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Center(
+                    child: TaskflowButton(
+                      title: 'Save',
+                      onTap: viewModel.saveTask,
+                      width: screenWidth(context) * 0.8,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -94,9 +106,8 @@ class _TitleSection extends StatelessWidget {
       children: [
         Text(
           'Title *',
-          style: AppTextStyles.caption(context).copyWith(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
+          style: AppTextStyles.body(context).copyWith(
+            fontWeight: FontWeight.w600,
           ),
         ),
         verticalSpaceSmall,
@@ -130,9 +141,8 @@ class _CategorySection extends StatelessWidget {
       children: [
         Text(
           'Category',
-          style: AppTextStyles.caption(context).copyWith(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
+          style: AppTextStyles.body(context).copyWith(
+            fontWeight: FontWeight.w600,
           ),
         ),
         verticalSpaceSmall,
@@ -158,9 +168,8 @@ class _DueDateSection extends StatelessWidget {
       children: [
         Text(
           'Due Date',
-          style: AppTextStyles.caption(context).copyWith(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
+          style: AppTextStyles.body(context).copyWith(
+            fontWeight: FontWeight.w600,
           ),
         ),
         verticalSpaceSmall,
@@ -168,8 +177,6 @@ class _DueDateSection extends StatelessWidget {
           controller: viewModel.dueDateController,
           placeholder: 'Select due date',
           initialDate: viewModel.selectedDueDate,
-          minDate: DateTime.now().subtract(const Duration(days: 365)),
-          maxDate: DateTime.now().add(const Duration(days: 365 * 5)),
           onDateSelected: (date) {
             viewModel.setDueDate(date);
           },
@@ -211,9 +218,8 @@ class _DescriptionSection extends StatelessWidget {
       children: [
         Text(
           'Description',
-          style: AppTextStyles.caption(context).copyWith(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
+          style: AppTextStyles.body(context).copyWith(
+            fontWeight: FontWeight.w600,
           ),
         ),
         verticalSpaceSmall,

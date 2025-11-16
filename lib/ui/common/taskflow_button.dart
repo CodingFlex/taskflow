@@ -29,9 +29,9 @@ class TaskflowButton extends StatefulWidget {
     this.color,
     this.leading,
     this.width = double.infinity,
-    this.height = 45.0,
+    this.height = 50.0,
     this.textStyle,
-    this.borderRadius = 6.0,
+    this.borderRadius = 26.0,
   }) : outline = false;
 
   const TaskflowButton.outline({
@@ -43,7 +43,7 @@ class TaskflowButton extends StatefulWidget {
     this.textStyle,
     required this.height,
     required this.width,
-    this.borderRadius = 6.0,
+    this.borderRadius = 26.0,
     this.type = TaskflowButtonType.primary,
     this.state = TaskflowButtonState.enabled,
   }) : outline = true;
