@@ -103,23 +103,34 @@ class HomeViewModel extends BaseViewModel {
     _bottomSheetService.showCustomSheet(variant: BottomSheetType.moreFilters);
   }
 
-  void navigateToTaskDetails(Task task) {
-    Navigator.of(StackedService.navigatorKey!.currentContext!).push(
-      MaterialPageRoute(
-        builder: (context) =>
-            TaskDetailsView(taskId: task.id, heroTag: 'task_${task.id}'),
-        settings: const RouteSettings(name: Routes.taskDetailsView),
-      ),
-    );
+  Future<void> navigateToTaskDetails(Task task) async {
+    final shouldRefresh =
+        await Navigator.of(StackedService.navigatorKey!.currentContext!).push(
+          MaterialPageRoute(
+            builder: (context) =>
+                TaskDetailsView(taskId: task.id, heroTag: 'task_${task.id}'),
+            settings: const RouteSettings(name: Routes.taskDetailsView),
+          ),
+        );
+
+    if (shouldRefresh == true) {
+      await loadTasks(forceRefresh: true);
+    }
   }
 
-  void navigateToAddTask() {
-    Navigator.of(StackedService.navigatorKey!.currentContext!).push(
-      MaterialPageRoute(
-        builder: (context) => const TaskDetailsView(heroTag: 'add_task_fab'),
-        settings: const RouteSettings(name: Routes.taskDetailsView),
-      ),
-    );
+  Future<void> navigateToAddTask() async {
+    final shouldRefresh =
+        await Navigator.of(StackedService.navigatorKey!.currentContext!).push(
+          MaterialPageRoute(
+            builder: (context) =>
+                const TaskDetailsView(heroTag: 'add_task_fab'),
+            settings: const RouteSettings(name: Routes.taskDetailsView),
+          ),
+        );
+
+    if (shouldRefresh == true) {
+      await loadTasks(forceRefresh: true);
+    }
   }
 
   void navigateToStatistics() {

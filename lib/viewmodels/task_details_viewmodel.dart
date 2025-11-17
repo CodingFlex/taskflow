@@ -21,14 +21,14 @@ class TaskDetailsViewModel extends BaseViewModel {
   final TextEditingController dueDateController = TextEditingController();
 
   Task? _task;
-  TaskCategory _selectedCategory = TaskCategory.other;
+  TaskCategory? _selectedCategory;
   DateTime? _selectedDueDate;
   bool _isCompleted = false;
   bool _isFormValid = false;
   bool _listenersAttached = false;
 
   Task? get task => _task;
-  TaskCategory get selectedCategory => _selectedCategory;
+  TaskCategory? get selectedCategory => _selectedCategory;
   DateTime? get selectedDueDate => _selectedDueDate;
   bool get isCompleted => _isCompleted;
   bool get isEditMode => taskId != null;
@@ -38,7 +38,7 @@ class TaskDetailsViewModel extends BaseViewModel {
     if (taskId != null) {
       await _loadTask();
     } else {
-      _selectedCategory = TaskCategory.other;
+      _selectedCategory = null;
       _selectedDueDate = null;
       _attachListeners();
       _updateFormValidity();
@@ -129,7 +129,7 @@ class TaskDetailsViewModel extends BaseViewModel {
         title: titleController.text.trim(),
         description: descriptionController.text.trim(),
         status: _isCompleted ? TaskStatus.completed : TaskStatus.pending,
-        category: _selectedCategory,
+        category: _selectedCategory ?? TaskCategory.other,
         dueDate: _selectedDueDate,
         createdAt: DateTime.now(),
         completedAt: _isCompleted ? DateTime.now() : null,
@@ -137,7 +137,7 @@ class TaskDetailsViewModel extends BaseViewModel {
 
       await _taskRepository.createTask(newTask);
       _toastService.showSuccess(message: 'Task created successfully');
-      _navigationService.back();
+      _navigationService.back(result: true);
     } on ApiException catch (e) {
       _toastService.showError(message: e.userMessage);
     }
@@ -151,7 +151,7 @@ class TaskDetailsViewModel extends BaseViewModel {
         title: titleController.text.trim(),
         description: descriptionController.text.trim(),
         status: _isCompleted ? TaskStatus.completed : TaskStatus.pending,
-        category: _selectedCategory,
+        category: _selectedCategory ?? TaskCategory.other,
         dueDate: _selectedDueDate,
         completedAt: _isCompleted && _task!.status != TaskStatus.completed
             ? DateTime.now()
@@ -160,7 +160,7 @@ class TaskDetailsViewModel extends BaseViewModel {
 
       await _taskRepository.updateTask(updatedTask);
       _toastService.showSuccess(message: 'Task updated successfully');
-      _navigationService.back();
+      _navigationService.back(result: true);
     } on ApiException catch (e) {
       _toastService.showError(message: e.userMessage);
     }
@@ -192,7 +192,7 @@ class TaskDetailsViewModel extends BaseViewModel {
 
       if (success) {
         _toastService.showSuccess(message: 'Task deleted successfully');
-        _navigationService.back();
+        _navigationService.back(result: true);
       } else {
         _toastService.showError(message: 'Failed to delete task');
       }
