@@ -18,7 +18,6 @@ Future<void> main() async {
   await dotenv.load(fileName: '.env');
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
   await setupLocator();
-  // Initialize shared services
   await locator<StorageService>().init();
   setupDialogUi();
   setupBottomSheetUi();
@@ -27,7 +26,6 @@ Future<void> main() async {
 
 class MainApp extends StatelessWidget {
   final AdaptiveThemeMode? savedThemeMode;
-
   const MainApp({super.key, this.savedThemeMode});
 
   @override
@@ -38,6 +36,7 @@ class MainApp extends StatelessWidget {
       initial: savedThemeMode ?? AdaptiveThemeMode.system,
       builder: (theme, darkTheme) {
         final brightness = theme.brightness;
+
         SystemChrome.setSystemUIOverlayStyle(
           SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
@@ -47,19 +46,27 @@ class MainApp extends StatelessWidget {
             statusBarBrightness: brightness,
           ),
         );
+
         return Sizer(
           builder: (context, orientation, deviceType) {
             return ToastificationWrapper(
-              child: MaterialApp(
-                initialRoute: Routes.splashView,
-                onGenerateRoute: StackedRouter().onGenerateRoute,
-                navigatorKey: StackedService.navigatorKey,
-                navigatorObservers: [
-                  StackedService.routeObserver,
-                  HeroineController(),
-                ],
-                theme: theme,
-                darkTheme: darkTheme,
+              child: AnimatedTheme(
+                data: theme,
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeInOutCubic,
+                child: MaterialApp(
+                  initialRoute: Routes.splashView,
+                  onGenerateRoute: StackedRouter().onGenerateRoute,
+                  navigatorKey: StackedService.navigatorKey,
+                  navigatorObservers: [
+                    StackedService.routeObserver,
+                    HeroineController(),
+                  ],
+                  theme: theme,
+                  darkTheme: darkTheme,
+                  themeAnimationDuration: const Duration(milliseconds: 400),
+                  themeAnimationCurve: Curves.easeInOutCubic,
+                ),
               ),
             );
           },
