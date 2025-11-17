@@ -7,6 +7,7 @@ import 'package:taskflow/models/task.dart';
 import 'package:taskflow/repositories/task_repository.dart';
 import 'package:taskflow/services/api_exceptions.dart';
 import 'package:taskflow/ui/common/toast.dart';
+import 'package:adaptive_theme/adaptive_theme.dart';
 
 import 'package:taskflow/ui/screens/statistics/statistics_view.dart';
 import 'package:taskflow/ui/screens/task_details/task_details_view.dart';
@@ -97,7 +98,27 @@ class HomeViewModel extends BaseViewModel {
     rebuildUi();
   }
 
-  void toggleTheme() {}
+  Future<void> toggleTheme() async {
+    final context = StackedService.navigatorKey!.currentContext;
+    if (context == null) return;
+
+    final adaptiveTheme = AdaptiveTheme.of(context);
+    final currentMode = adaptiveTheme.mode;
+
+    AdaptiveThemeMode newTheme;
+    if (currentMode == AdaptiveThemeMode.light) {
+      newTheme = AdaptiveThemeMode.dark;
+    } else if (currentMode == AdaptiveThemeMode.dark) {
+      newTheme = AdaptiveThemeMode.light;
+    } else {
+      final isCurrentlyDark = Theme.of(context).brightness == Brightness.dark;
+      newTheme = isCurrentlyDark
+          ? AdaptiveThemeMode.light
+          : AdaptiveThemeMode.dark;
+    }
+
+    adaptiveTheme.setThemeMode(newTheme);
+  }
 
   Future<void> showMoreFilters() async {
     final response = await _bottomSheetService.showCustomSheet(
