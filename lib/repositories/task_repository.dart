@@ -100,11 +100,15 @@ class TaskRepository {
 
   Future<Task> createTask(Task task) async {
     try {
-      await _storageService.saveTask(task);
-      _logger.i('✅ Task saved locally: ${task.title}');
+      final assignedTask = task.id == 0
+          ? task.copyWith(id: await _storageService.getNextTaskId())
+          : task;
+
+      await _storageService.saveTask(assignedTask);
+      _logger.i('✅ Task saved locally: ${assignedTask.title}');
 
       try {
-        final apiTask = await _taskService.createTask(task);
+        final apiTask = await _taskService.createTask(assignedTask);
         _logger.d('☁️ API payload received for ${apiTask.title}');
         // await _storageService.updateTask(apiTask);
 
@@ -114,7 +118,7 @@ class TaskRepository {
         _logger.i('✓ Task still available locally');
       }
 
-      return task;
+      return assignedTask;
     } catch (e, stackTrace) {
       _logger.e(
         '❌ Critical error: Failed to save task locally',

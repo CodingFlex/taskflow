@@ -90,6 +90,9 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
                             child: TaskflowButton(
                               title: viewModel.isEditMode ? 'Update' : 'Create',
                               onTap: viewModel.saveTask,
+                              state: viewModel.canSave
+                                  ? TaskflowButtonState.enabled
+                                  : TaskflowButtonState.disabled,
                               width: screenWidth(context) * 0.8,
                             ),
                           ),

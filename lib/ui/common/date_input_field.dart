@@ -133,50 +133,57 @@ class DateInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final hasDate = controller.text.isNotEmpty;
 
-    return Theme(
-      data: ThemeData(primaryColor: kcPrimaryColor),
-      child: GestureDetector(
-        onTap: () => _showDatePicker(context),
-        child: Container(
-          height: height ?? 48,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          constraints: const BoxConstraints(minWidth: 0),
-          decoration: BoxDecoration(
-            color: isDark ? kcDarkGreyColor2 : Colors.white,
-            borderRadius: BorderRadius.circular(borderRadius),
-            border: Border.all(
-              color: isDark ? Colors.transparent : Colors.grey.withOpacity(0.2),
-              width: 1.5,
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                FontAwesomeIcons.calendarDays,
-                color: isDark ? Colors.white70 : kcPrimaryColor,
-                size: 18,
-              ),
-              horizontalSpaceSmall,
-              Flexible(
-                child: Text(
-                  hasDate ? controller.text : placeholder,
-                  style: AppTextStyles.body(context).copyWith(
-                    fontSize: 14.sp,
-                    color: hasDate
-                        ? (isDark ? Colors.white : Colors.black87)
-                        : kcMediumGrey,
-                    fontWeight: hasDate ? FontWeight.w500 : FontWeight.w400,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+    return ValueListenableBuilder<TextEditingValue>(
+      valueListenable: controller,
+      builder: (context, value, _) {
+        final hasDate = value.text.isNotEmpty;
+        return Theme(
+          data: ThemeData(primaryColor: kcPrimaryColor),
+          child: GestureDetector(
+            onTap: () => _showDatePicker(context),
+            child: Container(
+              height: height ?? 48,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              constraints: const BoxConstraints(minWidth: 0),
+              decoration: BoxDecoration(
+                color: isDark ? kcDarkGreyColor2 : Colors.white,
+                borderRadius: BorderRadius.circular(borderRadius),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.transparent
+                      : Colors.grey.withOpacity(0.2),
+                  width: 1.5,
                 ),
               ),
-            ],
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    FontAwesomeIcons.calendarDays,
+                    color: isDark ? Colors.white70 : kcPrimaryColor,
+                    size: 18,
+                  ),
+                  horizontalSpaceSmall,
+                  Flexible(
+                    child: Text(
+                      hasDate ? value.text : placeholder,
+                      style: AppTextStyles.body(context).copyWith(
+                        fontSize: 14.sp,
+                        color: hasDate
+                            ? (isDark ? Colors.white : Colors.black87)
+                            : kcMediumGrey,
+                        fontWeight: hasDate ? FontWeight.w500 : FontWeight.w400,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

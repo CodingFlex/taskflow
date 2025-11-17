@@ -21,19 +21,27 @@ class TaskDetailsViewModel extends BaseViewModel {
   final TextEditingController dueDateController = TextEditingController();
 
   Task? _task;
-  TaskCategory? _selectedCategory;
+  TaskCategory _selectedCategory = TaskCategory.other;
   DateTime? _selectedDueDate;
   bool _isCompleted = false;
+  bool _isFormValid = false;
+  bool _listenersAttached = false;
 
   Task? get task => _task;
-  TaskCategory? get selectedCategory => _selectedCategory;
+  TaskCategory get selectedCategory => _selectedCategory;
   DateTime? get selectedDueDate => _selectedDueDate;
   bool get isCompleted => _isCompleted;
   bool get isEditMode => taskId != null;
+  bool get canSave => _isFormValid;
 
   Future<void> initialize() async {
     if (taskId != null) {
       await _loadTask();
+    } else {
+      _selectedCategory = TaskCategory.other;
+      _selectedDueDate = null;
+      _attachListeners();
+      _updateFormValidity();
     }
   }
 
@@ -54,6 +62,9 @@ class TaskDetailsViewModel extends BaseViewModel {
           dueDateController.text =
               '${_selectedDueDate!.day}/${_selectedDueDate!.month}/${_selectedDueDate!.year}';
         }
+
+        _attachListeners();
+        _updateFormValidity();
       }
     } on ApiException catch (e) {
       _toastService.showError(message: e.userMessage);
@@ -62,21 +73,30 @@ class TaskDetailsViewModel extends BaseViewModel {
     }
   }
 
-  void setCategory(TaskCategory? category) {
+  void _attachListeners() {
+    if (_listenersAttached) return;
+    titleController.addListener(_updateFormValidity);
+    descriptionController.addListener(_updateFormValidity);
+    dueDateController.addListener(_updateFormValidity);
+    _listenersAttached = true;
+  }
+
+  void setCategory(TaskCategory category) {
     _selectedCategory = category;
+    _updateFormValidity();
     rebuildUi();
   }
 
   void setDueDate(DateTime date) {
     _selectedDueDate = date;
     dueDateController.text = '${date.day}/${date.month}/${date.year}';
-    rebuildUi();
+    _updateFormValidity();
   }
 
   void clearDueDate() {
     _selectedDueDate = null;
     dueDateController.clear();
-    rebuildUi();
+    _updateFormValidity();
   }
 
   void toggleCompletion() {
@@ -105,11 +125,11 @@ class TaskDetailsViewModel extends BaseViewModel {
   Future<void> _createTask() async {
     try {
       final newTask = Task(
-        id: DateTime.now().millisecondsSinceEpoch,
+        id: 0,
         title: titleController.text.trim(),
         description: descriptionController.text.trim(),
         status: _isCompleted ? TaskStatus.completed : TaskStatus.pending,
-        category: _selectedCategory!,
+        category: _selectedCategory,
         dueDate: _selectedDueDate,
         createdAt: DateTime.now(),
         completedAt: _isCompleted ? DateTime.now() : null,
@@ -131,7 +151,7 @@ class TaskDetailsViewModel extends BaseViewModel {
         title: titleController.text.trim(),
         description: descriptionController.text.trim(),
         status: _isCompleted ? TaskStatus.completed : TaskStatus.pending,
-        category: _selectedCategory!,
+        category: _selectedCategory,
         dueDate: _selectedDueDate,
         completedAt: _isCompleted && _task!.status != TaskStatus.completed
             ? DateTime.now()
@@ -184,7 +204,9 @@ class TaskDetailsViewModel extends BaseViewModel {
   }
 
   bool _validateForm() {
+    _updateFormValidity();
     final title = titleController.text.trim();
+    final description = descriptionController.text.trim();
 
     if (title.isEmpty) {
       _toastService.showError(message: 'Please enter a task title');
@@ -203,14 +225,41 @@ class TaskDetailsViewModel extends BaseViewModel {
       return false;
     }
 
-    if (descriptionController.text.length > 500) {
+    if (description.isEmpty) {
+      _toastService.showError(message: 'Please enter a description');
+      return false;
+    }
+
+    if (description.length > 500) {
       _toastService.showError(
         message: 'Description must be less than 500 characters',
       );
       return false;
     }
 
+    if (_selectedDueDate == null) {
+      _toastService.showError(message: 'Please select a due date');
+      return false;
+    }
+
     return true;
+  }
+
+  void _updateFormValidity() {
+    final title = titleController.text.trim();
+    final description = descriptionController.text.trim();
+
+    final hasValidTitle =
+        title.isNotEmpty && title.length >= 3 && title.length <= 100;
+    final hasValidDescription =
+        description.isNotEmpty && description.length <= 500;
+    final hasDueDate = _selectedDueDate != null;
+    final nextState = hasValidTitle && hasValidDescription && hasDueDate;
+
+    if (_isFormValid != nextState) {
+      _isFormValid = nextState;
+      rebuildUi();
+    }
   }
 
   void navigateBack() {

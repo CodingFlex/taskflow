@@ -1,5 +1,7 @@
 // lib/services/storage_service.dart
 
+import 'dart:math' as math;
+
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:logger/logger.dart';
 import '../models/task.dart';
@@ -225,5 +227,21 @@ class StorageService {
       _logger.i('❌ Error resetting storage: $e');
       rethrow;
     }
+  }
+
+  Future<int> getNextTaskId() async {
+    await _ensureInitialized();
+    if (_taskBox!.isEmpty) {
+      return 1;
+    }
+    final keys = _taskBox!.keys.whereType<int>();
+    if (keys.isEmpty) {
+      return 1;
+    }
+    final maxId = keys.reduce(math.max);
+    if (maxId >= 0xFFFFFFFF) {
+      return 1;
+    }
+    return maxId + 1;
   }
 }
