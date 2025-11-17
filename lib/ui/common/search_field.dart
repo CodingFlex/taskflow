@@ -74,7 +74,7 @@ class SearchField extends StatelessWidget {
             borderSide: const BorderSide(color: kcPrimaryColor, width: 2),
           ),
           contentPadding: const EdgeInsets.symmetric(
-            vertical: 16.0,
+            vertical: 12.0,
             horizontal: 20.0,
           ),
         ),

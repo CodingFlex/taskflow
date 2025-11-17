@@ -77,7 +77,7 @@ class TaskflowInputField extends StatelessWidget {
               horizontal: 20,
               vertical: maxLines != null && maxLines! > 1
                   ? 10
-                  : (height != null ? height! / 4 : 16),
+                  : (height != null ? height! / 4 : 12),
             ),
             filled: true,
             fillColor: isDark ? kcDarkGreyColor2 : Colors.white,
