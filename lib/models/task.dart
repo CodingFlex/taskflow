@@ -93,6 +93,46 @@ class Task {
           : null,
     );
   }
+
+  factory Task.fromJsonPlaceholder(Map<String, dynamic> json) {
+    final completed = json['completed'] as bool? ?? false;
+    final id = json['id'] as int;
+    final title = json['title'] as String;
+    
+    return Task(
+      id: id,
+      title: title,
+      description: json['description'] as String? ?? '',
+      status: completed ? TaskStatus.completed : TaskStatus.pending,
+      category: json['category'] != null
+          ? TaskCategory.values.firstWhere(
+              (e) => e.name == json['category'],
+              orElse: () => TaskCategory.other,
+            )
+          : TaskCategory.other,
+      dueDate: json['dueDate'] != null
+          ? DateTime.parse(json['dueDate'] as String)
+          : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : DateTime.now(),
+      completedAt: completed && json['completedAt'] != null
+          ? DateTime.parse(json['completedAt'] as String)
+          : (completed ? DateTime.now() : null),
+    );
+  }
+
+  Map<String, dynamic> toJsonPlaceholder() {
+    return {
+      'id': id,
+      'title': title,
+      'completed': status == TaskStatus.completed,
+      if (description.isNotEmpty) 'description': description,
+      if (dueDate != null) 'dueDate': dueDate!.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      if (completedAt != null) 'completedAt': completedAt!.toIso8601String(),
+    };
+  }
 }
 
 enum TaskStatus {
