@@ -161,7 +161,10 @@ class HomeViewModel extends BaseViewModel {
   }
 
   Future<void> loadTasks({bool forceRefresh = false}) async {
-    setBusy(true);
+    final shouldToggleBusy = !forceRefresh;
+    if (shouldToggleBusy) {
+      setBusy(true);
+    }
     _errorMessage = null;
 
     try {
@@ -173,7 +176,11 @@ class HomeViewModel extends BaseViewModel {
       _errorMessage = 'An unexpected error occurred';
       _toastService.showError(message: 'Failed to load tasks');
     } finally {
-      setBusy(false);
+      if (shouldToggleBusy) {
+        setBusy(false);
+      } else {
+        rebuildUi();
+      }
     }
   }
 

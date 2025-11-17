@@ -21,21 +21,22 @@ class TaskRepository {
 
   Future<List<Task>> getTasks({bool forceRefresh = false}) async {
     try {
-      if (!forceRefresh) {
-        final localTasks = await _storageService.getTasks();
-        if (localTasks.isNotEmpty) {
-          _logger.i('📦 Loaded ${localTasks.length} tasks from local storage');
-          _fetchAndCacheTasksInBackground();
-          return localTasks;
-        }
+      final localTasks = await _storageService.getTasks();
+
+      if (!forceRefresh && localTasks.isNotEmpty) {
+        _logger.i('📦 Loaded ${localTasks.length} tasks from local storage');
+        _fetchAndCacheTasksInBackground();
+        return localTasks;
       }
 
-      _logger.i('🔄 Fetching tasks from API...');
-      final tasks = await _taskService.fetchTasks();
-      _logger.i('✅ API responded with ${tasks.length} tasks');
-      // await _storageService.saveTasks(tasks);
+      _logger.i('🔄 Fetching tasks from API (local cache only) ...');
+      final remote = await _taskService.fetchTasks();
+      _logger.i(
+        '✅ API responded with ${remote.length} tasks (UI remains offline cache)',
+      );
+      // await _storageService.saveTasks(remote);
 
-      return tasks;
+      return await _storageService.getTasks();
     } on ApiException catch (e) {
       _logger.w('⚠️ API Error (${e.statusCode}): ${e.message}');
 
@@ -83,11 +84,11 @@ class TaskRepository {
       }
 
       _logger.i('🔄 Task $id not in local storage, fetching from API...');
-      final task = await _taskService.fetchTask(id);
-      _logger.i('✅ Task $id fetched from API ');
+      await _taskService.fetchTask(id);
+      _logger.i('✅ Task $id fetched from API (local cache unchanged)');
       // await _storageService.saveTask(task);
 
-      return task;
+      return localTask;
     } on ApiException catch (e) {
       _logger.w('⚠️ Failed to fetch task $id from API: ${e.message}');
       return null;
