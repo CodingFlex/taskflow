@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:taskflow/app/app.bottomsheets.dart';
@@ -8,6 +9,7 @@ import 'package:taskflow/repositories/task_repository.dart';
 import 'package:taskflow/services/api_exceptions.dart';
 import 'package:taskflow/ui/common/toast.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'package:taskflow/ui/screens/statistics/statistics_view.dart';
 import 'package:taskflow/ui/screens/task_details/task_details_view.dart';
@@ -19,6 +21,7 @@ class HomeViewModel extends BaseViewModel {
   final _bottomSheetService = locator<BottomSheetService>();
   final _taskRepository = locator<TaskRepository>();
   final _toastService = locator<ToastService>();
+  final _connectivity = Connectivity();
 
   final TextEditingController searchController = TextEditingController();
   TaskFilter _selectedFilter = TaskFilter.all;
@@ -27,11 +30,14 @@ class HomeViewModel extends BaseViewModel {
 
   List<Task> _tasks = [];
   String? _errorMessage;
+  bool _isOnline = true;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
   TaskFilter get selectedFilter => _selectedFilter;
   SortOption get sortOption => _sortOption;
   TaskCategory? get selectedCategory => _selectedCategory;
   String? get errorMessage => _errorMessage;
+  bool get isOnline => _isOnline;
 
   List<Task> get filteredTasks {
     var tasks = List<Task>.from(_tasks);
@@ -239,12 +245,60 @@ class HomeViewModel extends BaseViewModel {
     await loadTasks(forceRefresh: true);
   }
 
+  Future<void> _checkConnectivity() async {
+    final results = await _connectivity.checkConnectivity();
+    _updateConnectivityStatus(results);
+  }
+
+  void _updateConnectivityStatus(List<ConnectivityResult> results) {
+    final wasOnline = _isOnline;
+    _isOnline = results.any(
+      (result) =>
+          result == ConnectivityResult.mobile ||
+          result == ConnectivityResult.wifi ||
+          result == ConnectivityResult.ethernet,
+    );
+
+    if (wasOnline != _isOnline) {
+      rebuildUi();
+    }
+  }
+
+  Future<void> syncWithServer() async {
+    await _checkConnectivity();
+
+    if (!_isOnline) {
+      _toastService.showError(
+        message: 'No internet connection. Please check your network.',
+      );
+      return;
+    }
+
+    setBusyForObject('sync', true);
+    try {
+      await _taskRepository.syncWithServer();
+      await loadTasks(forceRefresh: true);
+      _toastService.showSuccess(message: 'Sync completed successfully');
+    } on ApiException catch (e) {
+      _toastService.showError(message: e.userMessage);
+    } finally {
+      setBusyForObject('sync', false);
+    }
+  }
+
+  bool get isSyncing => busy('sync');
+
   void initialize() {
     loadTasks();
+    _checkConnectivity();
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
+      _updateConnectivityStatus,
+    );
   }
 
   @override
   void dispose() {
+    _connectivitySubscription?.cancel();
     searchController.dispose();
     super.dispose();
   }

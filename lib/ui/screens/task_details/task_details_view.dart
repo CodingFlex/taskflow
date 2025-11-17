@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/keyboard_unfocus_wrapper.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
@@ -65,41 +66,48 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
         child: Material(
           color: Theme.of(context).scaffoldBackgroundColor,
           child: KeyboardUnfocusWrapper(
-            child: viewModel.isBusy
-                ? const Center(child: CircularProgressIndicator())
-                : SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _TitleSection(viewModel: viewModel),
-                        verticalSpaceMedium,
-                        _CategorySection(viewModel: viewModel),
-                        verticalSpaceMedium,
-                        _DueDateSection(viewModel: viewModel),
-                        if (viewModel.isEditMode) ...[
-                          verticalSpaceMedium,
-                          _CompletionToggleSection(viewModel: viewModel),
-                        ],
-                        verticalSpaceMedium,
-                        _DescriptionSection(viewModel: viewModel),
-                        verticalSpaceLarge,
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: Center(
-                            child: TaskflowButton(
-                              title: viewModel.isEditMode ? 'Update' : 'Create',
-                              onTap: viewModel.saveTask,
-                              state: viewModel.canSave
-                                  ? TaskflowButtonState.enabled
-                                  : TaskflowButtonState.disabled,
-                              width: screenWidth(context) * 0.8,
-                            ),
-                          ),
+            child: Skeletonizer(
+              enabled: viewModel.isBusy,
+              effect: const ShimmerEffect(
+                baseColor: Color(0xFFE5E7EB),
+                highlightColor: Color(0xFFF6F7FB),
+                duration: Duration(milliseconds: 1200),
+              ),
+              enableSwitchAnimation: true,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _TitleSection(viewModel: viewModel),
+                    verticalSpaceMedium,
+                    _CategorySection(viewModel: viewModel),
+                    verticalSpaceMedium,
+                    _DueDateSection(viewModel: viewModel),
+                    if (viewModel.isEditMode) ...[
+                      verticalSpaceMedium,
+                      _CompletionToggleSection(viewModel: viewModel),
+                    ],
+                    verticalSpaceMedium,
+                    _DescriptionSection(viewModel: viewModel),
+                    verticalSpaceLarge,
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: Center(
+                        child: TaskflowButton(
+                          title: viewModel.isEditMode ? 'Update' : 'Create',
+                          onTap: viewModel.saveTask,
+                          state: viewModel.canSave
+                              ? TaskflowButtonState.enabled
+                              : TaskflowButtonState.disabled,
+                          width: screenWidth(context) * 0.8,
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ),

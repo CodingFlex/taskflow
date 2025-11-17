@@ -37,6 +37,7 @@ class HomeView extends StackedView<HomeViewModel> {
           ),
         ),
         actions: [
+          _ConnectivityIndicator(viewModel: viewModel),
           Container(
             margin: const EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
@@ -402,6 +403,49 @@ class _AnimatedTaskCard extends StatelessWidget {
         task: task,
         onTap: onTap,
         onToggleComplete: onToggleComplete,
+      ),
+    );
+  }
+}
+
+class _ConnectivityIndicator extends StatelessWidget {
+  final HomeViewModel viewModel;
+
+  const _ConnectivityIndicator({required this.viewModel});
+
+  @override
+  Widget build(BuildContext context) {
+    final isSyncing = viewModel.isSyncing;
+
+    return Container(
+      margin: const EdgeInsets.only(right: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: IconButton(
+        icon: isSyncing
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+            : Icon(
+                viewModel.isOnline
+                    ? FontAwesomeIcons.wifi
+                    : FontAwesomeIcons.circleDot,
+                color: viewModel.isOnline ? Colors.white : Colors.red,
+                size: 18,
+              ),
+        onPressed: isSyncing ? null : () => viewModel.syncWithServer(),
+        tooltip: isSyncing
+            ? 'Syncing...'
+            : viewModel.isOnline
+            ? 'Online - Tap to sync'
+            : 'Offline - Tap to sync',
       ),
     );
   }
