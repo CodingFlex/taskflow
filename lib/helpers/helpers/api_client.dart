@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
-import 'package:taskflow/helpers/helpers/app_error.dart';
+import 'package:taskflow/services/api_exceptions.dart';
 import 'package:taskflow/helpers/helpers/flavor_config.dart';
 
 class ApiClient {
@@ -8,14 +8,11 @@ class ApiClient {
   final Logger _logger;
   final int maxRetries;
 
-  static const _connectTimeoutMs = 15000; // 15s
-  static const _receiveTimeoutMs = 20000; // 20s
-  static const _sendTimeoutMs = 20000; // 20s
-  // static const _retryDelayMs = 800; // 0.8s
+  static const _connectTimeoutMs = 15000;
+  static const _receiveTimeoutMs = 20000;
+  static const _sendTimeoutMs = 20000;
 
-  ApiClient({this.maxRetries = 2})
-      : _dio = Dio(),
-        _logger = Logger() {
+  ApiClient({this.maxRetries = 2}) : _dio = Dio(), _logger = Logger() {
     _initializeDio();
   }
 
@@ -27,9 +24,7 @@ class ApiClient {
     _dio.options.receiveTimeout = const Duration(
       milliseconds: _receiveTimeoutMs,
     );
-    _dio.options.sendTimeout = const Duration(
-      milliseconds: _sendTimeoutMs,
-    );
+    _dio.options.sendTimeout = const Duration(milliseconds: _sendTimeoutMs);
 
     _dio.interceptors.addAll([
       _addHeadersInterceptor(),
@@ -97,10 +92,9 @@ class ApiClient {
       },
       onError: (error, handler) {
         if (FlavorConfig.instance.values.enableLogging) {
-          AppError.create(
-            message: 'Request failed',
-            type: ErrorType.network,
-            originalError: error,
+          _logger.e(
+            'API Error: ${error.requestOptions.method} ${error.requestOptions.uri}',
+            error: error,
             stackTrace: error.stackTrace,
           );
         }
@@ -109,57 +103,29 @@ class ApiClient {
     );
   }
 
-  // InterceptorsWrapper _authInterceptor() {
-  //   return InterceptorsWrapper(
-  //     onError: (DioException error, handler) async {
-  //       if (error.response?.statusCode == 401) {
-  //         final success = await _refreshToken();
-  //         if (success) {
-  //           _retryRequest(error.requestOptions, handler);
-  //         } else {
-  //           _logger.e("Failed to refresh token");
-  //           handler.next(error);
-  //         }
-  //       } else {
-  //         handler.next(error);
-  //       }
-  //     },
-  //   );
-  // }
-
-  // Future<bool> _refreshToken() async {
-  //   try {
-  //     final refreshToken = _Us;
-  //     if (refreshToken == null) return false;
-
-  //     final response = await _dio.post(
-  //       _urlProvider.refreshTokenUrl,
-  //       data: {"refreshToken": refreshToken},
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       final newAccessToken = response.data['access_token'];
-  //       await SharedPrefs().setString("accessToken", newAccessToken);
-  //       return true;
-  //     }
-  //   } on DioException catch (e) {
-  //     AppError.create(
-  //       message: 'Failed to refresh token',
-  //       type: ErrorType.authentication,
-  //       originalError: e,
-  //       stackTrace: e.stackTrace,
-  //     );
-  //   } catch (e) {
-  //     AppError.create(
-  //       message: 'Unexpected error during token refresh',
-  //       type: ErrorType.unknown,
-  //       originalError: e,
-  //     );
-  //   }
-  //   return false;
-  // }
-
-  // Optional: add retry helper if needed in future
+  Future<Response<T>> _executeRequest<T>(
+    Future<Response<T>> Function() request,
+    String endpoint,
+  ) async {
+    try {
+      return await request();
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e, endpoint: endpoint);
+    } catch (e, stackTrace) {
+      _logger.e(
+        'Unexpected error during API call',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      throw ApiException(
+        'Unexpected error: ${e.toString()}',
+        type: ErrorType.unknown,
+        originalError: e,
+        stackTrace: stackTrace,
+        endpoint: endpoint,
+      );
+    }
+  }
 
   Future<Response<T>> get<T>(
     String endpoint, {
@@ -167,20 +133,14 @@ class ApiClient {
     Options? options,
     bool requiresAuth = true,
   }) async {
-    try {
-      return await _dio.get<T>(
+    return _executeRequest(
+      () => _dio.get<T>(
         endpoint,
         queryParameters: queryParameters,
         options: _mergeOptions(options, requiresAuth),
-      );
-    } on DioException catch (e) {
-      throw AppError.create(
-        message: 'GET request failed for $endpoint',
-        type: ErrorType.network,
-        originalError: e,
-        stackTrace: e.stackTrace,
-      );
-    }
+      ),
+      endpoint,
+    );
   }
 
   Future<Response<T>> post<T>(
@@ -190,18 +150,15 @@ class ApiClient {
     Options? options,
     bool requiresAuth = true,
   }) async {
-    try {
-      return await _dio.post<T>(
+    return _executeRequest(
+      () => _dio.post<T>(
         endpoint,
         data: data,
         queryParameters: queryParameters,
         options: _mergeOptions(options, requiresAuth),
-      );
-    } on DioException catch (e) {
-      final statusCode = e.response?.statusCode;
-      final errorMessage = _handleErrorMessage(statusCode, e.response?.data);
-      throw ApiClientException(errorMessage, statusCode);
-    }
+      ),
+      endpoint,
+    );
   }
 
   Future<Response<T>> put<T>(
@@ -211,18 +168,15 @@ class ApiClient {
     Options? options,
     bool requiresAuth = true,
   }) async {
-    try {
-      return await _dio.put<T>(
+    return _executeRequest(
+      () => _dio.put<T>(
         endpoint,
         data: data,
         queryParameters: queryParameters,
         options: _mergeOptions(options, requiresAuth),
-      );
-    } on DioException catch (e) {
-      final statusCode = e.response?.statusCode;
-      final errorMessage = _handleErrorMessage(statusCode, e.response?.data);
-      throw ApiClientException(errorMessage, statusCode);
-    }
+      ),
+      endpoint,
+    );
   }
 
   Future<Response<T>> delete<T>(
@@ -232,18 +186,15 @@ class ApiClient {
     Options? options,
     bool requiresAuth = true,
   }) async {
-    try {
-      return await _dio.delete<T>(
+    return _executeRequest(
+      () => _dio.delete<T>(
         endpoint,
         data: data,
         queryParameters: queryParameters,
         options: _mergeOptions(options, requiresAuth),
-      );
-    } on DioException catch (e) {
-      final statusCode = e.response?.statusCode;
-      final errorMessage = _handleErrorMessage(statusCode, e.response?.data);
-      throw ApiClientException(errorMessage, statusCode);
-    }
+      ),
+      endpoint,
+    );
   }
 
   Future<Response<T>> patch<T>(
@@ -253,18 +204,15 @@ class ApiClient {
     Options? options,
     bool requiresAuth = true,
   }) async {
-    try {
-      return await _dio.patch<T>(
+    return _executeRequest(
+      () => _dio.patch<T>(
         endpoint,
         data: data,
         queryParameters: queryParameters,
         options: _mergeOptions(options, requiresAuth),
-      );
-    } on DioException catch (e) {
-      final statusCode = e.response?.statusCode;
-      final errorMessage = _handleErrorMessage(statusCode, e.response?.data);
-      throw ApiClientException(errorMessage, statusCode);
-    }
+      ),
+      endpoint,
+    );
   }
 
   Options _mergeOptions(Options? options, bool requiresAuth) {
@@ -272,35 +220,4 @@ class ApiClient {
       extra: {...options?.extra ?? {}, 'requiresAuth': requiresAuth},
     );
   }
-}
-
-/// **Helper function to map status codes to meaningful messages**
-String _handleErrorMessage(int? statusCode, dynamic data) {
-  if (data is Map<String, dynamic> && data.containsKey('message')) {
-    return data['message']; // Use API-provided message if available
-  }
-
-  switch (statusCode) {
-    case 400:
-      return 'Invalid request. Please check your input.';
-    case 401:
-      return 'Unauthorized';
-    case 403:
-      return 'Forbidden';
-    case 404:
-      return 'Resource not found.';
-    case 500:
-      return 'Server error. Please try again later.';
-    default:
-      return 'An unexpected error occurred.';
-  }
-}
-
-class ApiClientException implements Exception {
-  final String message;
-  final int? statusCode;
-  ApiClientException(this.message, this.statusCode);
-
-  @override
-  String toString() => 'ApiClientException($statusCode): $message';
 }

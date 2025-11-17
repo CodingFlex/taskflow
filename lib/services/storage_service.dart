@@ -99,7 +99,6 @@ class StorageService {
         await _taskBox!.put(task.id, task);
         _logger.i('✏️ Task updated: ${task.title} (ID: ${task.id})');
       } else {
-        // If task doesn't exist, save it as new
         await saveTask(task);
       }
     } catch (e) {
