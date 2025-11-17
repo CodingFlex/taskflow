@@ -1,5 +1,8 @@
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
@@ -66,46 +69,37 @@ class HomeView extends StackedView<HomeViewModel> {
         ],
       ),
       body: SafeArea(
-        child: RefreshIndicator(
+        child: CustomRefreshIndicator(
           onRefresh: viewModel.refreshTasks,
-          child: viewModel.isBusy
-              ? const Center(child: CircularProgressIndicator())
-              : viewModel.errorMessage != null
-              ? _ErrorView(
-                  message: viewModel.errorMessage!,
-                  onRetry: viewModel.loadTasks,
-                )
-              : SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Hero(
-                        tag: 'statistics_view',
-                        child: Material(
-                          color: Colors.transparent,
-                          child: SearchField(
-                            controller: viewModel.searchController,
-                            hintText: 'Search tasks...',
-                            onChanged: viewModel.onSearchChanged,
+          child: _HomeContent(viewModel: viewModel),
+          builder: (context, child, controller) {
+            return AnimatedBuilder(
+              animation: controller,
+              builder: (context, _) {
+                final pullDistance = controller.value * 80;
+                return Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    Transform.translate(
+                      offset: Offset(0, pullDistance),
+                      child: child,
+                    ),
+                    if (!controller.isIdle)
+                      Positioned(
+                        top: 12,
+                        child: Opacity(
+                          opacity: controller.value.clamp(0.0, 1.0),
+                          child: const SpinKitFadingFour(
+                            color: kcPrimaryColor,
+                            size: 32,
                           ),
                         ),
                       ),
-                      verticalSpaceMedium,
-                      _FilterSection(viewModel: viewModel),
-                      verticalSpaceMedium,
-                      _TasksSection(viewModel: viewModel),
-                      const Hero(
-                        tag: 'add_task_fab',
-                        child: Material(
-                          color: Colors.transparent,
-                          child: SizedBox.shrink(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                  ],
+                );
+              },
+            );
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -296,6 +290,74 @@ class _TasksSection extends StatelessWidget {
         ],
       ],
     );
+  }
+}
+
+class _HomeContent extends StatelessWidget {
+  final HomeViewModel viewModel;
+
+  const _HomeContent({required this.viewModel});
+
+  @override
+  Widget build(BuildContext context) {
+    if (viewModel.errorMessage != null) {
+      return SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.7,
+          child: _ErrorView(
+            message: viewModel.errorMessage!,
+            onRetry: viewModel.loadTasks,
+          ),
+        ),
+      );
+    }
+
+    final content = SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Hero(
+            tag: 'statistics_view',
+            child: Material(
+              color: Colors.transparent,
+              child: SearchField(
+                controller: viewModel.searchController,
+                hintText: 'Search tasks...',
+                onChanged: viewModel.onSearchChanged,
+              ),
+            ),
+          ),
+          verticalSpaceMedium,
+          _FilterSection(viewModel: viewModel),
+          verticalSpaceMedium,
+          _TasksSection(viewModel: viewModel),
+          const Hero(
+            tag: 'add_task_fab',
+            child: Material(
+              color: Colors.transparent,
+              child: SizedBox.shrink(),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (viewModel.isBusy) {
+      return Skeletonizer(
+        effect: const ShimmerEffect(
+          baseColor: Color(0xFFE5E7EB),
+          highlightColor: Color(0xFFF6F7FB),
+          duration: Duration(milliseconds: 1200),
+        ),
+        enableSwitchAnimation: true,
+        child: content,
+      );
+    }
+
+    return content;
   }
 }
 
