@@ -48,9 +48,9 @@ class StatisticsView extends StackedView<StatisticsViewModel> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _StatsOverview(viewModel: viewModel),
-                      verticalSpaceLarge,
+                      verticalSpaceMedium,
                       _CategoryStats(viewModel: viewModel),
-                      verticalSpaceLarge,
+                      verticalSpaceMedium,
                       _CompletionChart(viewModel: viewModel),
                     ],
                   ),
