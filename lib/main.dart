@@ -11,12 +11,15 @@ import 'package:taskflow/app/app.locator.dart';
 import 'package:taskflow/app/app.router.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
+import 'package:taskflow/services/storage_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
   await setupLocator();
+  // Initialize shared services
+  await locator<StorageService>().init();
   setupDialogUi();
   setupBottomSheetUi();
   runApp(MainApp(savedThemeMode: savedThemeMode));

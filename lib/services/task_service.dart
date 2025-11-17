@@ -1,6 +1,7 @@
 import 'package:taskflow/helpers/helpers/api_client.dart';
 import 'package:taskflow/helpers/helpers/url_provider.dart';
 import 'package:taskflow/models/task.dart';
+import 'package:taskflow/services/api_exceptions.dart';
 
 class TaskService {
   final ApiClient _apiClient;
@@ -25,9 +26,11 @@ class TaskService {
             .toList();
       }
 
-      throw Exception('Invalid response format');
+      throw ApiException('Invalid response format');
+    } on ApiException {
+      rethrow;
     } catch (e) {
-      throw Exception('Failed to fetch tasks: $e');
+      throw ApiException('Failed to fetch tasks: $e');
     }
   }
 
@@ -39,8 +42,10 @@ class TaskService {
       );
 
       return Task.fromJsonPlaceholder(response.data as Map<String, dynamic>);
+    } on ApiException {
+      rethrow;
     } catch (e) {
-      throw Exception('Failed to fetch task: $e');
+      throw ApiException('Failed to fetch task: $e');
     }
   }
 
@@ -54,8 +59,10 @@ class TaskService {
       );
 
       return Task.fromJsonPlaceholder(response.data as Map<String, dynamic>);
+    } on ApiException {
+      rethrow;
     } catch (e) {
-      throw Exception('Failed to create task: $e');
+      throw ApiException('Failed to create task: $e');
     }
   }
 
@@ -69,8 +76,10 @@ class TaskService {
       );
 
       return Task.fromJsonPlaceholder(response.data as Map<String, dynamic>);
+    } on ApiException {
+      rethrow;
     } catch (e) {
-      throw Exception('Failed to update task: $e');
+      throw ApiException('Failed to update task: $e');
     }
   }
 
@@ -80,8 +89,10 @@ class TaskService {
         _urlProvider.deleteTaskEndpoint(taskId),
         requiresAuth: false,
       );
+    } on ApiException {
+      rethrow;
     } catch (e) {
-      throw Exception('Failed to delete task: $e');
+      throw ApiException('Failed to delete task: $e');
     }
   }
 }

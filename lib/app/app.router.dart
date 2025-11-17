@@ -1,3 +1,4 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -5,10 +6,11 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:flutter/foundation.dart' as _i7;
 import 'package:flutter/material.dart' as _i6;
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i7;
+import 'package:stacked_services/stacked_services.dart' as _i8;
 import 'package:taskflow/ui/screens/home/home_view.dart' as _i2;
 import 'package:taskflow/ui/screens/splash/splash_view.dart' as _i3;
 import 'package:taskflow/ui/screens/statistics/statistics_view.dart' as _i5;
@@ -33,34 +35,28 @@ class Routes {
 
 class StackedRouter extends _i1.RouterBase {
   final _routes = <_i1.RouteDef>[
-    _i1.RouteDef(
-      Routes.homeView,
-      page: _i2.HomeView,
-    ),
-    _i1.RouteDef(
-      Routes.splashView,
-      page: _i3.SplashView,
-    ),
-    _i1.RouteDef(
-      Routes.taskDetailsView,
-      page: _i4.TaskDetailsView,
-    ),
-    _i1.RouteDef(
-      Routes.statisticsView,
-      page: _i5.StatisticsView,
-    ),
+    _i1.RouteDef(Routes.homeView, page: _i2.HomeView),
+    _i1.RouteDef(Routes.splashView, page: _i3.SplashView),
+    _i1.RouteDef(Routes.taskDetailsView, page: _i4.TaskDetailsView),
+    _i1.RouteDef(Routes.statisticsView, page: _i5.StatisticsView),
   ];
 
   final _pagesMap = <Type, _i1.StackedRouteFactory>{
     _i2.HomeView: (data) {
+      final args = data.getArgs<HomeViewArguments>(
+        orElse: () => const HomeViewArguments(),
+      );
       return _i6.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i2.HomeView(),
+        builder: (context) => _i2.HomeView(key: args.key),
         settings: data,
       );
     },
     _i3.SplashView: (data) {
+      final args = data.getArgs<SplashViewArguments>(
+        orElse: () => const SplashViewArguments(),
+      );
       return _i6.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i3.SplashView(),
+        builder: (context) => _i3.SplashView(key: args.key),
         settings: data,
       );
     },
@@ -70,7 +66,10 @@ class StackedRouter extends _i1.RouterBase {
       );
       return _i6.MaterialPageRoute<dynamic>(
         builder: (context) => _i4.TaskDetailsView(
-            key: args.key, taskId: args.taskId, heroTag: args.heroTag),
+          key: args.key,
+          taskId: args.taskId,
+          heroTag: args.heroTag,
+        ),
         settings: data,
       );
     },
@@ -93,14 +92,54 @@ class StackedRouter extends _i1.RouterBase {
   Map<Type, _i1.StackedRouteFactory> get pagesMap => _pagesMap;
 }
 
-class TaskDetailsViewArguments {
-  const TaskDetailsViewArguments({
-    this.key,
-    this.taskId,
-    this.heroTag,
-  });
+class HomeViewArguments {
+  const HomeViewArguments({this.key});
 
-  final _i6.Key? key;
+  final _i7.Key? key;
+
+  @override
+  String toString() {
+    return '{"key": "$key"}';
+  }
+
+  @override
+  bool operator ==(covariant HomeViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode;
+  }
+}
+
+class SplashViewArguments {
+  const SplashViewArguments({this.key});
+
+  final _i7.Key? key;
+
+  @override
+  String toString() {
+    return '{"key": "$key"}';
+  }
+
+  @override
+  bool operator ==(covariant SplashViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode;
+  }
+}
+
+class TaskDetailsViewArguments {
+  const TaskDetailsViewArguments({this.key, this.taskId, this.heroTag});
+
+  final _i7.Key? key;
 
   final int? taskId;
 
@@ -126,12 +165,9 @@ class TaskDetailsViewArguments {
 }
 
 class StatisticsViewArguments {
-  const StatisticsViewArguments({
-    this.key,
-    this.heroTag,
-  });
+  const StatisticsViewArguments({this.key, this.heroTag});
 
-  final _i6.Key? key;
+  final _i7.Key? key;
 
   final String? heroTag;
 
@@ -152,132 +188,162 @@ class StatisticsViewArguments {
   }
 }
 
-extension NavigatorStateExtension on _i7.NavigationService {
-  Future<dynamic> navigateToHomeView([
+extension NavigatorStateExtension on _i8.NavigationService {
+  Future<dynamic> navigateToHomeView({
+    _i7.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
-  ]) async {
-    return navigateTo<dynamic>(Routes.homeView,
-        id: routerId,
-        preventDuplicates: preventDuplicates,
-        parameters: parameters,
-        transition: transition);
+    transition,
+  }) async {
+    return navigateTo<dynamic>(
+      Routes.homeView,
+      arguments: HomeViewArguments(key: key),
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
   }
 
-  Future<dynamic> navigateToSplashView([
+  Future<dynamic> navigateToSplashView({
+    _i7.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
-  ]) async {
-    return navigateTo<dynamic>(Routes.splashView,
-        id: routerId,
-        preventDuplicates: preventDuplicates,
-        parameters: parameters,
-        transition: transition);
+    transition,
+  }) async {
+    return navigateTo<dynamic>(
+      Routes.splashView,
+      arguments: SplashViewArguments(key: key),
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
   }
 
   Future<dynamic> navigateToTaskDetailsView({
-    _i6.Key? key,
+    _i7.Key? key,
     int? taskId,
     String? heroTag,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
+    transition,
   }) async {
-    return navigateTo<dynamic>(Routes.taskDetailsView,
-        arguments: TaskDetailsViewArguments(
-            key: key, taskId: taskId, heroTag: heroTag),
-        id: routerId,
-        preventDuplicates: preventDuplicates,
-        parameters: parameters,
-        transition: transition);
+    return navigateTo<dynamic>(
+      Routes.taskDetailsView,
+      arguments: TaskDetailsViewArguments(
+        key: key,
+        taskId: taskId,
+        heroTag: heroTag,
+      ),
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
   }
 
   Future<dynamic> navigateToStatisticsView({
-    _i6.Key? key,
+    _i7.Key? key,
     String? heroTag,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
+    transition,
   }) async {
-    return navigateTo<dynamic>(Routes.statisticsView,
-        arguments: StatisticsViewArguments(key: key, heroTag: heroTag),
-        id: routerId,
-        preventDuplicates: preventDuplicates,
-        parameters: parameters,
-        transition: transition);
+    return navigateTo<dynamic>(
+      Routes.statisticsView,
+      arguments: StatisticsViewArguments(key: key, heroTag: heroTag),
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
   }
 
-  Future<dynamic> replaceWithHomeView([
+  Future<dynamic> replaceWithHomeView({
+    _i7.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
-  ]) async {
-    return replaceWith<dynamic>(Routes.homeView,
-        id: routerId,
-        preventDuplicates: preventDuplicates,
-        parameters: parameters,
-        transition: transition);
+    transition,
+  }) async {
+    return replaceWith<dynamic>(
+      Routes.homeView,
+      arguments: HomeViewArguments(key: key),
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
   }
 
-  Future<dynamic> replaceWithSplashView([
+  Future<dynamic> replaceWithSplashView({
+    _i7.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
-  ]) async {
-    return replaceWith<dynamic>(Routes.splashView,
-        id: routerId,
-        preventDuplicates: preventDuplicates,
-        parameters: parameters,
-        transition: transition);
+    transition,
+  }) async {
+    return replaceWith<dynamic>(
+      Routes.splashView,
+      arguments: SplashViewArguments(key: key),
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
   }
 
   Future<dynamic> replaceWithTaskDetailsView({
-    _i6.Key? key,
+    _i7.Key? key,
     int? taskId,
     String? heroTag,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
+    transition,
   }) async {
-    return replaceWith<dynamic>(Routes.taskDetailsView,
-        arguments: TaskDetailsViewArguments(
-            key: key, taskId: taskId, heroTag: heroTag),
-        id: routerId,
-        preventDuplicates: preventDuplicates,
-        parameters: parameters,
-        transition: transition);
+    return replaceWith<dynamic>(
+      Routes.taskDetailsView,
+      arguments: TaskDetailsViewArguments(
+        key: key,
+        taskId: taskId,
+        heroTag: heroTag,
+      ),
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
   }
 
   Future<dynamic> replaceWithStatisticsView({
-    _i6.Key? key,
+    _i7.Key? key,
     String? heroTag,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
-        transition,
+    transition,
   }) async {
-    return replaceWith<dynamic>(Routes.statisticsView,
-        arguments: StatisticsViewArguments(key: key, heroTag: heroTag),
-        id: routerId,
-        preventDuplicates: preventDuplicates,
-        parameters: parameters,
-        transition: transition);
+    return replaceWith<dynamic>(
+      Routes.statisticsView,
+      arguments: StatisticsViewArguments(key: key, heroTag: heroTag),
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
   }
 }

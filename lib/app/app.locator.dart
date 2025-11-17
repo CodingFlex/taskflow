@@ -1,3 +1,4 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -11,18 +12,27 @@ import 'package:stacked_services/src/dialog/dialog_service.dart';
 import 'package:stacked_services/src/navigation/navigation_service.dart';
 import 'package:stacked_shared/stacked_shared.dart';
 
+import '../repositories/task_repository.dart';
+import '../services/storage_service.dart';
+import '../services/task_service.dart';
+
 final locator = StackedLocator.instance;
 
 Future<void> setupLocator({
   String? environment,
   EnvironmentFilter? environmentFilter,
 }) async {
-// Register environments
+  // Register environments
   locator.registerEnvironment(
-      environment: environment, environmentFilter: environmentFilter);
+    environment: environment,
+    environmentFilter: environmentFilter,
+  );
 
-// Register dependencies
+  // Register dependencies
   locator.registerLazySingleton(() => BottomSheetService());
   locator.registerLazySingleton(() => DialogService());
   locator.registerLazySingleton(() => NavigationService());
+  locator.registerLazySingleton(() => StorageService());
+  locator.registerLazySingleton(() => TaskService());
+  locator.registerLazySingleton(() => TaskRepository());
 }

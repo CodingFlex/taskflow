@@ -1,3 +1,6 @@
+import 'package:taskflow/repositories/task_repository.dart';
+import 'package:taskflow/services/storage_service.dart';
+import 'package:taskflow/services/task_service.dart';
 import 'package:taskflow/ui/bottom_sheets/more_filters/more_filters_sheet.dart';
 import 'package:taskflow/ui/bottom_sheets/notice/notice_sheet.dart';
 import 'package:taskflow/ui/dialogs/delete_task/delete_task_dialog.dart';
@@ -21,6 +24,9 @@ import 'package:stacked_services/stacked_services.dart';
     LazySingleton(classType: BottomSheetService),
     LazySingleton(classType: DialogService),
     LazySingleton(classType: NavigationService),
+    LazySingleton(classType: StorageService),
+    LazySingleton(classType: TaskService),
+    LazySingleton(classType: TaskRepository),
     // @stacked-service
   ],
   bottomsheets: [

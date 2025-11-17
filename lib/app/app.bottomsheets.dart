@@ -1,3 +1,4 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -10,10 +11,7 @@ import 'app.locator.dart';
 import '../ui/bottom_sheets/more_filters/more_filters_sheet.dart';
 import '../ui/bottom_sheets/notice/notice_sheet.dart';
 
-enum BottomSheetType {
-  notice,
-  moreFilters,
-}
+enum BottomSheetType { notice, moreFilters }
 
 void setupBottomSheetUi() {
   final bottomsheetService = locator<BottomSheetService>();
