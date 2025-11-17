@@ -188,15 +188,17 @@ class HomeViewModel extends BaseViewModel {
       completedAt: task.status == TaskStatus.completed ? null : DateTime.now(),
     );
 
+    _updateTaskInList(updatedTask);
+
     try {
       await _taskRepository.updateTask(updatedTask);
-      _updateTaskInList(updatedTask);
       _toastService.showSuccess(
         message: updatedTask.status == TaskStatus.completed
             ? 'Task marked as completed'
             : 'Task marked as pending',
       );
     } on ApiException catch (e) {
+      _updateTaskInList(task);
       _toastService.showError(message: e.userMessage);
     }
   }

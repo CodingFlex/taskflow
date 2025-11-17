@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:taskflow/models/task.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
@@ -271,7 +272,8 @@ class _TasksSection extends StatelessWidget {
           ),
           verticalSpaceSmall,
           ...overdueTasks.map(
-            (task) => TaskCard(
+            (task) => _AnimatedTaskCard(
+              key: ValueKey('task_${task.id}'),
               task: task,
               onTap: () => viewModel.navigateToTaskDetails(task),
               onToggleComplete: () => viewModel.toggleTaskComplete(task),
@@ -281,7 +283,8 @@ class _TasksSection extends StatelessWidget {
         ],
         if (otherTasks.isNotEmpty) ...[
           ...otherTasks.map(
-            (task) => TaskCard(
+            (task) => _AnimatedTaskCard(
+              key: ValueKey('task_${task.id}'),
               task: task,
               onTap: () => viewModel.navigateToTaskDetails(task),
               onToggleComplete: () => viewModel.toggleTaskComplete(task),
@@ -358,6 +361,49 @@ class _HomeContent extends StatelessWidget {
     }
 
     return content;
+  }
+}
+
+class _AnimatedTaskCard extends StatelessWidget {
+  final Task task;
+  final VoidCallback? onTap;
+  final VoidCallback? onToggleComplete;
+
+  const _AnimatedTaskCard({
+    super.key,
+    required this.task,
+    this.onTap,
+    this.onToggleComplete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      switchInCurve: Curves.easeInOut,
+      switchOutCurve: Curves.easeInOut,
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position:
+                Tween<Offset>(
+                  begin: const Offset(-0.1, 0),
+                  end: Offset.zero,
+                ).animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+                ),
+            child: child,
+          ),
+        );
+      },
+      child: TaskCard(
+        key: ValueKey('task_card_${task.id}_${task.status}'),
+        task: task,
+        onTap: onTap,
+        onToggleComplete: onToggleComplete,
+      ),
+    );
   }
 }
 
