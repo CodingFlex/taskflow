@@ -6,11 +6,10 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:flutter/foundation.dart' as _i7;
 import 'package:flutter/material.dart' as _i6;
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i8;
+import 'package:stacked_services/stacked_services.dart' as _i7;
 import 'package:taskflow/ui/screens/home/home_view.dart' as _i2;
 import 'package:taskflow/ui/screens/splash/splash_view.dart' as _i3;
 import 'package:taskflow/ui/screens/statistics/statistics_view.dart' as _i5;
@@ -95,7 +94,7 @@ class StackedRouter extends _i1.RouterBase {
 class HomeViewArguments {
   const HomeViewArguments({this.key});
 
-  final _i7.Key? key;
+  final _i6.Key? key;
 
   @override
   String toString() {
@@ -117,7 +116,7 @@ class HomeViewArguments {
 class SplashViewArguments {
   const SplashViewArguments({this.key});
 
-  final _i7.Key? key;
+  final _i6.Key? key;
 
   @override
   String toString() {
@@ -139,7 +138,7 @@ class SplashViewArguments {
 class TaskDetailsViewArguments {
   const TaskDetailsViewArguments({this.key, this.taskId, this.heroTag});
 
-  final _i7.Key? key;
+  final _i6.Key? key;
 
   final int? taskId;
 
@@ -167,7 +166,7 @@ class TaskDetailsViewArguments {
 class StatisticsViewArguments {
   const StatisticsViewArguments({this.key, this.heroTag});
 
-  final _i7.Key? key;
+  final _i6.Key? key;
 
   final String? heroTag;
 
@@ -188,9 +187,9 @@ class StatisticsViewArguments {
   }
 }
 
-extension NavigatorStateExtension on _i8.NavigationService {
+extension NavigatorStateExtension on _i7.NavigationService {
   Future<dynamic> navigateToHomeView({
-    _i7.Key? key,
+    _i6.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -208,7 +207,7 @@ extension NavigatorStateExtension on _i8.NavigationService {
   }
 
   Future<dynamic> navigateToSplashView({
-    _i7.Key? key,
+    _i6.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -226,7 +225,7 @@ extension NavigatorStateExtension on _i8.NavigationService {
   }
 
   Future<dynamic> navigateToTaskDetailsView({
-    _i7.Key? key,
+    _i6.Key? key,
     int? taskId,
     String? heroTag,
     int? routerId,
@@ -250,7 +249,7 @@ extension NavigatorStateExtension on _i8.NavigationService {
   }
 
   Future<dynamic> navigateToStatisticsView({
-    _i7.Key? key,
+    _i6.Key? key,
     String? heroTag,
     int? routerId,
     bool preventDuplicates = true,
@@ -269,7 +268,7 @@ extension NavigatorStateExtension on _i8.NavigationService {
   }
 
   Future<dynamic> replaceWithHomeView({
-    _i7.Key? key,
+    _i6.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -287,7 +286,7 @@ extension NavigatorStateExtension on _i8.NavigationService {
   }
 
   Future<dynamic> replaceWithSplashView({
-    _i7.Key? key,
+    _i6.Key? key,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -305,7 +304,7 @@ extension NavigatorStateExtension on _i8.NavigationService {
   }
 
   Future<dynamic> replaceWithTaskDetailsView({
-    _i7.Key? key,
+    _i6.Key? key,
     int? taskId,
     String? heroTag,
     int? routerId,
@@ -329,7 +328,7 @@ extension NavigatorStateExtension on _i8.NavigationService {
   }
 
   Future<dynamic> replaceWithStatisticsView({
-    _i7.Key? key,
+    _i6.Key? key,
     String? heroTag,
     int? routerId,
     bool preventDuplicates = true,

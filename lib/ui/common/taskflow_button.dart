@@ -167,17 +167,17 @@ class _TaskflowButtonState extends State<TaskflowButton> {
                               widget.state == TaskflowButtonState.loading
                                   ? 'Processing...'
                                   : widget.title,
-                              style: widget.textStyle ??
-                                  Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(
-                                        fontWeight: widget.outline
-                                            ? FontWeight.w500
-                                            : FontWeight.bold,
-                                        color: labelColor,
-                                        fontSize: 16.0,
-                                      ),
+                              style:
+                                  widget.textStyle ??
+                                  Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium?.copyWith(
+                                    fontWeight: widget.outline
+                                        ? FontWeight.w500
+                                        : FontWeight.bold,
+                                    color: labelColor,
+                                    fontSize: 16.0,
+                                  ),
                             ),
                           ),
                         ],

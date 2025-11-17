@@ -24,10 +24,7 @@ class SplashView extends StackedView<SplashViewModel> {
           children: [
             _AnimatedTaskflowText(),
             verticalSpaceMedium,
-            const SpinKitFadingFour(
-              color: kcPrimaryColor,
-              size: 50.0,
-            ),
+            const SpinKitFadingFour(color: kcPrimaryColor, size: 50.0),
           ],
         ),
       ),
@@ -62,10 +59,7 @@ class _AnimatedTaskflowTextState extends State<_AnimatedTaskflowText>
     );
 
     // Fade in animation
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
@@ -73,10 +67,7 @@ class _AnimatedTaskflowTextState extends State<_AnimatedTaskflowText>
     );
 
     // Scale animation with bounce effect
-    _scaleAnimation = Tween<double>(
-      begin: 0.5,
-      end: 1.0,
-    ).animate(
+    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.0, 0.8, curve: Curves.elasticOut),

@@ -21,8 +21,9 @@ class CategoryFilterChip extends StatelessWidget {
     final backgroundColor = isSelected
         ? (category?.color ?? kcPrimaryColor)
         : (isDark ? kcDarkGreyColor2 : Colors.grey.shade200);
-    final textColor =
-        isSelected ? Colors.white : (isDark ? Colors.white : Colors.black87);
+    final textColor = isSelected
+        ? Colors.white
+        : (isDark ? Colors.white : Colors.black87);
 
     return GestureDetector(
       onTap: onTap,

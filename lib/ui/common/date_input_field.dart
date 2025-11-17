@@ -66,15 +66,14 @@ class DateInputField extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Select Date',
-                      style: AppTextStyles.heading3(context),
-                    ),
+                    Text('Select Date', style: AppTextStyles.heading3(context)),
                     TextButton(
                       onPressed: () => Navigator.pop(context),
                       child: Text(
@@ -91,7 +90,8 @@ class DateInputField extends StatelessWidget {
               Expanded(
                 child: SfDateRangePicker(
                   initialSelectedDate: initialDate ?? DateTime.now(),
-                  minDate: minDate ??
+                  minDate:
+                      minDate ??
                       DateTime.now().copyWith(
                         hour: 0,
                         minute: 0,
@@ -106,20 +106,21 @@ class DateInputField extends StatelessWidget {
                   selectionColor: kcPrimaryColor,
                   onSelectionChanged:
                       (DateRangePickerSelectionChangedArgs args) {
-                    if (args.value is DateTime) {
-                      final selectedDate = args.value as DateTime;
-                      final formattedDate =
-                          DateFormat('MM/dd/yyyy').format(selectedDate);
+                        if (args.value is DateTime) {
+                          final selectedDate = args.value as DateTime;
+                          final formattedDate = DateFormat(
+                            'MM/dd/yyyy',
+                          ).format(selectedDate);
 
-                      controller.text = formattedDate;
+                          controller.text = formattedDate;
 
-                      if (onDateSelected != null) {
-                        onDateSelected!(selectedDate);
-                      }
+                          if (onDateSelected != null) {
+                            onDateSelected!(selectedDate);
+                          }
 
-                      Navigator.pop(context);
-                    }
-                  },
+                          Navigator.pop(context);
+                        }
+                      },
                 ),
               ),
             ],

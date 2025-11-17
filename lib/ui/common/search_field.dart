@@ -40,10 +40,9 @@ class SearchField extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
-        style: AppTextStyles.body(context).copyWith(
-          fontSize: 14.sp,
-          fontWeight: FontWeight.w500,
-        ),
+        style: AppTextStyles.body(
+          context,
+        ).copyWith(fontSize: 14.sp, fontWeight: FontWeight.w500),
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: AppTextStyles.body(context).copyWith(
@@ -72,10 +71,7 @@ class SearchField extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(borderRadius),
-            borderSide: const BorderSide(
-              color: kcPrimaryColor,
-              width: 2,
-            ),
+            borderSide: const BorderSide(color: kcPrimaryColor, width: 2),
           ),
           contentPadding: const EdgeInsets.symmetric(
             vertical: 16.0,

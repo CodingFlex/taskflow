@@ -29,8 +29,8 @@ class CategorySelector extends StatelessWidget {
               color: isSelected
                   ? category.color
                   : (Theme.of(context).brightness == Brightness.dark
-                      ? kcDarkGreyColor2
-                      : Colors.grey.shade200),
+                        ? kcDarkGreyColor2
+                        : Colors.grey.shade200),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: isSelected ? category.color : Colors.transparent,
@@ -54,10 +54,11 @@ class CategorySelector extends StatelessWidget {
                       color: isSelected
                           ? Colors.white
                           : (Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black87),
-                      fontWeight:
-                          isSelected ? FontWeight.w600 : FontWeight.w500,
+                                ? Colors.white
+                                : Colors.black87),
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),

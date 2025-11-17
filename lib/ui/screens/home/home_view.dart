@@ -17,6 +17,7 @@ class HomeView extends StackedView<HomeViewModel> {
   @override
   Widget builder(BuildContext context, HomeViewModel viewModel, Widget? child) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
@@ -65,35 +66,46 @@ class HomeView extends StackedView<HomeViewModel> {
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Hero(
-                tag: 'statistics_view',
-                child: Material(
-                  color: Colors.transparent,
-                  child: SearchField(
-                    controller: viewModel.searchController,
-                    hintText: 'Search tasks...',
-                    onChanged: viewModel.onSearchChanged,
+        child: RefreshIndicator(
+          onRefresh: viewModel.refreshTasks,
+          child: viewModel.isBusy
+              ? const Center(child: CircularProgressIndicator())
+              : viewModel.errorMessage != null
+              ? _ErrorView(
+                  message: viewModel.errorMessage!,
+                  onRetry: viewModel.loadTasks,
+                )
+              : SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Hero(
+                        tag: 'statistics_view',
+                        child: Material(
+                          color: Colors.transparent,
+                          child: SearchField(
+                            controller: viewModel.searchController,
+                            hintText: 'Search tasks...',
+                            onChanged: viewModel.onSearchChanged,
+                          ),
+                        ),
+                      ),
+                      verticalSpaceMedium,
+                      _FilterSection(viewModel: viewModel),
+                      verticalSpaceMedium,
+                      _TasksSection(viewModel: viewModel),
+                      const Hero(
+                        tag: 'add_task_fab',
+                        child: Material(
+                          color: Colors.transparent,
+                          child: SizedBox.shrink(),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              verticalSpaceMedium,
-              _FilterSection(viewModel: viewModel),
-              verticalSpaceMedium,
-              _TasksSection(viewModel: viewModel),
-              const Hero(
-                tag: 'add_task_fab',
-                child: Material(
-                  color: Colors.transparent,
-                  child: SizedBox.shrink(),
-                ),
-              ),
-            ],
-          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -111,6 +123,54 @@ class HomeView extends StackedView<HomeViewModel> {
   void onViewModelReady(HomeViewModel viewModel) {
     viewModel.initialize();
     super.onViewModelReady(viewModel);
+  }
+}
+
+class _ErrorView extends StatelessWidget {
+  final String message;
+  final VoidCallback onRetry;
+
+  const _ErrorView({required this.message, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              FontAwesomeIcons.triangleExclamation,
+              size: 64,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white38
+                  : Colors.black26,
+            ),
+            verticalSpaceMedium,
+            Text(
+              message,
+              style: AppTextStyles.body(context).copyWith(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white54
+                    : Colors.black54,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            verticalSpaceMedium,
+            ElevatedButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(FontAwesomeIcons.arrowsRotate, size: 16),
+              label: const Text('Try Again'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kcPrimaryColor,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -258,11 +318,9 @@ class _SectionHeader extends StatelessWidget {
         horizontalSpaceSmall,
         Text(
           title,
-          style: AppTextStyles.caption(context).copyWith(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: color,
-          ),
+          style: AppTextStyles.caption(
+            context,
+          ).copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: color),
         ),
       ],
     );

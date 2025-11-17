@@ -90,11 +90,7 @@ class Toast {
     String? title,
     Duration duration = const Duration(seconds: 4),
   }) {
-    _toastService.showError(
-      message: message,
-      title: title,
-      duration: duration,
-    );
+    _toastService.showError(message: message, title: title, duration: duration);
   }
 
   /// Show a success toast for copy operation (legacy method).

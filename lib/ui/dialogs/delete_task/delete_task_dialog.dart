@@ -24,9 +24,7 @@ class DeleteTaskDialog extends StackedView<DeleteTaskDialogModel> {
   ) {
     return Dialog(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -35,17 +33,14 @@ class DeleteTaskDialog extends StackedView<DeleteTaskDialogModel> {
           children: [
             Text(
               'Delete Task?',
-              style: AppTextStyles.heading2(context).copyWith(
-                fontSize: 24,
-                fontWeight: FontWeight.w800,
-              ),
+              style: AppTextStyles.heading2(
+                context,
+              ).copyWith(fontSize: 24, fontWeight: FontWeight.w800),
             ),
             verticalSpaceMedium,
             Text(
               'This action cannot be undone.',
-              style: AppTextStyles.body(context).copyWith(
-                fontSize: 16,
-              ),
+              style: AppTextStyles.body(context).copyWith(fontSize: 16),
             ),
             verticalSpaceLarge,
             Row(

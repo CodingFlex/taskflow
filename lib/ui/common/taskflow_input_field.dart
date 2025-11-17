@@ -101,8 +101,9 @@ class TaskflowInputField extends StatelessWidget {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(borderRadius),
               borderSide: BorderSide(
-                color:
-                    isDark ? Colors.transparent : Colors.grey.withOpacity(0.2),
+                color: isDark
+                    ? Colors.transparent
+                    : Colors.grey.withOpacity(0.2),
                 width: 1.5,
               ),
             ),
@@ -117,8 +118,9 @@ class TaskflowInputField extends StatelessWidget {
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(borderRadius),
               borderSide: BorderSide(
-                color:
-                    isDark ? Colors.transparent : Colors.grey.withOpacity(0.2),
+                color: isDark
+                    ? Colors.transparent
+                    : Colors.grey.withOpacity(0.2),
                 width: 1.5,
               ),
             ),

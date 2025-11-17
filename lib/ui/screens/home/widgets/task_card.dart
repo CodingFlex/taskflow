@@ -36,10 +36,7 @@ class TaskCard extends StatelessWidget {
               color: isDark ? kcDarkGreyColor2 : Colors.white,
               borderRadius: BorderRadius.circular(12),
               border: Border(
-                left: BorderSide(
-                  color: task.category.color,
-                  width: 4,
-                ),
+                left: BorderSide(color: task.category.color, width: 4),
               ),
             ),
             child: Row(
@@ -61,11 +58,7 @@ class TaskCard extends StatelessWidget {
                       color: isCompleted ? Colors.green : Colors.transparent,
                     ),
                     child: isCompleted
-                        ? const Icon(
-                            Icons.check,
-                            size: 16,
-                            color: Colors.white,
-                          )
+                        ? const Icon(Icons.check, size: 16, color: Colors.white)
                         : null,
                   ),
                 ),
@@ -107,10 +100,7 @@ class TaskCard extends StatelessWidget {
                           if (isCompleted && task.completedAt != null)
                             _CompletedTag(completedAt: task.completedAt!)
                           else if (!isCompleted && task.dueDate != null)
-                            _DueDateTag(
-                              task: task,
-                              isOverdue: task.isOverdue,
-                            ),
+                            _DueDateTag(task: task, isOverdue: task.isOverdue),
                         ],
                       ),
                     ],
@@ -147,11 +137,7 @@ class _CategoryTag extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            FontAwesomeIcons.tag,
-            size: 10,
-            color: category.color,
-          ),
+          Icon(FontAwesomeIcons.tag, size: 10, color: category.color),
           const SizedBox(width: 4),
           Text(
             category.displayName,
@@ -171,10 +157,7 @@ class _DueDateTag extends StatelessWidget {
   final Task task;
   final bool isOverdue;
 
-  const _DueDateTag({
-    required this.task,
-    required this.isOverdue,
-  });
+  const _DueDateTag({required this.task, required this.isOverdue});
 
   @override
   Widget build(BuildContext context) {
@@ -204,11 +187,7 @@ class _DueDateTag extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            FontAwesomeIcons.calendar,
-            size: 10,
-            color: color,
-          ),
+          Icon(FontAwesomeIcons.calendar, size: 10, color: color),
           const SizedBox(width: 4),
           Text(
             text,
@@ -264,11 +243,7 @@ class _CreatedDateTag extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            FontAwesomeIcons.clock,
-            size: 10,
-            color: color,
-          ),
+          const Icon(FontAwesomeIcons.clock, size: 10, color: color),
           const SizedBox(width: 4),
           Text(
             text,
@@ -324,11 +299,7 @@ class _CompletedTag extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            FontAwesomeIcons.check,
-            size: 10,
-            color: color,
-          ),
+          const Icon(FontAwesomeIcons.check, size: 10, color: color),
           const SizedBox(width: 4),
           Text(
             text,

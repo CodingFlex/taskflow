@@ -15,6 +15,7 @@ import 'package:stacked_shared/stacked_shared.dart';
 import '../repositories/task_repository.dart';
 import '../services/storage_service.dart';
 import '../services/task_service.dart';
+import '../ui/common/toast.dart';
 
 final locator = StackedLocator.instance;
 
@@ -35,4 +36,5 @@ Future<void> setupLocator({
   locator.registerLazySingleton(() => StorageService());
   locator.registerLazySingleton(() => TaskService());
   locator.registerLazySingleton(() => TaskRepository());
+  locator.registerLazySingleton(() => ToastService());
 }

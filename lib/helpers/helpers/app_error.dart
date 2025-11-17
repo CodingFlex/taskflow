@@ -19,21 +19,33 @@ class AppError {
     final logger = Logger();
     switch (type) {
       case ErrorType.network:
-        logger.e('Network Error: $message',
-            error: originalError, stackTrace: stackTrace);
+        logger.e(
+          'Network Error: $message',
+          error: originalError,
+          stackTrace: stackTrace,
+        );
         break;
       case ErrorType.authentication:
-        logger.e('Authentication Error: $message',
-            error: originalError, stackTrace: stackTrace);
+        logger.e(
+          'Authentication Error: $message',
+          error: originalError,
+          stackTrace: stackTrace,
+        );
         break;
       case ErrorType.validation:
-        logger.w('Validation Error: $message',
-            error: originalError, stackTrace: stackTrace);
+        logger.w(
+          'Validation Error: $message',
+          error: originalError,
+          stackTrace: stackTrace,
+        );
         break;
       case ErrorType.unknown:
       default:
-        logger.e('Unknown Error: $message',
-            error: originalError, stackTrace: stackTrace);
+        logger.e(
+          'Unknown Error: $message',
+          error: originalError,
+          stackTrace: stackTrace,
+        );
     }
 
     // Optional: Add crash reporting here (e.g., Firebase Crashlytics)

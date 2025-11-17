@@ -40,19 +40,21 @@ class StatisticsView extends StackedView<StatisticsViewModel> {
         tag: heroTag ?? 'statistics_view',
         child: Material(
           color: Theme.of(context).scaffoldBackgroundColor,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _StatsOverview(viewModel: viewModel),
-                verticalSpaceLarge,
-                _CategoryStats(viewModel: viewModel),
-                verticalSpaceLarge,
-                _CompletionChart(viewModel: viewModel),
-              ],
-            ),
-          ),
+          child: viewModel.isBusy
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _StatsOverview(viewModel: viewModel),
+                      verticalSpaceLarge,
+                      _CategoryStats(viewModel: viewModel),
+                      verticalSpaceLarge,
+                      _CompletionChart(viewModel: viewModel),
+                    ],
+                  ),
+                ),
         ),
       ),
     );
@@ -61,6 +63,12 @@ class StatisticsView extends StackedView<StatisticsViewModel> {
   @override
   StatisticsViewModel viewModelBuilder(BuildContext context) =>
       StatisticsViewModel();
+
+  @override
+  void onViewModelReady(StatisticsViewModel viewModel) {
+    viewModel.initialize();
+    super.onViewModelReady(viewModel);
+  }
 }
 
 class _StatsOverview extends StatelessWidget {
@@ -132,10 +140,9 @@ class _StatCard extends StatelessWidget {
           verticalSpaceSmall,
           Text(
             value,
-            style: AppTextStyles.heading2(context).copyWith(
-              fontSize: 24,
-              fontWeight: FontWeight.w800,
-            ),
+            style: AppTextStyles.heading2(
+              context,
+            ).copyWith(fontSize: 24, fontWeight: FontWeight.w800),
           ),
           verticalSpaceTiny,
           Text(
@@ -161,10 +168,7 @@ class _CategoryStats extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Tasks by Category',
-          style: AppTextStyles.heading3(context),
-        ),
+        Text('Tasks by Category', style: AppTextStyles.heading3(context)),
         verticalSpaceMedium,
         ...TaskCategory.values.map((category) {
           final count = viewModel.getCategoryCount(category);
@@ -227,10 +231,7 @@ class _CategoryStatItem extends StatelessWidget {
                   ),
                 ],
               ),
-              Text(
-                '$count',
-                style: AppTextStyles.heading3(context),
-              ),
+              Text('$count', style: AppTextStyles.heading3(context)),
             ],
           ),
           verticalSpaceSmall,
@@ -270,10 +271,7 @@ class _CompletionChart extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Completion Rate',
-            style: AppTextStyles.heading3(context),
-          ),
+          Text('Completion Rate', style: AppTextStyles.heading3(context)),
           verticalSpaceMedium,
           Center(
             child: Stack(
@@ -285,18 +283,19 @@ class _CompletionChart extends StatelessWidget {
                   child: CircularProgressIndicator(
                     value: completedPercentage / 100,
                     strokeWidth: 12,
-                    backgroundColor:
-                        isDark ? kcDarkGreyColor : Colors.grey.shade200,
-                    valueColor:
-                        const AlwaysStoppedAnimation<Color>(Colors.green),
+                    backgroundColor: isDark
+                        ? kcDarkGreyColor
+                        : Colors.grey.shade200,
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      Colors.green,
+                    ),
                   ),
                 ),
                 Text(
                   '${completedPercentage.toStringAsFixed(0)}%',
-                  style: AppTextStyles.heading2(context).copyWith(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: AppTextStyles.heading2(
+                    context,
+                  ).copyWith(fontSize: 24, fontWeight: FontWeight.w800),
                 ),
               ],
             ),

@@ -45,10 +45,7 @@ class MoreFiltersSheet extends StackedView<MoreFiltersSheetModel> {
             ),
           ),
           verticalSpaceLarge,
-          Text(
-            'More Filters',
-            style: AppTextStyles.heading2(context),
-          ),
+          Text('More Filters', style: AppTextStyles.heading2(context)),
           verticalSpaceLarge,
           Text(
             'SORT BY',

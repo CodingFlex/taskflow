@@ -32,64 +32,71 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
           icon: const Icon(FontAwesomeIcons.arrowLeft, color: Colors.white),
           onPressed: viewModel.navigateBack,
         ),
-        title: const Text(
-          'Task Details',
-          style: TextStyle(
+        title: Text(
+          viewModel.isEditMode ? 'Edit Task' : 'New Task',
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w700,
             fontSize: 20,
           ),
         ),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: IconButton(
-              icon: const Icon(FontAwesomeIcons.trash,
-                  color: Colors.red, size: 18),
-              onPressed: viewModel.showDeleteDialog,
-            ),
-          ),
-        ],
+        actions: viewModel.isEditMode
+            ? [
+                Container(
+                  margin: const EdgeInsets.only(right: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(
+                      FontAwesomeIcons.trash,
+                      color: Colors.red,
+                      size: 18,
+                    ),
+                    onPressed: viewModel.showDeleteDialog,
+                  ),
+                ),
+              ]
+            : null,
       ),
       body: Hero(
         tag: heroTag ?? (taskId != null ? 'task_$taskId' : 'add_task_fab'),
         child: Material(
           color: Theme.of(context).scaffoldBackgroundColor,
           child: KeyboardUnfocusWrapper(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _TitleSection(viewModel: viewModel),
-                  verticalSpaceMedium,
-                  _CategorySection(viewModel: viewModel),
-                  verticalSpaceMedium,
-                  _DueDateSection(viewModel: viewModel),
-                  if (viewModel.taskId != null) ...[
-                    verticalSpaceMedium,
-                    _CompletionToggleSection(viewModel: viewModel),
-                  ],
-                  verticalSpaceMedium,
-                  _DescriptionSection(viewModel: viewModel),
-                  verticalSpaceLarge,
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Center(
-                      child: TaskflowButton(
-                        title: 'Save',
-                        onTap: viewModel.saveTask,
-                        width: screenWidth(context) * 0.8,
-                      ),
+            child: viewModel.isBusy
+                ? const Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _TitleSection(viewModel: viewModel),
+                        verticalSpaceMedium,
+                        _CategorySection(viewModel: viewModel),
+                        verticalSpaceMedium,
+                        _DueDateSection(viewModel: viewModel),
+                        if (viewModel.isEditMode) ...[
+                          verticalSpaceMedium,
+                          _CompletionToggleSection(viewModel: viewModel),
+                        ],
+                        verticalSpaceMedium,
+                        _DescriptionSection(viewModel: viewModel),
+                        verticalSpaceLarge,
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: Center(
+                            child: TaskflowButton(
+                              title: viewModel.isEditMode ? 'Update' : 'Create',
+                              onTap: viewModel.saveTask,
+                              width: screenWidth(context) * 0.8,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
           ),
         ),
       ),
@@ -99,6 +106,12 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
   @override
   TaskDetailsViewModel viewModelBuilder(BuildContext context) =>
       TaskDetailsViewModel(taskId: taskId);
+
+  @override
+  void onViewModelReady(TaskDetailsViewModel viewModel) {
+    viewModel.initialize();
+    super.onViewModelReady(viewModel);
+  }
 }
 
 class _CompletionToggleSection extends StatelessWidget {
@@ -120,9 +133,9 @@ class _CompletionToggleSection extends StatelessWidget {
             children: [
               Text(
                 'Mark as completed',
-                style: AppTextStyles.body(context).copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTextStyles.body(
+                  context,
+                ).copyWith(fontWeight: FontWeight.w600),
               ),
               verticalSpaceTiny,
               Text(
@@ -140,8 +153,9 @@ class _CompletionToggleSection extends StatelessWidget {
         horizontalSpaceMedium,
         Switch(
           thumbColor: WidgetStateProperty.all(Colors.white),
-          inactiveTrackColor:
-              isDark ? kcDarkGreyColor2 : const Color(0xFFE4E7EC),
+          inactiveTrackColor: isDark
+              ? kcDarkGreyColor2
+              : const Color(0xFFE4E7EC),
           trackOutlineColor: isDark
               ? WidgetStateProperty.all(kcDarkGreyColor2)
               : WidgetStateProperty.all(const Color(0xFFE4E7EC)),
@@ -166,9 +180,9 @@ class _TitleSection extends StatelessWidget {
       children: [
         Text(
           'Title *',
-          style: AppTextStyles.body(context).copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: AppTextStyles.body(
+            context,
+          ).copyWith(fontWeight: FontWeight.w600),
         ),
         verticalSpaceSmall,
         TaskflowInputField(
@@ -201,9 +215,9 @@ class _CategorySection extends StatelessWidget {
       children: [
         Text(
           'Category',
-          style: AppTextStyles.body(context).copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: AppTextStyles.body(
+            context,
+          ).copyWith(fontWeight: FontWeight.w600),
         ),
         verticalSpaceSmall,
         CategorySelector(
@@ -228,9 +242,9 @@ class _DueDateSection extends StatelessWidget {
       children: [
         Text(
           'Due Date',
-          style: AppTextStyles.body(context).copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: AppTextStyles.body(
+            context,
+          ).copyWith(fontWeight: FontWeight.w600),
         ),
         verticalSpaceSmall,
         DateInputField(
@@ -248,15 +262,17 @@ class _DueDateSection extends StatelessWidget {
           verticalSpaceTiny,
           Row(
             children: [
-              const Icon(FontAwesomeIcons.circleExclamation,
-                  color: Colors.red, size: 16),
+              const Icon(
+                FontAwesomeIcons.circleExclamation,
+                color: Colors.red,
+                size: 16,
+              ),
               horizontalSpaceSmall,
               Text(
                 'This task is overdue',
-                style: AppTextStyles.caption(context).copyWith(
-                  color: Colors.red,
-                  fontSize: 12,
-                ),
+                style: AppTextStyles.caption(
+                  context,
+                ).copyWith(color: Colors.red, fontSize: 12),
               ),
             ],
           ),
@@ -278,9 +294,9 @@ class _DescriptionSection extends StatelessWidget {
       children: [
         Text(
           'Description',
-          style: AppTextStyles.body(context).copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: AppTextStyles.body(
+            context,
+          ).copyWith(fontWeight: FontWeight.w600),
         ),
         verticalSpaceSmall,
         TaskflowInputField(

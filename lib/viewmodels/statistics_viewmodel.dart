@@ -1,17 +1,24 @@
 import 'package:stacked/stacked.dart';
 import 'package:taskflow/app/app.locator.dart';
 import 'package:taskflow/models/task.dart';
+import 'package:taskflow/repositories/task_repository.dart';
+import 'package:taskflow/services/api_exceptions.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:taskflow/ui/common/toast.dart';
 
 class StatisticsViewModel extends BaseViewModel {
   final _navigationService = locator<NavigationService>();
+  final _taskRepository = locator<TaskRepository>();
+  final _toastService = locator<ToastService>();
 
   List<Task> _tasks = [];
 
   int get totalTasks => _tasks.length;
+
   int get completedTasks =>
       _tasks.where((t) => t.status == TaskStatus.completed).length;
+
   int get pendingTasks =>
       _tasks.where((t) => t.status == TaskStatus.pending).length;
 
@@ -24,33 +31,24 @@ class StatisticsViewModel extends BaseViewModel {
   }
 
   void toggleTheme() {
-    AdaptiveTheme.of(StackedService.navigatorKey!.currentContext!)
-        .toggleThemeMode();
+    AdaptiveTheme.of(
+      StackedService.navigatorKey!.currentContext!,
+    ).toggleThemeMode();
   }
 
-  void loadStatistics() {
+  Future<void> loadStatistics() async {
     setBusy(true);
-    // TODO: Load tasks from API
-    _tasks = [
-      Task(
-        id: 1,
-        title: 'Update dependencies',
-        description: 'Upgrade Flutter packages',
-        status: TaskStatus.pending,
-        category: TaskCategory.work,
-        dueDate: DateTime.now().subtract(const Duration(days: 3)),
-        createdAt: DateTime.now().subtract(const Duration(days: 5)),
-      ),
-      Task(
-        id: 2,
-        title: 'Fix bug',
-        description: 'Resolve issue',
-        status: TaskStatus.completed,
-        category: TaskCategory.work,
-        dueDate: DateTime.now().add(const Duration(days: 1)),
-        createdAt: DateTime.now().subtract(const Duration(days: 2)),
-      ),
-    ];
-    setBusy(false);
+
+    try {
+      _tasks = await _taskRepository.getTasks();
+    } on ApiException catch (e) {
+      _toastService.showError(message: e.userMessage);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  void initialize() {
+    loadStatistics();
   }
 }

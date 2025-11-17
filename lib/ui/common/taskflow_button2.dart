@@ -58,7 +58,8 @@ class _TaskflowButton2State extends State<TaskflowButton2> {
     const Color deleteTextColor = Colors.red;
 
     // Determine base color from type if color not provided
-    final Color baseColor = widget.color ??
+    final Color baseColor =
+        widget.color ??
         () {
           switch (widget.isDelete ? TaskflowButton2Type.danger : widget.type) {
             case TaskflowButton2Type.primary:
@@ -124,29 +125,30 @@ class _TaskflowButton2State extends State<TaskflowButton2> {
             border: widget.noBorder
                 ? null // No border if noBorder is true
                 : (widget.outlineColor == null && widget.textColor == null)
-                    ? null // No border if both are null
-                    : Border.all(
-                        color: widget.isDelete
-                            ? deleteOutlineColor
-                            : isDisabled
-                                ? kcMediumGrey
-                                : (widget.outlineColor ?? baseColor),
-                        width: 1,
-                      ),
+                ? null // No border if both are null
+                : Border.all(
+                    color: widget.isDelete
+                        ? deleteOutlineColor
+                        : isDisabled
+                        ? kcMediumGrey
+                        : (widget.outlineColor ?? baseColor),
+                    width: 1,
+                  ),
             // Add shadow when color is white for better visibility in light mode, unless noShadow is true
             boxShadow: widget.noShadow
                 ? null
                 : (widget.color == Colors.white
-                    ? [
-                        BoxShadow(
-                          color:
-                              Colors.black.withOpacity(_isPressed ? 0.05 : 0.1),
-                          blurRadius: _isPressed ? 2 : 4,
-                          offset: Offset(0, _isPressed ? 1 : 2),
-                          spreadRadius: 0,
-                        ),
-                      ]
-                    : null),
+                      ? [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(
+                              _isPressed ? 0.05 : 0.1,
+                            ),
+                            blurRadius: _isPressed ? 2 : 4,
+                            offset: Offset(0, _isPressed ? 1 : 2),
+                            spreadRadius: 0,
+                          ),
+                        ]
+                      : null),
           ),
           child: Container(
             width: widget.width,
@@ -163,7 +165,8 @@ class _TaskflowButton2State extends State<TaskflowButton2> {
                           widget.state == TaskflowButton2State.loading
                               ? 'Processing...'
                               : widget.title,
-                          style: widget.textStyle ??
+                          style:
+                              widget.textStyle ??
                               AppTextStyles.heading3(context).copyWith(
                                 fontSize: 16.sp,
                                 fontWeight:
@@ -171,12 +174,12 @@ class _TaskflowButton2State extends State<TaskflowButton2> {
                                 color: widget.isDelete
                                     ? deleteTextColor
                                     : isDisabled
-                                        ? kcMediumGrey
-                                        : (widget.textColor ??
-                                            (widget.outlineColor == null &&
-                                                    widget.textColor == null
-                                                ? Colors.black
-                                                : baseColor)),
+                                    ? kcMediumGrey
+                                    : (widget.textColor ??
+                                          (widget.outlineColor == null &&
+                                                  widget.textColor == null
+                                              ? Colors.black
+                                              : baseColor)),
                               ),
                         ),
                       ),

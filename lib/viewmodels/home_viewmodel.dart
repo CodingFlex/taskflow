@@ -4,18 +4,20 @@ import 'package:taskflow/app/app.bottomsheets.dart';
 import 'package:taskflow/app/app.locator.dart';
 import 'package:taskflow/app/app.router.dart';
 import 'package:taskflow/models/task.dart';
+import 'package:taskflow/repositories/task_repository.dart';
+import 'package:taskflow/services/api_exceptions.dart';
+import 'package:taskflow/ui/common/toast.dart';
+
 import 'package:taskflow/ui/screens/statistics/statistics_view.dart';
 import 'package:taskflow/ui/screens/task_details/task_details_view.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-enum TaskFilter {
-  all,
-  completed,
-  pending,
-}
+enum TaskFilter { all, completed, pending }
 
 class HomeViewModel extends BaseViewModel {
   final _bottomSheetService = locator<BottomSheetService>();
+  final _taskRepository = locator<TaskRepository>();
+  final _toastService = locator<ToastService>();
 
   final TextEditingController searchController = TextEditingController();
   TaskFilter _selectedFilter = TaskFilter.all;
@@ -23,10 +25,12 @@ class HomeViewModel extends BaseViewModel {
   TaskCategory? _selectedCategory;
 
   List<Task> _tasks = [];
+  String? _errorMessage;
 
   TaskFilter get selectedFilter => _selectedFilter;
   SortOption get sortOption => _sortOption;
   TaskCategory? get selectedCategory => _selectedCategory;
+  String? get errorMessage => _errorMessage;
 
   List<Task> get filteredTasks {
     var tasks = List<Task>.from(_tasks);
@@ -93,23 +97,17 @@ class HomeViewModel extends BaseViewModel {
     rebuildUi();
   }
 
-  void toggleTheme() {
-    // Theme toggle will be handled by AdaptiveTheme
-  }
+  void toggleTheme() {}
 
   void showMoreFilters() {
-    _bottomSheetService.showCustomSheet(
-      variant: BottomSheetType.moreFilters,
-    );
+    _bottomSheetService.showCustomSheet(variant: BottomSheetType.moreFilters);
   }
 
   void navigateToTaskDetails(Task task) {
     Navigator.of(StackedService.navigatorKey!.currentContext!).push(
       MaterialPageRoute(
-        builder: (context) => TaskDetailsView(
-          taskId: task.id,
-          heroTag: 'task_${task.id}',
-        ),
+        builder: (context) =>
+            TaskDetailsView(taskId: task.id, heroTag: 'task_${task.id}'),
         settings: const RouteSettings(name: Routes.taskDetailsView),
       ),
     );
@@ -118,9 +116,7 @@ class HomeViewModel extends BaseViewModel {
   void navigateToAddTask() {
     Navigator.of(StackedService.navigatorKey!.currentContext!).push(
       MaterialPageRoute(
-        builder: (context) => const TaskDetailsView(
-          heroTag: 'add_task_fab',
-        ),
+        builder: (context) => const TaskDetailsView(heroTag: 'add_task_fab'),
         settings: const RouteSettings(name: Routes.taskDetailsView),
       ),
     );
@@ -129,25 +125,34 @@ class HomeViewModel extends BaseViewModel {
   void navigateToStatistics() {
     Navigator.of(StackedService.navigatorKey!.currentContext!).push(
       MaterialPageRoute(
-        builder: (context) => const StatisticsView(
-          heroTag: 'statistics_view',
-        ),
+        builder: (context) => const StatisticsView(heroTag: 'statistics_view'),
         settings: const RouteSettings(name: Routes.statisticsView),
       ),
     );
   }
 
-  void toggleTaskComplete(Task task) {
+  Future<void> toggleTaskComplete(Task task) async {
     final updatedTask = task.copyWith(
       status: task.status == TaskStatus.completed
           ? TaskStatus.pending
           : TaskStatus.completed,
       completedAt: task.status == TaskStatus.completed ? null : DateTime.now(),
     );
-    _updateTask(updatedTask);
+
+    try {
+      await _taskRepository.updateTask(updatedTask);
+      _updateTaskInList(updatedTask);
+      _toastService.showSuccess(
+        message: updatedTask.status == TaskStatus.completed
+            ? 'Task marked as completed'
+            : 'Task marked as pending',
+      );
+    } on ApiException catch (e) {
+      _toastService.showError(message: e.userMessage);
+    }
   }
 
-  void _updateTask(Task task) {
+  void _updateTaskInList(Task task) {
     final index = _tasks.indexWhere((t) => t.id == task.id);
     if (index != -1) {
       _tasks[index] = task;
@@ -155,39 +160,25 @@ class HomeViewModel extends BaseViewModel {
     }
   }
 
-  void loadTasks() {
+  Future<void> loadTasks({bool forceRefresh = false}) async {
     setBusy(true);
-    // TODO: Load tasks from API
-    _tasks = [
-      Task(
-        id: 1,
-        title: 'Update dependencies',
-        description: 'Upgrade Flutter packages to latest versions',
-        status: TaskStatus.pending,
-        category: TaskCategory.work,
-        dueDate: DateTime.now().subtract(const Duration(days: 3)),
-        createdAt: DateTime.now().subtract(const Duration(days: 5)),
-      ),
-      Task(
-        id: 2,
-        title: 'Fix bug in login flow',
-        description: 'Resolve authentication issue',
-        status: TaskStatus.pending,
-        category: TaskCategory.work,
-        dueDate: DateTime.now().add(const Duration(days: 1)),
-        createdAt: DateTime.now().subtract(const Duration(days: 2)),
-      ),
-      Task(
-        id: 3,
-        title: 'Review pull requests',
-        description: 'Check and merge pending PRs',
-        status: TaskStatus.pending,
-        category: TaskCategory.work,
-        dueDate: DateTime.now().add(const Duration(days: 1)),
-        createdAt: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-    ];
-    setBusy(false);
+    _errorMessage = null;
+
+    try {
+      _tasks = await _taskRepository.getTasks(forceRefresh: forceRefresh);
+    } on ApiException catch (e) {
+      _errorMessage = e.userMessage;
+      _toastService.showError(message: e.userMessage);
+    } catch (e) {
+      _errorMessage = 'An unexpected error occurred';
+      _toastService.showError(message: 'Failed to load tasks');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  Future<void> refreshTasks() async {
+    await loadTasks(forceRefresh: true);
   }
 
   void initialize() {
