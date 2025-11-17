@@ -112,6 +112,12 @@ class MoreFiltersSheet extends StackedView<MoreFiltersSheetModel> {
   }
 
   @override
-  MoreFiltersSheetModel viewModelBuilder(BuildContext context) =>
-      MoreFiltersSheetModel();
+  MoreFiltersSheetModel viewModelBuilder(BuildContext context) {
+    final initialSortOption = request.data?['initialSortOption'] as SortOption?;
+    final initialCategory = request.data?['initialCategory'] as TaskCategory?;
+    return MoreFiltersSheetModel(
+      initialSortOption: initialSortOption,
+      initialCategory: initialCategory,
+    );
+  }
 }

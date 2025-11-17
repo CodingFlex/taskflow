@@ -99,8 +99,25 @@ class HomeViewModel extends BaseViewModel {
 
   void toggleTheme() {}
 
-  void showMoreFilters() {
-    _bottomSheetService.showCustomSheet(variant: BottomSheetType.moreFilters);
+  Future<void> showMoreFilters() async {
+    final response = await _bottomSheetService.showCustomSheet(
+      variant: BottomSheetType.moreFilters,
+      data: {
+        'initialSortOption': _sortOption,
+        'initialCategory': _selectedCategory,
+      },
+    );
+
+    if (response?.confirmed == true && response?.data != null) {
+      final data = response!.data as Map<String, dynamic>;
+      if (data.containsKey('sortOption')) {
+        _sortOption = data['sortOption'] as SortOption;
+      }
+      if (data.containsKey('category')) {
+        _selectedCategory = data['category'] as TaskCategory?;
+      }
+      rebuildUi();
+    }
   }
 
   Future<void> navigateToTaskDetails(Task task) async {
