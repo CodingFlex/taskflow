@@ -9,7 +9,7 @@ import 'package:taskflow/repositories/task_repository.dart';
 import 'package:taskflow/services/api_exceptions.dart';
 import 'package:taskflow/ui/common/toast.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 import 'package:taskflow/ui/screens/statistics/statistics_view.dart';
 import 'package:taskflow/ui/screens/task_details/task_details_view.dart';
@@ -21,7 +21,6 @@ class HomeViewModel extends BaseViewModel {
   final _bottomSheetService = locator<BottomSheetService>();
   final _taskRepository = locator<TaskRepository>();
   final _toastService = locator<ToastService>();
-  final _connectivity = Connectivity();
 
   final TextEditingController searchController = TextEditingController();
   TaskFilter _selectedFilter = TaskFilter.all;
@@ -30,14 +29,20 @@ class HomeViewModel extends BaseViewModel {
 
   List<Task> _tasks = [];
   String? _errorMessage;
-  bool _isOnline = true;
-  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  InternetStatus _connectionStatus = InternetStatus.connected;
+  StreamSubscription<InternetStatus>? _internetSubscription;
+
+  Timer? _statusDebounceTimer;
+  DateTime? _lastToastTime;
+  InternetStatus? _lastStableStatus;
+  static const _toastCooldownDuration = Duration(seconds: 5);
+  static const _statusStabilizationDuration = Duration(seconds: 3);
 
   TaskFilter get selectedFilter => _selectedFilter;
   SortOption get sortOption => _sortOption;
   TaskCategory? get selectedCategory => _selectedCategory;
   String? get errorMessage => _errorMessage;
-  bool get isOnline => _isOnline;
+  bool get isOnline => _connectionStatus == InternetStatus.connected;
 
   List<Task> get filteredTasks {
     var tasks = List<Task>.from(_tasks);
@@ -245,29 +250,54 @@ class HomeViewModel extends BaseViewModel {
     await loadTasks(forceRefresh: true);
   }
 
-  Future<void> _checkConnectivity() async {
-    final results = await _connectivity.checkConnectivity();
-    _updateConnectivityStatus(results);
+  bool _canShowToast() {
+    if (_lastToastTime == null) return true;
+
+    final timeSinceLastToast = DateTime.now().difference(_lastToastTime!);
+    return timeSinceLastToast >= _toastCooldownDuration;
   }
 
-  void _updateConnectivityStatus(List<ConnectivityResult> results) {
-    final wasOnline = _isOnline;
-    _isOnline = results.any(
-      (result) =>
-          result == ConnectivityResult.mobile ||
-          result == ConnectivityResult.wifi ||
-          result == ConnectivityResult.ethernet,
-    );
+  void _showStatusToast(InternetStatus status) {
+    if (!_canShowToast()) return;
 
-    if (wasOnline != _isOnline) {
-      rebuildUi();
+    _lastToastTime = DateTime.now();
+
+    if (status == InternetStatus.connected) {
+      _toastService.showSuccess(
+        message: 'Back online',
+        duration: const Duration(seconds: 2),
+      );
+    } else {
+      _toastService.showError(
+        message: 'Connection lost',
+        duration: const Duration(seconds: 2),
+      );
     }
   }
 
-  Future<void> syncWithServer() async {
-    await _checkConnectivity();
+  void _onInternetStatusChanged(InternetStatus status) {
+    _statusDebounceTimer?.cancel();
 
-    if (!_isOnline) {
+    _statusDebounceTimer = Timer(_statusStabilizationDuration, () {
+      if (_lastStableStatus == status) return;
+
+      final wasOnline = isOnline;
+      _connectionStatus = status;
+      _lastStableStatus = status;
+
+      rebuildUi();
+
+      if (wasOnline != isOnline) {
+        _showStatusToast(status);
+      }
+    });
+
+    _connectionStatus = status;
+    rebuildUi();
+  }
+
+  Future<void> syncWithServer() async {
+    if (!isOnline) {
       _toastService.showError(
         message: 'No internet connection. Please check your network.',
       );
@@ -290,15 +320,22 @@ class HomeViewModel extends BaseViewModel {
 
   void initialize() {
     loadTasks();
-    _checkConnectivity();
-    _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
-      _updateConnectivityStatus,
-    );
+
+    _internetSubscription = InternetConnection.createInstance(
+      checkInterval: const Duration(seconds: 2),
+      customCheckOptions: [
+        InternetCheckOption(uri: Uri.parse('https://icanhazip.com/')),
+        InternetCheckOption(
+          uri: Uri.parse('https://jsonplaceholder.typicode.com'),
+        ),
+      ],
+    ).onStatusChange.listen(_onInternetStatusChanged);
   }
 
   @override
   void dispose() {
-    _connectivitySubscription?.cancel();
+    _statusDebounceTimer?.cancel();
+    _internetSubscription?.cancel();
     searchController.dispose();
     super.dispose();
   }
