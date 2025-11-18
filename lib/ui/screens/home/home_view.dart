@@ -236,6 +236,66 @@ class _TasksSection extends StatelessWidget {
     final overdueTasks = filteredTasks.where((t) => t.isOverdue).toList();
     final otherTasks = filteredTasks.where((t) => !t.isOverdue).toList();
 
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 400),
+      switchInCurve: Curves.easeInOutCubic,
+      switchOutCurve: Curves.easeInOutCubic,
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position:
+                Tween<Offset>(
+                  begin: const Offset(0, 0.02),
+                  end: Offset.zero,
+                ).animate(
+                  CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOutCubic,
+                  ),
+                ),
+            child: child,
+          ),
+        );
+      },
+      layoutBuilder: (currentChild, previousChildren) {
+        return Stack(
+          alignment: Alignment.topCenter,
+          children: <Widget>[
+            ...previousChildren,
+            if (currentChild != null) currentChild,
+          ],
+        );
+      },
+      child: _TasksList(
+        key: ValueKey(
+          'tasks_${viewModel.selectedFilter}_${filteredTasks.length}',
+        ),
+        overdueTasks: overdueTasks,
+        otherTasks: otherTasks,
+        filteredTasks: filteredTasks,
+        viewModel: viewModel,
+      ),
+    );
+  }
+}
+
+class _TasksList extends StatelessWidget {
+  final List<Task> overdueTasks;
+  final List<Task> otherTasks;
+  final List<Task> filteredTasks;
+  final HomeViewModel viewModel;
+
+  const _TasksList({
+    super.key,
+    required this.overdueTasks,
+    required this.otherTasks,
+    required this.filteredTasks,
+    required this.viewModel,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     if (filteredTasks.isEmpty) {
       return Center(
         child: Column(
@@ -272,27 +332,92 @@ class _TasksSection extends StatelessWidget {
             color: Colors.red,
           ),
           verticalSpaceSmall,
-          ...overdueTasks.map(
-            (task) => _AnimatedTaskCard(
-              key: ValueKey('task_${task.id}'),
-              task: task,
-              onTap: () => viewModel.navigateToTaskDetails(task),
-              onToggleComplete: () => viewModel.toggleTaskComplete(task),
-            ),
-          ),
+          _AnimatedTaskList(tasks: overdueTasks, viewModel: viewModel),
           verticalSpaceMedium,
         ],
-        if (otherTasks.isNotEmpty) ...[
-          ...otherTasks.map(
-            (task) => _AnimatedTaskCard(
-              key: ValueKey('task_${task.id}'),
-              task: task,
-              onTap: () => viewModel.navigateToTaskDetails(task),
-              onToggleComplete: () => viewModel.toggleTaskComplete(task),
-            ),
-          ),
-        ],
+        if (otherTasks.isNotEmpty)
+          _AnimatedTaskList(tasks: otherTasks, viewModel: viewModel),
       ],
+    );
+  }
+}
+
+class _AnimatedTaskList extends StatelessWidget {
+  final List<Task> tasks;
+  final HomeViewModel viewModel;
+
+  const _AnimatedTaskList({required this.tasks, required this.viewModel});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: List.generate(tasks.length, (index) {
+        final task = tasks[index];
+        return TweenAnimationBuilder<double>(
+          key: ValueKey('task_animation_${task.id}'),
+          tween: Tween(begin: 0.0, end: 1.0),
+          duration: Duration(milliseconds: 300 + (index * 50)),
+          curve: Curves.easeOutCubic,
+          builder: (context, value, child) {
+            return Opacity(
+              opacity: value,
+              child: Transform.translate(
+                offset: Offset(0, 20 * (1 - value)),
+                child: child,
+              ),
+            );
+          },
+          child: _AnimatedTaskCard(
+            key: ValueKey('task_${task.id}'),
+            task: task,
+            onTap: () => viewModel.navigateToTaskDetails(task),
+            onToggleComplete: () => viewModel.toggleTaskComplete(task),
+          ),
+        );
+      }),
+    );
+  }
+}
+
+class _AnimatedTaskCard extends StatelessWidget {
+  final Task task;
+  final VoidCallback? onTap;
+  final VoidCallback? onToggleComplete;
+
+  const _AnimatedTaskCard({
+    super.key,
+    required this.task,
+    this.onTap,
+    this.onToggleComplete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      switchInCurve: Curves.easeInOut,
+      switchOutCurve: Curves.easeInOut,
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position:
+                Tween<Offset>(
+                  begin: const Offset(-0.1, 0),
+                  end: Offset.zero,
+                ).animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+                ),
+            child: child,
+          ),
+        );
+      },
+      child: TaskCard(
+        key: ValueKey('task_card_${task.id}_${task.status}'),
+        task: task,
+        onTap: onTap,
+        onToggleComplete: onToggleComplete,
+      ),
     );
   }
 }
@@ -362,49 +487,6 @@ class _HomeContent extends StatelessWidget {
     }
 
     return content;
-  }
-}
-
-class _AnimatedTaskCard extends StatelessWidget {
-  final Task task;
-  final VoidCallback? onTap;
-  final VoidCallback? onToggleComplete;
-
-  const _AnimatedTaskCard({
-    super.key,
-    required this.task,
-    this.onTap,
-    this.onToggleComplete,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
-      switchInCurve: Curves.easeInOut,
-      switchOutCurve: Curves.easeInOut,
-      transitionBuilder: (child, animation) {
-        return FadeTransition(
-          opacity: animation,
-          child: SlideTransition(
-            position:
-                Tween<Offset>(
-                  begin: const Offset(-0.1, 0),
-                  end: Offset.zero,
-                ).animate(
-                  CurvedAnimation(parent: animation, curve: Curves.easeInOut),
-                ),
-            child: child,
-          ),
-        );
-      },
-      child: TaskCard(
-        key: ValueKey('task_card_${task.id}_${task.status}'),
-        task: task,
-        onTap: onTap,
-        onToggleComplete: onToggleComplete,
-      ),
-    );
   }
 }
 
