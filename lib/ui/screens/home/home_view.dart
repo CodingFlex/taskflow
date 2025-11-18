@@ -436,7 +436,7 @@ class _ConnectivityIndicator extends StatelessWidget {
             : Icon(
                 viewModel.isOnline
                     ? FontAwesomeIcons.wifi
-                    : FontAwesomeIcons.circleDot,
+                    : FontAwesomeIcons.circleXmark,
                 color: viewModel.isOnline ? Colors.white : Colors.red,
                 size: 18,
               ),

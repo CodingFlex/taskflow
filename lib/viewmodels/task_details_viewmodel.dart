@@ -34,6 +34,15 @@ class TaskDetailsViewModel extends BaseViewModel {
   bool get isEditMode => taskId != null;
   bool get canSave => _isFormValid;
 
+  // Validation getters for UI
+  bool get isTitleValid =>
+      titleController.text.trim().length >= 3 &&
+      titleController.text.trim().length <= 100;
+
+  bool get isTitleEmpty => titleController.text.trim().isEmpty;
+
+  int get titleLength => titleController.text.length;
+
   Future<void> initialize() async {
     if (taskId != null) {
       await _loadTask();
@@ -75,10 +84,16 @@ class TaskDetailsViewModel extends BaseViewModel {
 
   void _attachListeners() {
     if (_listenersAttached) return;
-    titleController.addListener(_updateFormValidity);
+    titleController.addListener(_onTitleChanged);
     descriptionController.addListener(_updateFormValidity);
     dueDateController.addListener(_updateFormValidity);
     _listenersAttached = true;
+  }
+
+  void _onTitleChanged() {
+    // Trigger rebuild for validator animation
+    notifyListeners();
+    _updateFormValidity();
   }
 
   void setCategory(TaskCategory category) {
@@ -268,6 +283,12 @@ class TaskDetailsViewModel extends BaseViewModel {
 
   @override
   void dispose() {
+    // Remove listeners before disposing
+    if (_listenersAttached) {
+      titleController.removeListener(_onTitleChanged);
+      descriptionController.removeListener(_updateFormValidity);
+      dueDateController.removeListener(_updateFormValidity);
+    }
     titleController.dispose();
     descriptionController.dispose();
     dueDateController.dispose();

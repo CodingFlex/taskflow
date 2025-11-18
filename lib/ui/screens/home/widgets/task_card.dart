@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:sizer/sizer.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
@@ -42,24 +43,22 @@ class TaskCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  onTap: onToggleComplete,
-                  child: Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: isCompleted
-                            ? Colors.green
-                            : (isDark ? Colors.white38 : Colors.black26),
-                        width: 2,
-                      ),
-                      color: isCompleted ? Colors.green : Colors.transparent,
+                SizedBox(
+                  width: 28,
+                  height: 28,
+                  child: MSHCheckbox(
+                    size: 28,
+                    value: isCompleted,
+                    colorConfig: MSHColorConfig.fromCheckedUncheckedDisabled(
+                      checkedColor: Colors.green,
+                      uncheckedColor: isDark ? Colors.white38 : Colors.black26,
                     ),
-                    child: isCompleted
-                        ? const Icon(Icons.check, size: 16, color: Colors.white)
-                        : null,
+                    style: MSHCheckboxStyle.fillScaleCheck,
+                    onChanged: (selected) {
+                      if (onToggleComplete != null) {
+                        onToggleComplete!();
+                      }
+                    },
                   ),
                 ),
                 horizontalSpaceSmall,
@@ -208,22 +207,39 @@ class _CreatedDateTag extends StatelessWidget {
 
   const _CreatedDateTag({required this.createdAt});
 
+  bool _isSameDay(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
+  }
+
+  bool _isYesterday(DateTime date) {
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    return _isSameDay(date, yesterday);
+  }
+
+  int _daysDifference(DateTime date1, DateTime date2) {
+    final date1Only = DateTime(date1.year, date1.month, date1.day);
+    final date2Only = DateTime(date2.year, date2.month, date2.day);
+    return date2Only.difference(date1Only).inDays;
+  }
+
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
-    final difference = now.difference(createdAt);
+    final daysDiff = _daysDifference(createdAt, now);
     String text;
 
-    if (difference.inDays == 0) {
+    if (_isSameDay(createdAt, now)) {
       text = 'Created today';
-    } else if (difference.inDays == 1) {
+    } else if (_isYesterday(createdAt)) {
       text = 'Created yesterday';
-    } else if (difference.inDays < 7) {
-      text = 'Created ${difference.inDays}d ago';
+    } else if (daysDiff < 7) {
+      text = 'Created ${daysDiff}d ago';
     } else {
-      final months = (difference.inDays / 30).floor();
+      final months = (daysDiff / 30).floor();
       if (months == 0) {
-        final weeks = (difference.inDays / 7).floor();
+        final weeks = (daysDiff / 7).floor();
         text = 'Created ${weeks}w ago';
       } else if (months == 1) {
         text = 'Created 1mo ago';
@@ -264,22 +280,39 @@ class _CompletedTag extends StatelessWidget {
 
   const _CompletedTag({required this.completedAt});
 
+  bool _isSameDay(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
+  }
+
+  bool _isYesterday(DateTime date) {
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    return _isSameDay(date, yesterday);
+  }
+
+  int _daysDifference(DateTime date1, DateTime date2) {
+    final date1Only = DateTime(date1.year, date1.month, date1.day);
+    final date2Only = DateTime(date2.year, date2.month, date2.day);
+    return date2Only.difference(date1Only).inDays;
+  }
+
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
-    final difference = now.difference(completedAt);
+    final daysDiff = _daysDifference(completedAt, now);
     String text;
 
-    if (difference.inDays == 0) {
+    if (_isSameDay(completedAt, now)) {
       text = 'Completed today';
-    } else if (difference.inDays == 1) {
+    } else if (_isYesterday(completedAt)) {
       text = 'Completed yesterday';
-    } else if (difference.inDays < 7) {
-      text = 'Completed ${difference.inDays}d ago';
+    } else if (daysDiff < 7) {
+      text = 'Completed ${daysDiff}d ago';
     } else {
-      final months = (difference.inDays / 30).floor();
+      final months = (daysDiff / 30).floor();
       if (months == 0) {
-        final weeks = (difference.inDays / 7).floor();
+        final weeks = (daysDiff / 7).floor();
         text = 'Completed ${weeks}w ago';
       } else if (months == 1) {
         text = 'Completed 1mo ago';
