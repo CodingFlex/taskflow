@@ -291,6 +291,30 @@ class TaskDetailsViewModel extends BaseViewModel {
     final title = titleController.text.trim();
     final description = descriptionController.text.trim();
 
+    // Validate title and set/clear error
+    if (title.isEmpty) {
+      _titleError = null;
+    } else if (title.length < 3) {
+      _titleError = ksTitleMinLengthError;
+    } else if (title.length > 100) {
+      _titleError = ksTitleMaxLengthError;
+    } else {
+      _titleError = null;
+    }
+
+    // Validate description and set/clear error
+    if (description.isEmpty) {
+      _descriptionError = null;
+    } else if (description.length > 500) {
+      _descriptionError = ksDescriptionMaxLengthError;
+    } else {
+      _descriptionError = null;
+    }
+
+    if (_selectedDueDate != null) {
+      _dueDateError = null;
+    }
+
     final hasValidTitle =
         title.isNotEmpty && title.length >= 3 && title.length <= 100;
     final hasValidDescription =
@@ -298,13 +322,12 @@ class TaskDetailsViewModel extends BaseViewModel {
     final hasDueDate = _selectedDueDate != null;
     final nextState = hasValidTitle && hasValidDescription && hasDueDate;
 
-    // Clear errors when field becomes valid
-    if (hasValidTitle) _titleError = null;
-    if (hasValidDescription) _descriptionError = null;
-    if (hasDueDate) _dueDateError = null;
-
     if (_isFormValid != nextState) {
       _isFormValid = nextState;
+      rebuildUi();
+    } else if (_titleError != null ||
+        _descriptionError != null ||
+        _dueDateError != null) {
       rebuildUi();
     }
   }

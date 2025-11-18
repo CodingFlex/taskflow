@@ -220,4 +220,8 @@ class ApiClient {
       extra: {...options?.extra ?? {}, 'requiresAuth': requiresAuth},
     );
   }
+
+  void dispose() {
+    _dio.close(force: true);
+  }
 }

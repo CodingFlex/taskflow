@@ -53,7 +53,7 @@ class AnimatedFieldError extends StatelessWidget {
                         errorMessage!,
                         style: AppTextStyles.caption(
                           context,
-                        ).copyWith(color: color, fontSize: 12.sp),
+                        ).copyWith(color: color, fontSize: 10.sp),
                       ),
                     ),
                   ],

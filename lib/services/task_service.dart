@@ -189,4 +189,8 @@ class TaskService {
       );
     }
   }
+
+  void dispose() {
+    _apiClient.dispose();
+  }
 }
