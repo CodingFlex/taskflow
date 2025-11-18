@@ -1,6 +1,7 @@
 import 'package:stacked/stacked.dart';
 import 'package:taskflow/app/app.locator.dart';
 import 'package:taskflow/models/task.dart';
+import 'package:taskflow/models/task_enums.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class MoreFiltersSheetModel extends BaseViewModel {
