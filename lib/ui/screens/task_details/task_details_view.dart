@@ -99,9 +99,11 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
                         child: TaskflowButton(
                           title: viewModel.isEditMode ? ksUpdate : ksCreate,
                           onTap: viewModel.saveTask,
-                          state: viewModel.canSave
-                              ? TaskflowButtonState.enabled
-                              : TaskflowButtonState.disabled,
+                          state: viewModel.isSaving
+                              ? TaskflowButtonState.loading
+                              : (viewModel.canSave
+                                    ? TaskflowButtonState.enabled
+                                    : TaskflowButtonState.disabled),
                           width: screenWidth(context) * 0.8,
                         ),
                       ),
@@ -152,9 +154,7 @@ class _CompletionToggleSection extends StatelessWidget {
               ),
               verticalSpaceTiny,
               Text(
-                isCompleted
-                    ? ksTaskIsCompleted
-                    : ksToggleTaskCompletion,
+                isCompleted ? ksTaskIsCompleted : ksToggleTaskCompletion,
                 style: AppTextStyles.caption(context).copyWith(
                   fontSize: 12,
                   color: isDark ? Colors.white70 : Colors.black54,

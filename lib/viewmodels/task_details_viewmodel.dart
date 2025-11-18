@@ -35,6 +35,7 @@ class TaskDetailsViewModel extends BaseViewModel {
   bool get isCompleted => _isCompleted;
   bool get isEditMode => taskId != null;
   bool get canSave => _isFormValid;
+  bool get isSaving => busy('save');
 
   // Validation getters for UI
   bool get isTitleValid =>
@@ -126,7 +127,7 @@ class TaskDetailsViewModel extends BaseViewModel {
       return;
     }
 
-    setBusy(true);
+    setBusyForObject('save', true);
 
     try {
       if (isEditMode) {
@@ -135,7 +136,7 @@ class TaskDetailsViewModel extends BaseViewModel {
         await _createTask();
       }
     } finally {
-      setBusy(false);
+      setBusyForObject('save', false);
     }
   }
 

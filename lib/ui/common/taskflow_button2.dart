@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 
@@ -162,9 +161,7 @@ class _TaskflowButton2State extends State<TaskflowButton2> {
                       if (widget.leading != null) const SizedBox(width: 5),
                       Flexible(
                         child: Text(
-                          widget.state == TaskflowButton2State.loading
-                              ? 'Processing...'
-                              : widget.title,
+                          widget.title,
                           style:
                               widget.textStyle ??
                               AppTextStyles.heading3(context).copyWith(
@@ -186,17 +183,20 @@ class _TaskflowButton2State extends State<TaskflowButton2> {
                     ],
                   )
                 : SizedBox(
-                    height: 20, // Set the desired height
-                    width: 20, // Set the desired width
-                    child: Skeletonizer(
-                      enabled: true,
-                      child: Container(
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          color: baseColor.withOpacity(0.3),
-                          shape: BoxShape.circle,
-                        ),
+                    height: 18,
+                    width: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        widget.isDelete
+                            ? deleteTextColor
+                            : isDisabled
+                            ? kcMediumGrey
+                            : (widget.textColor ??
+                                  (widget.outlineColor == null &&
+                                          widget.textColor == null
+                                      ? Colors.black
+                                      : baseColor)),
                       ),
                     ),
                   ),

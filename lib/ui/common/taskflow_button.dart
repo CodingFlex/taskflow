@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 
@@ -164,9 +163,7 @@ class _TaskflowButtonState extends State<TaskflowButton> {
                           if (widget.leading != null) const SizedBox(width: 5),
                           Flexible(
                             child: Text(
-                              widget.state == TaskflowButtonState.loading
-                                  ? 'Processing...'
-                                  : widget.title,
+                              widget.title,
                               style:
                                   widget.textStyle ??
                                   Theme.of(
@@ -182,12 +179,13 @@ class _TaskflowButtonState extends State<TaskflowButton> {
                           ),
                         ],
                       )
-                    : const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CupertinoActivityIndicator(radius: 10.0),
-                          SizedBox(width: 8),
-                        ],
+                    : SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          valueColor: AlwaysStoppedAnimation<Color>(labelColor),
+                        ),
                       ),
               ),
             ),
