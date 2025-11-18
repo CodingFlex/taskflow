@@ -73,33 +73,35 @@ class _TaskflowButton2State extends State<TaskflowButton2> {
     final bool isDisabled = widget.state == TaskflowButton2State.disabled;
     final bool isLoading = widget.state == TaskflowButton2State.loading;
     final bool isEnabled = widget.state == TaskflowButton2State.enabled;
+    final bool isInteractive =
+        isEnabled; // Only enabled state allows interaction
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(widget.borderRadius),
-        onTapDown: isEnabled
+        onTapDown: isInteractive
             ? (_) {
                 setState(() {
                   _isPressed = true;
                 });
               }
             : null,
-        onTapUp: isEnabled
+        onTapUp: isInteractive
             ? (_) {
                 setState(() {
                   _isPressed = false;
                 });
               }
             : null,
-        onTapCancel: isEnabled
+        onTapCancel: isInteractive
             ? () {
                 setState(() {
                   _isPressed = false;
                 });
               }
             : null,
-        onTap: isEnabled && widget.onTap != null
+        onTap: isInteractive && widget.onTap != null
             ? () {
                 widget.onTap!();
               }
@@ -128,7 +130,7 @@ class _TaskflowButton2State extends State<TaskflowButton2> {
                 : Border.all(
                     color: widget.isDelete
                         ? deleteOutlineColor
-                        : isDisabled
+                        : (isDisabled || isLoading)
                         ? kcMediumGrey
                         : (widget.outlineColor ?? baseColor),
                     width: 1,

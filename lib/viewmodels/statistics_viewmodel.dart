@@ -8,11 +8,14 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:taskflow/ui/common/toast.dart';
 
 class StatisticsViewModel extends BaseViewModel {
+  final List<Task>? tasks;
   final _navigationService = locator<NavigationService>();
   final _taskRepository = locator<TaskRepository>();
   final _toastService = locator<ToastService>();
 
   List<Task> _tasks = [];
+
+  StatisticsViewModel({this.tasks});
 
   int get totalTasks => _tasks.length;
 
@@ -49,6 +52,11 @@ class StatisticsViewModel extends BaseViewModel {
   }
 
   void initialize() {
-    loadStatistics();
+    if (tasks != null) {
+      _tasks = tasks!;
+      rebuildUi();
+    } else {
+      loadStatistics();
+    }
   }
 }

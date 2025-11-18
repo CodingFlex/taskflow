@@ -11,12 +11,13 @@ import 'package:stacked_services/stacked_services.dart';
 /// Manages task creation/editing screen with form validation and task operations
 class TaskDetailsViewModel extends BaseViewModel {
   final int? taskId;
+  final Task? initialTask;
   final _navigationService = locator<NavigationService>();
   final _taskRepository = locator<TaskRepository>();
   final _toastService = locator<ToastService>();
   final _dialogService = locator<DialogService>();
 
-  TaskDetailsViewModel({this.taskId});
+  TaskDetailsViewModel({this.taskId, this.initialTask});
 
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
@@ -48,13 +49,36 @@ class TaskDetailsViewModel extends BaseViewModel {
 
   Future<void> initialize() async {
     if (taskId != null) {
-      await _loadTask();
+      // If task data is already provided, use it directly (no loading needed)
+      if (initialTask != null) {
+        _initializeWithTask(initialTask!);
+      } else {
+        // Fallback: fetch from API if task wasn't passed
+        await _loadTask();
+      }
     } else {
       _selectedCategory = null;
       _selectedDueDate = null;
       _attachListeners();
       _updateFormValidity();
     }
+  }
+
+  void _initializeWithTask(Task taskData) {
+    _task = taskData;
+    titleController.text = taskData.title;
+    descriptionController.text = taskData.description;
+    _selectedCategory = taskData.category;
+    _selectedDueDate = taskData.dueDate;
+    _isCompleted = taskData.status == TaskStatus.completed;
+
+    if (_selectedDueDate != null) {
+      dueDateController.text =
+          '${_selectedDueDate!.day}/${_selectedDueDate!.month}/${_selectedDueDate!.year}';
+    }
+
+    _attachListeners();
+    _updateFormValidity();
   }
 
   Future<void> _loadTask() async {

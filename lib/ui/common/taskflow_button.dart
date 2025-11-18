@@ -71,21 +71,22 @@ class _TaskflowButtonState extends State<TaskflowButton> {
     final bool isDisabled = widget.state == TaskflowButtonState.disabled;
     final bool isLoading = widget.state == TaskflowButtonState.loading;
     final bool isEnabled = widget.state == TaskflowButtonState.enabled;
+    final bool isInteractive = isEnabled; // Only enabled state allows interaction
     final Color fillColor = widget.outline
         ? Colors.transparent
-        : (isDisabled ? baseColor.withOpacity(0.4) : baseColor);
+        : (isDisabled || isLoading ? baseColor.withOpacity(0.4) : baseColor);
     final Color borderColor = baseColor;
     final Color labelColor = widget.outline ? baseColor : Colors.white;
 
     return GestureDetector(
-      onTapDown: isEnabled
+      onTapDown: isInteractive
           ? (_) {
               setState(() {
                 _isPressed = true;
               });
             }
           : null,
-      onTapUp: isEnabled
+      onTapUp: isInteractive
           ? (_) {
               // Reset pressed state immediately
               Future.microtask(() {
@@ -97,14 +98,14 @@ class _TaskflowButtonState extends State<TaskflowButton> {
               });
             }
           : null,
-      onTapCancel: isEnabled
+      onTapCancel: isInteractive
           ? () {
               setState(() {
                 _isPressed = false;
               });
             }
           : null,
-      onTap: isEnabled
+      onTap: isInteractive
           ? () {
               // Haptic feedback tuned by type
               if (widget.type == TaskflowButtonType.danger) {

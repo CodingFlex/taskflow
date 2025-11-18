@@ -158,8 +158,11 @@ class HomeViewModel extends BaseViewModel {
     final shouldRefresh =
         await Navigator.of(StackedService.navigatorKey!.currentContext!).push(
           MaterialPageRoute(
-            builder: (context) =>
-                TaskDetailsView(taskId: task.id, heroTag: 'task_${task.id}'),
+            builder: (context) => TaskDetailsView(
+              taskId: task.id,
+              heroTag: 'task_${task.id}',
+              task: task, // Pass the complete task object - no loading needed!
+            ),
             settings: const RouteSettings(name: Routes.taskDetailsView),
           ),
         );
@@ -187,7 +190,11 @@ class HomeViewModel extends BaseViewModel {
   void navigateToStatistics() {
     Navigator.of(StackedService.navigatorKey!.currentContext!).push(
       MaterialPageRoute(
-        builder: (context) => const StatisticsView(heroTag: 'statistics_view'),
+        builder: (context) => StatisticsView(
+          heroTag: 'statistics_button',
+          tasks:
+              filteredTasks, // Pass the already-loaded tasks - no loading needed!
+        ),
         settings: const RouteSettings(name: Routes.statisticsView),
       ),
     );
@@ -300,9 +307,7 @@ class HomeViewModel extends BaseViewModel {
 
   Future<void> syncWithServer() async {
     if (!isOnline) {
-      _toastService.showError(
-        message: ksNoInternetConnection,
-      );
+      _toastService.showError(message: ksNoInternetConnection);
       return;
     }
 

@@ -11,8 +11,9 @@ import 'package:stacked/stacked.dart';
 
 class StatisticsView extends StackedView<StatisticsViewModel> {
   final String? heroTag;
+  final List<Task>? tasks;
 
-  const StatisticsView({super.key, this.heroTag});
+  const StatisticsView({super.key, this.heroTag, this.tasks});
 
   @override
   Widget builder(
@@ -39,28 +40,34 @@ class StatisticsView extends StackedView<StatisticsViewModel> {
         ),
       ),
       body: Hero(
-        tag: heroTag ?? 'statistics_view',
+        tag: heroTag ?? 'statistics_button',
         child: Material(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          child: Skeletonizer(
-            enabled: viewModel.isBusy,
-            effect: const ShimmerEffect(
-              baseColor: Color(0xFFE5E7EB),
-              highlightColor: Color(0xFFF6F7FB),
-              duration: Duration(milliseconds: 1200),
+          color: Colors.transparent,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(0),
             ),
-            enableSwitchAnimation: true,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _StatsOverview(viewModel: viewModel),
-                  verticalSpaceMedium,
-                  _CategoryStats(viewModel: viewModel),
-                  verticalSpaceMedium,
-                  _CompletionChart(viewModel: viewModel),
-                ],
+            child: Skeletonizer(
+              enabled: viewModel.isBusy,
+              effect: const ShimmerEffect(
+                baseColor: Color(0xFFE5E7EB),
+                highlightColor: Color(0xFFF6F7FB),
+                duration: Duration(milliseconds: 1200),
+              ),
+              enableSwitchAnimation: true,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _StatsOverview(viewModel: viewModel),
+                    verticalSpaceMedium,
+                    _CategoryStats(viewModel: viewModel),
+                    verticalSpaceMedium,
+                    _CompletionChart(viewModel: viewModel),
+                  ],
+                ),
               ),
             ),
           ),
@@ -71,7 +78,7 @@ class StatisticsView extends StackedView<StatisticsViewModel> {
 
   @override
   StatisticsViewModel viewModelBuilder(BuildContext context) =>
-      StatisticsViewModel();
+      StatisticsViewModel(tasks: tasks);
 
   @override
   void onViewModelReady(StatisticsViewModel viewModel) {

@@ -39,19 +39,25 @@ class HomeView extends StackedView<HomeViewModel> {
         ),
         actions: [
           _ConnectivityIndicator(viewModel: viewModel),
-          Container(
-            margin: const EdgeInsets.only(right: 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: IconButton(
-              icon: const Icon(
-                FontAwesomeIcons.chartBar,
-                color: Colors.white,
-                size: 18,
+          Hero(
+            tag: 'statistics_button',
+            child: Container(
+              margin: const EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
               ),
-              onPressed: viewModel.navigateToStatistics,
+              child: Material(
+                color: Colors.transparent,
+                child: IconButton(
+                  icon: const Icon(
+                    FontAwesomeIcons.chartBar,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  onPressed: viewModel.navigateToStatistics,
+                ),
+              ),
             ),
           ),
           Container(
@@ -106,6 +112,7 @@ class HomeView extends StackedView<HomeViewModel> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'add_task_fab',
         onPressed: viewModel.navigateToAddTask,
         backgroundColor: kcPrimaryColor,
         child: const Icon(FontAwesomeIcons.plus, color: Colors.white),
@@ -449,28 +456,15 @@ class _HomeContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Hero(
-            tag: 'statistics_view',
-            child: Material(
-              color: Colors.transparent,
-              child: SearchField(
-                controller: viewModel.searchController,
-                hintText: ksSearchTasksHint,
-                onChanged: viewModel.onSearchChanged,
-              ),
-            ),
+          SearchField(
+            controller: viewModel.searchController,
+            hintText: ksSearchTasksHint,
+            onChanged: viewModel.onSearchChanged,
           ),
           verticalSpaceMedium,
           _FilterSection(viewModel: viewModel),
           verticalSpaceMedium,
           _TasksSection(viewModel: viewModel),
-          const Hero(
-            tag: 'add_task_fab',
-            child: Material(
-              color: Colors.transparent,
-              child: SizedBox.shrink(),
-            ),
-          ),
         ],
       ),
     );

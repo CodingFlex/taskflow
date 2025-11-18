@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:taskflow/models/task.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/app_strings.dart';
 import 'package:taskflow/ui/common/keyboard_unfocus_wrapper.dart';
@@ -17,8 +18,9 @@ import 'package:stacked/stacked.dart';
 class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
   final int? taskId;
   final String? heroTag;
+  final Task? task;
 
-  const TaskDetailsView({super.key, this.taskId, this.heroTag});
+  const TaskDetailsView({super.key, this.taskId, this.heroTag, this.task});
 
   @override
   Widget builder(
@@ -120,7 +122,7 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
 
   @override
   TaskDetailsViewModel viewModelBuilder(BuildContext context) =>
-      TaskDetailsViewModel(taskId: taskId);
+      TaskDetailsViewModel(taskId: taskId, initialTask: task);
 
   @override
   void onViewModelReady(TaskDetailsViewModel viewModel) {
