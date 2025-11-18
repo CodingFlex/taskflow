@@ -143,32 +143,34 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? kcDarkGreyColor2 : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: color, size: 24),
-          verticalSpaceSmall,
-          Text(
-            value,
-            style: AppTextStyles.heading2(
-              context,
-            ).copyWith(fontSize: 24, fontWeight: FontWeight.w800),
-          ),
-          verticalSpaceTiny,
-          Text(
-            title,
-            style: AppTextStyles.caption(context).copyWith(
-              fontSize: 12,
-              color: isDark ? Colors.white70 : Colors.black54,
+    return RepaintBoundary(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? kcDarkGreyColor2 : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: color, size: 24),
+            verticalSpaceSmall,
+            Text(
+              value,
+              style: AppTextStyles.heading2(
+                context,
+              ).copyWith(fontSize: 24, fontWeight: FontWeight.w800),
             ),
-          ),
-        ],
+            verticalSpaceTiny,
+            Text(
+              title,
+              style: AppTextStyles.caption(context).copyWith(
+                fontSize: 12,
+                color: isDark ? Colors.white70 : Colors.black54,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -218,58 +220,62 @@ class _CategoryStatItem extends StatelessWidget {
     final percentage = total > 0 ? (count / total) * 100 : 0.0;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-      decoration: BoxDecoration(
-        color: isDark ? kcDarkGreyColor2 : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: category.color,
+    return RepaintBoundary(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+        decoration: BoxDecoration(
+          color: isDark ? kcDarkGreyColor2 : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: category.color,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                flex: 3,
-                child: Text(
-                  category.displayName,
-                  style: AppTextStyles.body(context),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
+                const SizedBox(width: 6),
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    category.displayName,
+                    style: AppTextStyles.body(context),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 6),
-              Flexible(
-                flex: 1,
-                child: Text(
-                  '$count',
-                  style: AppTextStyles.heading3(context),
-                  overflow: TextOverflow.visible,
-                  textAlign: TextAlign.end,
+                const SizedBox(width: 6),
+                Flexible(
+                  flex: 1,
+                  child: Text(
+                    '$count',
+                    style: AppTextStyles.heading3(context),
+                    overflow: TextOverflow.visible,
+                    textAlign: TextAlign.end,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          verticalSpaceSmall,
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: percentage / 100,
-              backgroundColor: isDark ? kcDarkGreyColor : Colors.grey.shade200,
-              valueColor: AlwaysStoppedAnimation<Color>(category.color),
-              minHeight: 8,
+              ],
             ),
-          ),
-        ],
+            verticalSpaceSmall,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: percentage / 100,
+                backgroundColor: isDark
+                    ? kcDarkGreyColor
+                    : Colors.grey.shade200,
+                valueColor: AlwaysStoppedAnimation<Color>(category.color),
+                minHeight: 8,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

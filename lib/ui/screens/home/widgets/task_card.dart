@@ -29,92 +29,99 @@ class TaskCard extends StatelessWidget {
 
     return Hero(
       tag: 'task_${task.id}',
-      child: Material(
-        color: Colors.transparent,
-        child: GestureDetector(
-          onTap: onTap,
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isDark ? kcDarkGreyColor2 : Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border(
-                left: BorderSide(color: task.category.color, width: 4),
-              ),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 28,
-                  height: 28,
-                  child: MSHCheckbox(
-                    size: 28,
-                    value: isCompleted,
-                    colorConfig: MSHColorConfig.fromCheckedUncheckedDisabled(
-                      checkedColor: Colors.green,
-                      uncheckedColor: isDark ? Colors.white38 : Colors.black26,
-                    ),
-                    style: MSHCheckboxStyle.fillScaleCheck,
-                    onChanged: (selected) {
-                      if (onToggleComplete != null) {
-                        onToggleComplete!();
-                      }
-                    },
-                  ),
+      child: RepaintBoundary(
+        child: Material(
+          color: Colors.transparent,
+          child: GestureDetector(
+            onTap: onTap,
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isDark ? kcDarkGreyColor2 : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border(
+                  left: BorderSide(color: task.category.color, width: 4),
                 ),
-                horizontalSpaceSmall,
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        task.title,
-                        style: AppTextStyles.heading3(context).copyWith(
-                          decoration: isCompleted
-                              ? TextDecoration.lineThrough
-                              : TextDecoration.none,
-                          color: isCompleted
-                              ? (isDark ? Colors.white54 : Colors.black54)
-                              : null,
-                        ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 28,
+                    height: 28,
+                    child: MSHCheckbox(
+                      size: 28,
+                      value: isCompleted,
+                      colorConfig: MSHColorConfig.fromCheckedUncheckedDisabled(
+                        checkedColor: Colors.green,
+                        uncheckedColor: isDark
+                            ? Colors.white38
+                            : Colors.black26,
                       ),
-                      if (task.description.isNotEmpty) ...[
-                        verticalSpaceTiny,
+                      style: MSHCheckboxStyle.fillScaleCheck,
+                      onChanged: (selected) {
+                        if (onToggleComplete != null) {
+                          onToggleComplete!();
+                        }
+                      },
+                    ),
+                  ),
+                  horizontalSpaceSmall,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Text(
-                          task.description,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.body(context).copyWith(
-                            color: isDark ? Colors.white70 : Colors.black87,
-                            fontSize: 13.sp,
+                          task.title,
+                          style: AppTextStyles.heading3(context).copyWith(
+                            decoration: isCompleted
+                                ? TextDecoration.lineThrough
+                                : TextDecoration.none,
+                            color: isCompleted
+                                ? (isDark ? Colors.white54 : Colors.black54)
+                                : null,
                           ),
                         ),
-                      ],
-                      verticalSpaceSmall,
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          _CategoryTag(category: task.category),
-                          _CreatedDateTag(createdAt: task.createdAt),
-                          if (isCompleted && task.completedAt != null)
-                            _CompletedTag(completedAt: task.completedAt!)
-                          else if (!isCompleted && task.dueDate != null)
-                            _DueDateTag(task: task, isOverdue: task.isOverdue),
+                        if (task.description.isNotEmpty) ...[
+                          verticalSpaceTiny,
+                          Text(
+                            task.description,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTextStyles.body(context).copyWith(
+                              color: isDark ? Colors.white70 : Colors.black87,
+                              fontSize: 13.sp,
+                            ),
+                          ),
                         ],
-                      ),
-                    ],
+                        verticalSpaceSmall,
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            _CategoryTag(category: task.category),
+                            _CreatedDateTag(createdAt: task.createdAt),
+                            if (isCompleted && task.completedAt != null)
+                              _CompletedTag(completedAt: task.completedAt!)
+                            else if (!isCompleted && task.dueDate != null)
+                              _DueDateTag(
+                                task: task,
+                                isOverdue: task.isOverdue,
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                if (task.isOverdue)
-                  const Icon(
-                    FontAwesomeIcons.circleExclamation,
-                    color: Colors.red,
-                    size: 20,
-                  ),
-              ],
+                  if (task.isOverdue)
+                    const Icon(
+                      FontAwesomeIcons.circleExclamation,
+                      color: Colors.red,
+                      size: 20,
+                    ),
+                ],
+              ),
             ),
           ),
         ),
