@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:stacked/stacked.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taskflow/viewmodels/splash_viewmodel.dart';
@@ -25,7 +24,10 @@ class SplashView extends StackedView<SplashViewModel> {
           children: [
             _AnimatedTaskflowText(),
             verticalSpaceMedium,
-            const SpinKitFadingFour(color: kcPrimaryColor, size: 50.0),
+            const CircularProgressIndicator(
+              color: kcPrimaryColor,
+              strokeWidth: 3,
+            ),
           ],
         ),
       ),

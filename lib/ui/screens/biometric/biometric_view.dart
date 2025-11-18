@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
@@ -144,7 +143,10 @@ class BiometricView extends StackedView<BiometricViewModel> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SpinKitFadingFour(color: kcPrimaryColor, size: 50.0),
+                    CircularProgressIndicator(
+                      color: kcPrimaryColor,
+                      strokeWidth: 3,
+                    ),
                   ],
                 ),
               ),

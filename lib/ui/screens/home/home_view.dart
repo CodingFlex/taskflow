@@ -1,6 +1,5 @@
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:taskflow/models/task.dart';
@@ -93,9 +92,9 @@ class HomeView extends StackedView<HomeViewModel> {
                         top: 12,
                         child: Opacity(
                           opacity: controller.value.clamp(0.0, 1.0),
-                          child: const SpinKitFadingFour(
+                          child: const CircularProgressIndicator(
                             color: kcPrimaryColor,
-                            size: 32,
+                            strokeWidth: 3,
                           ),
                         ),
                       ),
