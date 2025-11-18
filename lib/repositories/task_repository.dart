@@ -1,6 +1,8 @@
+import 'dart:math';
 import 'package:logger/logger.dart';
 import 'package:taskflow/app/app.locator.dart';
 import 'package:taskflow/models/task.dart';
+import 'package:taskflow/models/paginated_result.dart';
 import 'package:taskflow/services/task_service.dart';
 import 'package:taskflow/services/storage_service.dart';
 import 'package:taskflow/services/api_exceptions.dart';
@@ -12,9 +14,14 @@ class TaskRepository {
   final StorageService _storageService;
   final Logger _logger = Logger();
 
+  /// Toggle pagination: false = Hive (all at once), true = API (client-side pagination)
+  static const bool _usePagination = false;
+
   TaskRepository({TaskService? taskService, StorageService? storageService})
     : _taskService = taskService ?? locator<TaskService>(),
       _storageService = storageService ?? locator<StorageService>();
+
+  bool get shouldUsePagination => _usePagination;
 
   /// Fetches all tasks using offline-first approach
   /// Returns local cache immediately, then syncs with API in background
@@ -23,27 +30,22 @@ class TaskRepository {
       final localTasks = await _storageService.getTasks();
 
       if (!forceRefresh && localTasks.isNotEmpty) {
-        _logger.i('📦 Loaded ${localTasks.length} tasks from local storage');
+        _logger.i('Loaded ${localTasks.length} tasks from local storage');
         _fetchAndCacheTasksInBackground();
         return localTasks;
       }
 
-      _logger.i('🔄 Fetching tasks from API (local cache only) ...');
+      _logger.i('Fetching tasks from API (local cache only)');
       final remote = await _taskService.fetchTasks();
-      _logger.i(
-        '✅ API responded with ${remote.length} tasks (UI remains offline cache)',
-      );
-
-      // Intentionally not saving API response to maintain offline-first demo
-      // await _storageService.saveTasks(remote);
+      _logger.i('API responded with ${remote.length} tasks');
 
       return await _storageService.getTasks();
     } on ApiException catch (e) {
-      _logger.w('⚠️ API Error (${e.statusCode}): ${e.message}');
+      _logger.w('API Error (${e.statusCode}): ${e.message}');
 
       final localTasks = await _storageService.getTasks();
       if (localTasks.isNotEmpty) {
-        _logger.i('📦 Falling back to ${localTasks.length} cached tasks');
+        _logger.i('Falling back to ${localTasks.length} cached tasks');
         return localTasks;
       }
 
@@ -56,17 +58,80 @@ class TaskRepository {
       );
     } catch (e, stackTrace) {
       _logger.e(
-        '❌ Unexpected error fetching tasks',
+        'Unexpected error fetching tasks',
         error: e,
         stackTrace: stackTrace,
       );
 
       final localTasks = await _storageService.getTasks();
       if (localTasks.isNotEmpty) {
-        _logger.i('📦 Falling back to ${localTasks.length} cached tasks ');
+        _logger.i('Falling back to ${localTasks.length} cached tasks');
         return localTasks;
       }
 
+      throw ApiException(
+        'Failed to load tasks: ${e.toString()}',
+        type: ErrorType.unknown,
+        originalError: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  Future<PaginatedTaskResult> getTasksPaginated({
+    required int page,
+    required int pageSize,
+  }) async {
+    if (!_usePagination) {
+      throw StateError(
+        'Pagination disabled. Enable _usePagination or use getTasks()',
+      );
+    }
+
+    try {
+      // Fetch from API to simulate network pagination
+      _logger.i('Fetching from API for pagination test');
+      final allTasks = await _taskService.fetchTasks();
+      _logger.i(
+        'Client-side pagination: page $page, size $pageSize (${allTasks.length} total from API)',
+      );
+
+      final startIndex = page * pageSize;
+      final endIndex = min(startIndex + pageSize, allTasks.length);
+
+      if (startIndex >= allTasks.length && allTasks.isNotEmpty) {
+        return PaginatedTaskResult(
+          tasks: [],
+          page: page,
+          pageSize: pageSize,
+          totalTasks: allTasks.length,
+          hasMore: false,
+        );
+      }
+
+      final pagedTasks = startIndex < allTasks.length
+          ? allTasks.sublist(startIndex, endIndex)
+          : <Task>[];
+
+      final hasMore = endIndex < allTasks.length;
+      _logger.i(
+        'Page $page: ${pagedTasks.length} tasks (${startIndex + 1}-${startIndex + pagedTasks.length} of ${allTasks.length})',
+      );
+
+      // Simulate network delay for realistic pagination feel
+      if (page > 0) {
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
+
+      return PaginatedTaskResult(
+        tasks: pagedTasks,
+        page: page,
+        pageSize: pageSize,
+        totalTasks: allTasks.length,
+        hasMore: hasMore,
+      );
+    } catch (e, stackTrace) {
+      _logger.e('Error in paginated fetch', error: e, stackTrace: stackTrace);
       throw ApiException(
         'Failed to load tasks: ${e.toString()}',
         type: ErrorType.unknown,
@@ -81,23 +146,20 @@ class TaskRepository {
     try {
       final localTask = await _storageService.getTaskById(id);
       if (localTask != null) {
-        _logger.i('📦 Task $id found in local storage');
+        _logger.i('Task $id found in local storage');
         return localTask;
       }
 
-      _logger.i('🔄 Task $id not in local storage, fetching from API...');
+      _logger.i('Task $id not in local storage, fetching from API');
       await _taskService.fetchTask(id);
-      _logger.i('✅ Task $id fetched from API (local cache unchanged)');
-
-      // Intentionally not saving to demonstrate offline-first architecture
-      // await _storageService.saveTask(task);
+      _logger.i('Task $id fetched from API');
 
       return localTask;
     } on ApiException catch (e) {
-      _logger.w('⚠️ Failed to fetch task $id from API: ${e.message}');
+      _logger.w('Failed to fetch task $id from API: ${e.message}');
       return null;
     } catch (e, stackTrace) {
-      _logger.e('❌ Error fetching task $id', error: e, stackTrace: stackTrace);
+      _logger.e('Error fetching task $id', error: e, stackTrace: stackTrace);
       return null;
     }
   }
@@ -111,25 +173,21 @@ class TaskRepository {
           : task;
 
       await _storageService.saveTask(assignedTask);
-      _logger.i('✅ Task saved locally: ${assignedTask.title}');
+      _logger.i('Task saved locally: ${assignedTask.title}');
 
       try {
         final apiTask = await _taskService.createTask(assignedTask);
-        _logger.d('☁️ API payload received for ${apiTask.title}');
-
-        // Intentionally not merging API response - local data is source of truth
-        // await _storageService.updateTask(apiTask);
-
-        _logger.i('☁️ Task creation acknowledged by API');
+        _logger.d('API payload received for ${apiTask.title}');
+        _logger.i('Task creation acknowledged by API');
       } on ApiException catch (e) {
-        _logger.w('⚠️ API sync failed for task creation: ${e.message}');
-        _logger.i('✓ Task still available locally');
+        _logger.w('API sync failed for task creation: ${e.message}');
+        _logger.i('Task still available locally');
       }
 
       return assignedTask;
     } catch (e, stackTrace) {
       _logger.e(
-        '❌ Critical error: Failed to save task locally',
+        'Critical error: Failed to save task locally',
         error: e,
         stackTrace: stackTrace,
       );
@@ -146,25 +204,21 @@ class TaskRepository {
   Future<Task> updateTask(Task task) async {
     try {
       await _storageService.updateTask(task);
-      _logger.i('✅ Task updated locally: ${task.title}');
+      _logger.i('Task updated locally: ${task.title}');
 
       try {
         final apiTask = await _taskService.updateTask(task);
-        _logger.d('☁️ API payload received for ${apiTask.title}');
-
-        // Intentionally not merging API response - local data is source of truth
-        // await _storageService.updateTask(apiTask);
-
-        _logger.i('☁️ Task update acknowledged by API  ');
+        _logger.d('API payload received for ${apiTask.title}');
+        _logger.i('Task update acknowledged by API');
       } on ApiException catch (e) {
-        _logger.w('⚠️ API sync failed for task update: ${e.message}');
-        _logger.i('✓ Task still updated locally');
+        _logger.w('API sync failed for task update: ${e.message}');
+        _logger.i('Task still updated locally');
       }
 
       return task;
     } catch (e, stackTrace) {
       _logger.e(
-        '❌ Critical error: Failed to update task locally',
+        'Critical error: Failed to update task locally',
         error: e,
         stackTrace: stackTrace,
       );
@@ -181,20 +235,20 @@ class TaskRepository {
   Future<bool> deleteTask(int taskId) async {
     try {
       await _storageService.deleteTask(taskId);
-      _logger.i('✅ Task deleted locally: $taskId');
+      _logger.i('Task deleted locally: $taskId');
 
       try {
         await _taskService.deleteTask(taskId);
-        _logger.i('☁️ Task deletion acknowledged by API');
+        _logger.i('Task deletion acknowledged by API');
       } on ApiException catch (e) {
-        _logger.w('⚠️ API sync failed for task deletion: ${e.message}');
-        _logger.i('✓ Task still deleted locally');
+        _logger.w('API sync failed for task deletion: ${e.message}');
+        _logger.i('Task still deleted locally');
       }
 
       return true;
     } catch (e, stackTrace) {
       _logger.e(
-        '❌ Critical error: Failed to delete task locally',
+        'Critical error: Failed to delete task locally',
         error: e,
         stackTrace: stackTrace,
       );
@@ -206,13 +260,9 @@ class TaskRepository {
   Future<void> clearLocalData() async {
     try {
       await _storageService.clearAllTasks();
-      _logger.i('🧹 All local tasks cleared');
+      _logger.i('All local tasks cleared');
     } catch (e, stackTrace) {
-      _logger.e(
-        '❌ Error clearing local data',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      _logger.e('Error clearing local data', error: e, stackTrace: stackTrace);
       throw ApiException(
         'Failed to clear local data: ${e.toString()}',
         type: ErrorType.unknown,
@@ -225,17 +275,12 @@ class TaskRepository {
   /// Manual sync with server (triggered by pull-to-refresh)
   Future<void> syncWithServer() async {
     try {
-      _logger.i('🔄 Starting manual sync with server...');
+      _logger.i('Starting manual sync with server');
 
       final serverTasks = await _taskService.fetchTasks();
-      _logger.i(
-        '✅ Sync simulated: ${serverTasks.length} tasks returned by API',
-      );
-
-      // Intentionally not syncing - demonstrates offline-first where local is authoritative
-      // await _storageService.saveTasks(serverTasks);
+      _logger.i('Sync simulated: ${serverTasks.length} tasks returned by API');
     } on ApiException catch (e) {
-      _logger.e('❌ Sync failed: ${e.message}');
+      _logger.e('Sync failed: ${e.message}');
       throw ApiException(
         'Failed to sync with server. ${e.userMessage}',
         statusCode: e.statusCode,
@@ -243,7 +288,7 @@ class TaskRepository {
         originalError: e,
       );
     } catch (e, stackTrace) {
-      _logger.e('❌ Unexpected sync error', error: e, stackTrace: stackTrace);
+      _logger.e('Unexpected sync error', error: e, stackTrace: stackTrace);
       throw ApiException(
         'Sync failed: ${e.toString()}',
         type: ErrorType.unknown,
@@ -253,20 +298,14 @@ class TaskRepository {
     }
   }
 
-  /// Fetches tasks from API in background
   void _fetchAndCacheTasksInBackground() {
     _taskService
         .fetchTasks()
         .then((tasks) {
-          _logger.i(
-            '🔄 Background sync completed: ${tasks.length} API tasks (cache unchanged)',
-          );
-
-          // Intentionally not caching - maintains user's local changes as primary
-          // await _storageService.saveTasks(tasks);
+          _logger.i('Background sync completed: ${tasks.length} API tasks');
         })
         .catchError((error) {
-          _logger.d('⚠️ Background sync failed (non-critical): $error');
+          _logger.d('Background sync failed (non-critical): $error');
         });
   }
 
@@ -281,7 +320,7 @@ class TaskRepository {
       };
     } catch (e, stackTrace) {
       _logger.e(
-        '❌ Error getting task statistics',
+        'Error getting task statistics',
         error: e,
         stackTrace: stackTrace,
       );

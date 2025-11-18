@@ -10,6 +10,7 @@ import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:taskflow/ui/common/search_field.dart';
 import 'package:taskflow/ui/screens/home/widgets/task_card.dart';
 import 'package:taskflow/ui/screens/home/widgets/filter_chip_widget.dart';
+import 'package:taskflow/ui/screens/home/widgets/paginated_task_list.dart';
 import 'package:taskflow/viewmodels/home_viewmodel.dart'
     show HomeViewModel, TaskFilter;
 import 'package:stacked/stacked.dart';
@@ -240,6 +241,12 @@ class _TasksSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Use paginated list if pagination is enabled
+    if (viewModel.usePagination) {
+      return PaginatedTaskList(viewModel: viewModel);
+    }
+
+    // Otherwise use regular list
     final filteredTasks = viewModel.filteredTasks;
     final overdueTasks = filteredTasks.where((t) => t.isOverdue).toList();
     final otherTasks = filteredTasks.where((t) => !t.isOverdue).toList();

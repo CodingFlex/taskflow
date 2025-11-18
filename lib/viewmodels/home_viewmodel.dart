@@ -5,6 +5,7 @@ import 'package:taskflow/app/app.bottomsheets.dart';
 import 'package:taskflow/app/app.locator.dart';
 import 'package:taskflow/app/app.router.dart';
 import 'package:taskflow/models/task.dart';
+import 'package:taskflow/models/paginated_result.dart';
 import 'package:taskflow/repositories/task_repository.dart';
 import 'package:taskflow/services/api_exceptions.dart';
 import 'package:taskflow/ui/common/app_strings.dart';
@@ -45,6 +46,9 @@ class HomeViewModel extends BaseViewModel {
   TaskCategory? get selectedCategory => _selectedCategory;
   String? get errorMessage => _errorMessage;
   bool get isOnline => _connectionStatus == InternetStatus.connected;
+  
+  /// Check if pagination is enabled (for API mode)
+  bool get usePagination => _taskRepository.shouldUsePagination;
 
   List<Task> get filteredTasks {
     var tasks = List<Task>.from(_tasks);
@@ -257,6 +261,78 @@ class HomeViewModel extends BaseViewModel {
 
   Future<void> refreshTasks() async {
     await loadTasks(forceRefresh: true);
+  }
+
+  /// Fetches tasks with pagination (only when usePagination is true)
+  /// Applies same filtering/sorting as filteredTasks
+  Future<PaginatedTaskResult> getTasksPaginated({
+    required int page,
+    required int pageSize,
+  }) async {
+    try {
+      // Get paginated result from repository
+      final result = await _taskRepository.getTasksPaginated(
+        page: page,
+        pageSize: pageSize,
+      );
+
+      // Apply filtering and sorting to paginated tasks
+      var tasks = result.tasks;
+
+      // Search filter
+      if (searchController.text.isNotEmpty) {
+        final query = searchController.text.toLowerCase();
+        tasks = tasks.where((task) {
+          return task.title.toLowerCase().contains(query) ||
+              task.description.toLowerCase().contains(query);
+        }).toList();
+      }
+
+      // Status filter
+      switch (_selectedFilter) {
+        case TaskFilter.completed:
+          tasks = tasks.where((t) => t.status == TaskStatus.completed).toList();
+          break;
+        case TaskFilter.pending:
+          tasks = tasks.where((t) => t.status == TaskStatus.pending).toList();
+          break;
+        case TaskFilter.all:
+          break;
+      }
+
+      // Category filter
+      if (_selectedCategory != null) {
+        tasks = tasks.where((t) => t.category == _selectedCategory).toList();
+      }
+
+      // Sorting
+      switch (_sortOption) {
+        case SortOption.dateCreated:
+          tasks.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+          break;
+        case SortOption.title:
+          tasks.sort((a, b) => a.title.compareTo(b.title));
+          break;
+        case SortOption.dueDate:
+          tasks.sort((a, b) {
+            if (a.dueDate == null && b.dueDate == null) return 0;
+            if (a.dueDate == null) return 1;
+            if (b.dueDate == null) return -1;
+            return a.dueDate!.compareTo(b.dueDate!);
+          });
+          break;
+      }
+
+      return PaginatedTaskResult(
+        tasks: tasks,
+        page: result.page,
+        pageSize: result.pageSize,
+        totalTasks: result.totalTasks,
+        hasMore: result.hasMore,
+      );
+    } catch (e) {
+      rethrow;
+    }
   }
 
   bool _canShowToast() {

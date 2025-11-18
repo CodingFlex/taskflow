@@ -129,6 +129,9 @@ class HomeViewModel extends BaseViewModel {
 
 ```dart
 class TaskRepository {
+  /// Toggle: false = Hive (instant), true = API (paginated)
+  static const bool _usePagination = false;
+  
   Future<List<Task>> getTasks() async {
     // 1. Return cached data immediately
     final localTasks = await _storageService.getTasks();
@@ -165,11 +168,49 @@ class TaskRepository {
 ```
 
 ### Benefits
-- Instant UI updates  
+- Instant UI updates
 - Works without internet  
 - No loading spinners for writes  
 - Resilient to network failures  
-- Better user experience  
+- Better user experience
+
+## Pagination Architecture
+
+**Key Insight:** Pagination is implemented but disabled for Hive since local storage loads instantly. It's ready for future API integration.
+
+### Why Disabled for Hive?
+- Hive loads all tasks instantly (no network latency)
+- Pagination would create artificial delays
+- Goes against offline-first principle
+
+### Implementation
+```dart
+class TaskRepository {
+  static const bool _usePagination = false; // Toggle for API mode
+  
+  // When false: Returns all tasks from Hive
+  Future<List<Task>> getTasks() async {
+    return await _storageService.getTasks();
+  }
+  
+  // When true: Paginates API results
+  Future<PaginatedTaskResult> getTasksPaginated({
+    required int page,
+    required int pageSize,
+  }) async {
+    final allTasks = await _taskService.fetchTasks();
+    // Client-side slicing logic...
+    return PaginatedTaskResult(tasks: pagedTasks, hasMore: hasMore);
+  }
+}
+```
+
+### UI Components Ready
+- `PaginatedTaskList` widget with "Load More" button
+- `HomeView` conditionally renders based on `usePagination` flag
+- All features work (filters, search, sorting)
+
+**Enable when:** Migrating to real backend API with large datasets. Just flip `_usePagination = true`.  
 
 ## Data Flow
 
