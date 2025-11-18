@@ -71,9 +71,7 @@ class StorageService {
     await _ensureInitialized();
     try {
       final tasks = _taskBox!.values.toList();
-
       tasks.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      _logger.i('Retrieved ${tasks.length} tasks from storage');
       return tasks;
     } catch (e) {
       _logger.i('Error getting tasks: $e');

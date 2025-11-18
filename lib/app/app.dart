@@ -1,3 +1,4 @@
+import 'package:taskflow/commands/command_manager.dart';
 import 'package:taskflow/repositories/task_repository.dart';
 import 'package:taskflow/services/biometrics_service.dart';
 import 'package:taskflow/services/storage_service.dart';
@@ -33,6 +34,7 @@ import 'package:stacked_services/stacked_services.dart';
     LazySingleton(classType: TaskService),
     LazySingleton(classType: TaskRepository),
     LazySingleton(classType: ToastService),
+    LazySingleton(classType: CommandManager),
     // @stacked-service
   ],
   bottomsheets: [

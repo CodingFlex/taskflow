@@ -5,6 +5,8 @@ import 'package:stacked/stacked.dart';
 import 'package:taskflow/app/app.bottomsheets.dart';
 import 'package:taskflow/app/app.locator.dart';
 import 'package:taskflow/app/app.router.dart';
+import 'package:taskflow/commands/command_manager.dart';
+import 'package:taskflow/commands/update_task_command.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/models/paginated_result.dart';
 import 'package:taskflow/repositories/task_repository.dart';
@@ -26,6 +28,7 @@ class HomeViewModel extends BaseViewModel {
   final _bottomSheetService = locator<BottomSheetService>();
   final _taskRepository = locator<TaskRepository>();
   final _toastService = locator<ToastService>();
+  final _commandManager = locator<CommandManager>();
 
   final TextEditingController searchController = TextEditingController();
   TaskFilter _selectedFilter = TaskFilter.all;
@@ -167,7 +170,8 @@ class HomeViewModel extends BaseViewModel {
             builder: (context) => TaskDetailsView(
               taskId: task.id,
               heroTag: 'task_${task.id}',
-              task: task, // Pass the complete task object - no loading needed!
+              task: task,
+              onTaskChanged: () => loadTasks(forceRefresh: true),
             ),
             settings: const RouteSettings(name: Routes.taskDetailsView),
           ),
@@ -182,8 +186,10 @@ class HomeViewModel extends BaseViewModel {
     final shouldRefresh =
         await Navigator.of(StackedService.navigatorKey!.currentContext!).push(
           MaterialPageRoute(
-            builder: (context) =>
-                const TaskDetailsView(heroTag: 'add_task_fab'),
+            builder: (context) => TaskDetailsView(
+              heroTag: 'add_task_fab',
+              onTaskChanged: () => loadTasks(forceRefresh: true),
+            ),
             settings: const RouteSettings(name: Routes.taskDetailsView),
           ),
         );
@@ -217,11 +223,23 @@ class HomeViewModel extends BaseViewModel {
     _updateTaskInList(updatedTask);
 
     try {
-      await _taskRepository.updateTask(updatedTask);
+      final command = UpdateTaskCommand(
+        oldTask: task,
+        newTask: updatedTask,
+        repository: _taskRepository,
+      );
+
+      await _commandManager.executeCommand(command);
+
       _toastService.showSuccess(
         message: updatedTask.status == TaskStatus.completed
             ? ksTaskMarkedCompleted
             : ksTaskMarkedPending,
+        duration: const Duration(seconds: 4),
+        onUndoPressed: () async {
+          await _commandManager.undo();
+          await loadTasks(forceRefresh: true);
+        },
       );
     } on ApiException catch (e) {
       _updateTaskInList(task);

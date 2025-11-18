@@ -35,10 +35,7 @@ class TaskRepository {
         return localTasks;
       }
 
-      _logger.i('Fetching tasks from API (local cache only)');
-      final remote = await _taskService.fetchTasks();
-      _logger.i('API responded with ${remote.length} tasks');
-
+      await _taskService.fetchTasks();
       return await _storageService.getTasks();
     } on ApiException catch (e) {
       _logger.w('API Error (${e.statusCode}): ${e.message}');

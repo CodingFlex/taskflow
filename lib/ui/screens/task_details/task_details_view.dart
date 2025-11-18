@@ -20,8 +20,15 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
   final int? taskId;
   final String? heroTag;
   final Task? task;
+  final VoidCallback? onTaskChanged;
 
-  const TaskDetailsView({super.key, this.taskId, this.heroTag, this.task});
+  const TaskDetailsView({
+    super.key,
+    this.taskId,
+    this.heroTag,
+    this.task,
+    this.onTaskChanged,
+  });
 
   @override
   Widget builder(
@@ -136,7 +143,11 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
 
   @override
   TaskDetailsViewModel viewModelBuilder(BuildContext context) =>
-      TaskDetailsViewModel(taskId: taskId, initialTask: task);
+      TaskDetailsViewModel(
+        taskId: taskId,
+        initialTask: task,
+        onTaskChanged: onTaskChanged,
+      );
 
   @override
   void onViewModelReady(TaskDetailsViewModel viewModel) {

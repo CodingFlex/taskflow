@@ -2,21 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:toastification/toastification.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-/// Service for showing toast notifications using the toastification package.
-///
-/// This service provides methods to show success and error toasts
-/// using ToastificationStyle.flat style. It can be used from viewmodels
-/// without requiring a BuildContext.
+/// Service for showing toast notifications
+/// Success toasts support optional undo functionality
 class ToastService {
   /// Show a success toast notification.
   ///
   /// [message] - The message to display in the toast
   /// [title] - Optional title for the toast (defaults to "Success")
   /// [duration] - How long the toast should be displayed (defaults to 3 seconds)
+  /// [onUndoPressed] - Optional callback for "Undo" button. If provided, shows undo button
   void showSuccess({
     required String message,
     String? title,
     Duration duration = const Duration(seconds: 3),
+    VoidCallback? onUndoPressed,
   }) {
     final context = _getContext();
     if (context == null) return;
@@ -24,11 +23,39 @@ class ToastService {
     toastification.show(
       context: context,
       title: Text(title ?? 'Success'),
-      description: Text(message),
-      style: ToastificationStyle.flatColored,
+      description: onUndoPressed != null
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(child: Text(message)),
+                const SizedBox(width: 8),
+                TextButton(
+                  onPressed: () {
+                    toastification.dismissAll();
+                    onUndoPressed();
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: const Text(
+                    'UNDO',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  ),
+                ),
+              ],
+            )
+          : Text(message),
+      style: ToastificationStyle.flat,
       type: ToastificationType.success,
       autoCloseDuration: duration,
       alignment: Alignment.topRight,
+      showProgressBar: onUndoPressed != null,
     );
   }
 

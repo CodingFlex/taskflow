@@ -1,6 +1,6 @@
 import 'package:logger/logger.dart';
-import 'package:taskflow/helpers/helpers/api_client.dart';
-import 'package:taskflow/helpers/helpers/url_provider.dart';
+import 'package:taskflow/helpers/api_client.dart';
+import 'package:taskflow/helpers/url_provider.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/services/api_exceptions.dart';
 

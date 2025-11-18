@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:taskflow/services/api_exceptions.dart';
-import 'package:taskflow/helpers/helpers/flavor_config.dart';
+import 'package:taskflow/helpers/flavor_config.dart';
 
 class ApiClient {
   final Dio _dio;

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:taskflow/app/app.locator.dart';
+import 'package:taskflow/commands/command_manager.dart';
+import 'package:taskflow/commands/delete_task_command.dart';
+import 'package:taskflow/commands/update_task_command.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/repositories/task_repository.dart';
 import 'package:taskflow/services/api_exceptions.dart';
@@ -12,12 +15,14 @@ import 'package:stacked_services/stacked_services.dart';
 class TaskDetailsViewModel extends BaseViewModel {
   final int? taskId;
   final Task? initialTask;
+  final VoidCallback? onTaskChanged;
   final _navigationService = locator<NavigationService>();
   final _taskRepository = locator<TaskRepository>();
   final _toastService = locator<ToastService>();
   final _dialogService = locator<DialogService>();
+  final _commandManager = locator<CommandManager>();
 
-  TaskDetailsViewModel({this.taskId, this.initialTask});
+  TaskDetailsViewModel({this.taskId, this.initialTask, this.onTaskChanged});
 
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
@@ -207,8 +212,23 @@ class TaskDetailsViewModel extends BaseViewModel {
             : _task!.completedAt,
       );
 
-      await _taskRepository.updateTask(updatedTask);
-      _toastService.showSuccess(message: ksTaskUpdatedSuccess);
+      final command = UpdateTaskCommand(
+        oldTask: _task!,
+        newTask: updatedTask,
+        repository: _taskRepository,
+      );
+
+      await _commandManager.executeCommand(command);
+
+      _toastService.showSuccess(
+        message: ksTaskUpdatedSuccess,
+        duration: const Duration(seconds: 5),
+        onUndoPressed: () async {
+          await _commandManager.undo();
+          onTaskChanged?.call();
+        },
+      );
+
       _navigationService.back(result: true);
     } on ApiException catch (e) {
       _toastService.showError(message: e.userMessage);
@@ -232,19 +252,28 @@ class TaskDetailsViewModel extends BaseViewModel {
   }
 
   Future<void> _deleteTask() async {
-    if (taskId == null) return;
+    if (taskId == null || _task == null) return;
 
     setBusyForObject('delete', true);
 
     try {
-      final success = await _taskRepository.deleteTask(taskId!);
+      final command = DeleteTaskCommand(
+        deletedTask: _task!,
+        repository: _taskRepository,
+      );
 
-      if (success) {
-        _toastService.showSuccess(message: ksTaskDeletedSuccess);
-        _navigationService.back(result: true);
-      } else {
-        _toastService.showError(message: ksFailedToDeleteTask);
-      }
+      await _commandManager.executeCommand(command);
+
+      _navigationService.back(result: true);
+
+      _toastService.showSuccess(
+        message: ksTaskDeletedSuccess,
+        duration: const Duration(seconds: 5),
+        onUndoPressed: () async {
+          await _commandManager.undo();
+          onTaskChanged?.call();
+        },
+      );
     } on ApiException catch (e) {
       _toastService.showError(message: e.userMessage);
     } finally {

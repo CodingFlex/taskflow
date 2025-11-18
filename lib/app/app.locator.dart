@@ -12,6 +12,7 @@ import 'package:stacked_services/src/dialog/dialog_service.dart';
 import 'package:stacked_services/src/navigation/navigation_service.dart';
 import 'package:stacked_shared/stacked_shared.dart';
 
+import '../commands/command_manager.dart';
 import '../repositories/task_repository.dart';
 import '../services/biometrics_service.dart';
 import '../services/storage_service.dart';
@@ -39,4 +40,5 @@ Future<void> setupLocator({
   locator.registerLazySingleton(() => TaskService());
   locator.registerLazySingleton(() => TaskRepository());
   locator.registerLazySingleton(() => ToastService());
+  locator.registerLazySingleton(() => CommandManager());
 }

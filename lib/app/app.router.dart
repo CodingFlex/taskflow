@@ -9,7 +9,8 @@
 import 'package:flutter/material.dart' as _i7;
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i8;
+import 'package:stacked_services/stacked_services.dart' as _i9;
+import 'package:taskflow/models/task.dart' as _i8;
 import 'package:taskflow/ui/screens/biometric/biometric_view.dart' as _i4;
 import 'package:taskflow/ui/screens/home/home_view.dart' as _i2;
 import 'package:taskflow/ui/screens/splash/splash_view.dart' as _i3;
@@ -82,6 +83,7 @@ class StackedRouter extends _i1.RouterBase {
           key: args.key,
           taskId: args.taskId,
           heroTag: args.heroTag,
+          task: args.task,
         ),
         settings: data,
       );
@@ -91,8 +93,11 @@ class StackedRouter extends _i1.RouterBase {
         orElse: () => const StatisticsViewArguments(),
       );
       return _i7.MaterialPageRoute<dynamic>(
-        builder: (context) =>
-            _i6.StatisticsView(key: args.key, heroTag: args.heroTag),
+        builder: (context) => _i6.StatisticsView(
+          key: args.key,
+          heroTag: args.heroTag,
+          tasks: args.tasks,
+        ),
         settings: data,
       );
     },
@@ -172,7 +177,12 @@ class BiometricViewArguments {
 }
 
 class TaskDetailsViewArguments {
-  const TaskDetailsViewArguments({this.key, this.taskId, this.heroTag});
+  const TaskDetailsViewArguments({
+    this.key,
+    this.taskId,
+    this.heroTag,
+    this.task,
+  });
 
   final _i7.Key? key;
 
@@ -180,9 +190,11 @@ class TaskDetailsViewArguments {
 
   final String? heroTag;
 
+  final _i8.Task? task;
+
   @override
   String toString() {
-    return '{"key": "$key", "taskId": "$taskId", "heroTag": "$heroTag"}';
+    return '{"key": "$key", "taskId": "$taskId", "heroTag": "$heroTag", "task": "$task"}';
   }
 
   @override
@@ -190,40 +202,43 @@ class TaskDetailsViewArguments {
     if (identical(this, other)) return true;
     return other.key == key &&
         other.taskId == taskId &&
-        other.heroTag == heroTag;
+        other.heroTag == heroTag &&
+        other.task == task;
   }
 
   @override
   int get hashCode {
-    return key.hashCode ^ taskId.hashCode ^ heroTag.hashCode;
+    return key.hashCode ^ taskId.hashCode ^ heroTag.hashCode ^ task.hashCode;
   }
 }
 
 class StatisticsViewArguments {
-  const StatisticsViewArguments({this.key, this.heroTag});
+  const StatisticsViewArguments({this.key, this.heroTag, this.tasks});
 
   final _i7.Key? key;
 
   final String? heroTag;
 
+  final List<_i8.Task>? tasks;
+
   @override
   String toString() {
-    return '{"key": "$key", "heroTag": "$heroTag"}';
+    return '{"key": "$key", "heroTag": "$heroTag", "tasks": "$tasks"}';
   }
 
   @override
   bool operator ==(covariant StatisticsViewArguments other) {
     if (identical(this, other)) return true;
-    return other.key == key && other.heroTag == heroTag;
+    return other.key == key && other.heroTag == heroTag && other.tasks == tasks;
   }
 
   @override
   int get hashCode {
-    return key.hashCode ^ heroTag.hashCode;
+    return key.hashCode ^ heroTag.hashCode ^ tasks.hashCode;
   }
 }
 
-extension NavigatorStateExtension on _i8.NavigationService {
+extension NavigatorStateExtension on _i9.NavigationService {
   Future<dynamic> navigateToHomeView({
     _i7.Key? key,
     int? routerId,
@@ -282,6 +297,7 @@ extension NavigatorStateExtension on _i8.NavigationService {
     _i7.Key? key,
     int? taskId,
     String? heroTag,
+    _i8.Task? task,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -294,6 +310,7 @@ extension NavigatorStateExtension on _i8.NavigationService {
         key: key,
         taskId: taskId,
         heroTag: heroTag,
+        task: task,
       ),
       id: routerId,
       preventDuplicates: preventDuplicates,
@@ -305,6 +322,7 @@ extension NavigatorStateExtension on _i8.NavigationService {
   Future<dynamic> navigateToStatisticsView({
     _i7.Key? key,
     String? heroTag,
+    List<_i8.Task>? tasks,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -313,7 +331,11 @@ extension NavigatorStateExtension on _i8.NavigationService {
   }) async {
     return navigateTo<dynamic>(
       Routes.statisticsView,
-      arguments: StatisticsViewArguments(key: key, heroTag: heroTag),
+      arguments: StatisticsViewArguments(
+        key: key,
+        heroTag: heroTag,
+        tasks: tasks,
+      ),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
@@ -379,6 +401,7 @@ extension NavigatorStateExtension on _i8.NavigationService {
     _i7.Key? key,
     int? taskId,
     String? heroTag,
+    _i8.Task? task,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -391,6 +414,7 @@ extension NavigatorStateExtension on _i8.NavigationService {
         key: key,
         taskId: taskId,
         heroTag: heroTag,
+        task: task,
       ),
       id: routerId,
       preventDuplicates: preventDuplicates,
@@ -402,6 +426,7 @@ extension NavigatorStateExtension on _i8.NavigationService {
   Future<dynamic> replaceWithStatisticsView({
     _i7.Key? key,
     String? heroTag,
+    List<_i8.Task>? tasks,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -410,7 +435,11 @@ extension NavigatorStateExtension on _i8.NavigationService {
   }) async {
     return replaceWith<dynamic>(
       Routes.statisticsView,
-      arguments: StatisticsViewArguments(key: key, heroTag: heroTag),
+      arguments: StatisticsViewArguments(
+        key: key,
+        heroTag: heroTag,
+        tasks: tasks,
+      ),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
