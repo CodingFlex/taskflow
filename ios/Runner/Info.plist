@@ -45,5 +45,7 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSFaceIDUsageDescription</key>
+	<string>TaskFlow uses biometric authentication to securely access your tasks</string>
 </dict>
 </plist>

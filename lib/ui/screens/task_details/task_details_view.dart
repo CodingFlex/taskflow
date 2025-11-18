@@ -90,7 +90,7 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
                     ],
                     verticalSpaceMedium,
                     _DescriptionSection(viewModel: viewModel),
-                    verticalSpaceLarge,
+                    verticalSpaceMedium,
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20),
                       child: Center(

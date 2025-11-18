@@ -13,6 +13,7 @@ import 'package:stacked_services/src/navigation/navigation_service.dart';
 import 'package:stacked_shared/stacked_shared.dart';
 
 import '../repositories/task_repository.dart';
+import '../services/biometrics_service.dart';
 import '../services/storage_service.dart';
 import '../services/task_service.dart';
 import '../ui/common/toast.dart';
@@ -33,6 +34,7 @@ Future<void> setupLocator({
   locator.registerLazySingleton(() => BottomSheetService());
   locator.registerLazySingleton(() => DialogService());
   locator.registerLazySingleton(() => NavigationService());
+  locator.registerLazySingleton(() => BiometricsService());
   locator.registerLazySingleton(() => StorageService());
   locator.registerLazySingleton(() => TaskService());
   locator.registerLazySingleton(() => TaskRepository());
