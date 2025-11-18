@@ -181,7 +181,8 @@ class TaskRepository {
         _logger.i('Task creation acknowledged by API');
       } on ApiException catch (e) {
         _logger.w('API sync failed for task creation: ${e.message}');
-        _logger.i('Task still available locally');
+        _logger.w('Marking task ${assignedTask.id} for POST sync');
+        await _storageService.addPendingCreate(assignedTask.id);
       }
 
       return assignedTask;
@@ -212,7 +213,8 @@ class TaskRepository {
         _logger.i('Task update acknowledged by API');
       } on ApiException catch (e) {
         _logger.w('API sync failed for task update: ${e.message}');
-        _logger.i('Task still updated locally');
+        _logger.w('Marking task ${task.id} for PUT sync');
+        await _storageService.addPendingUpdate(task.id);
       }
 
       return task;
@@ -242,13 +244,129 @@ class TaskRepository {
         _logger.i('Task deletion acknowledged by API');
       } on ApiException catch (e) {
         _logger.w('API sync failed for task deletion: ${e.message}');
-        _logger.i('Task still deleted locally');
+        _logger.w('Marking task $taskId for DELETE sync');
+        await _storageService.addPendingDelete(taskId);
       }
 
       return true;
     } catch (e, stackTrace) {
       _logger.e(
         'Critical error: Failed to delete task locally',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      return false;
+    }
+  }
+
+  /// Syncs all local tasks to the API when connectivity is restored
+  /// Calls this method when user comes back online after offline operations
+  /// Returns true if there were pending changes that got synced
+  Future<bool> syncOfflineChanges() async {
+    try {
+      _logger.i('Checking for pending operations...');
+      final hasPending = await _storageService.hasPendingOperations();
+
+      _logger.i('hasPending: $hasPending');
+
+      if (!hasPending) {
+        _logger.i('No pending operations to sync');
+        return false;
+      }
+
+      _logger.i('=== Starting offline changes sync ===');
+
+      final pendingCreates = await _storageService.getPendingCreates();
+      final pendingUpdates = await _storageService.getPendingUpdates();
+      final pendingDeletes = await _storageService.getPendingDeletes();
+
+      _logger.i(
+        'Pending: ${pendingCreates.length} creates, ${pendingUpdates.length} updates, ${pendingDeletes.length} deletes',
+      );
+
+      int totalSynced = 0;
+      int totalFailed = 0;
+
+      // Sync creates (POST)
+      for (final taskId in pendingCreates) {
+        try {
+          final task = await _storageService.getTaskById(taskId);
+          if (task != null) {
+            _logger.d('POST task $taskId: ${task.title}');
+            await _taskService.createTask(task);
+            await _storageService.removePendingOperation(taskId);
+            totalSynced++;
+            _logger.i('Created task $taskId on API');
+          } else {
+            _logger.w('Task $taskId not found locally, removing from pending');
+            await _storageService.removePendingOperation(taskId);
+          }
+        } on ApiException catch (e) {
+          _logger.w('Failed to create task $taskId: ${e.message}');
+          totalFailed++;
+        } catch (e) {
+          _logger.w('Unexpected error creating task $taskId: $e');
+          totalFailed++;
+        }
+      }
+
+      // Sync updates (PUT)
+      for (final taskId in pendingUpdates) {
+        try {
+          final task = await _storageService.getTaskById(taskId);
+          if (task != null) {
+            _logger.d('PUT task $taskId: ${task.title}');
+            await _taskService.updateTask(task);
+            await _storageService.removePendingOperation(taskId);
+            totalSynced++;
+            _logger.i('Updated task $taskId on API');
+          } else {
+            _logger.w('Task $taskId not found locally, removing from pending');
+            await _storageService.removePendingOperation(taskId);
+          }
+        } on ApiException catch (e) {
+          _logger.w('Failed to update task $taskId: ${e.message}');
+          totalFailed++;
+        } catch (e) {
+          _logger.w('Unexpected error updating task $taskId: $e');
+          totalFailed++;
+        }
+      }
+
+      // Sync deletes (DELETE)
+      for (final taskId in pendingDeletes) {
+        try {
+          _logger.d('DELETE task $taskId');
+          await _taskService.deleteTask(taskId);
+          await _storageService.removePendingOperation(taskId);
+          totalSynced++;
+          _logger.i('Deleted task $taskId on API');
+        } on ApiException catch (e) {
+          _logger.w('Failed to delete task $taskId: ${e.message}');
+          totalFailed++;
+        } catch (e) {
+          _logger.w('Unexpected error deleting task $taskId: $e');
+          totalFailed++;
+        }
+      }
+
+      _logger.i(
+        '=== Sync complete: $totalSynced synced, $totalFailed failed ===',
+      );
+
+      if (totalFailed == 0 && totalSynced > 0) {
+        await _storageService.clearPendingOperations();
+        _logger.i('All operations synced successfully');
+        return true;
+      } else if (totalSynced > 0) {
+        _logger.w('Partial sync: some operations failed');
+        return true; // Still return true if at least some synced
+      }
+
+      return false;
+    } catch (e, stackTrace) {
+      _logger.e(
+        'Error syncing offline changes',
         error: e,
         stackTrace: stackTrace,
       );

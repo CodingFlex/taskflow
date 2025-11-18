@@ -7,9 +7,11 @@ import '../models/task.dart';
 /// Manages local task storage using Hive database
 class StorageService {
   static const String _taskBoxName = 'tasks_box';
+  static const String _metadataBoxName = 'metadata_box';
 
   final Logger _logger = Logger();
   Box<Task>? _taskBox;
+  Box<dynamic>? _metadataBox;
 
   Future<void> init() async {
     try {
@@ -23,6 +25,7 @@ class StorageService {
       }
 
       _taskBox = await Hive.openBox<Task>(_taskBoxName);
+      _metadataBox = await Hive.openBox<dynamic>(_metadataBoxName);
 
       _logger.i('Hive initialized successfully');
       _logger.i('Tasks in storage: ${_taskBox!.length}');
@@ -35,6 +38,9 @@ class StorageService {
   Future<void> _ensureInitialized() async {
     if (_taskBox == null || !_taskBox!.isOpen) {
       await init();
+    }
+    if (_metadataBox == null || !_metadataBox!.isOpen) {
+      _metadataBox = await Hive.openBox<dynamic>(_metadataBoxName);
     }
   }
 
@@ -240,5 +246,155 @@ class StorageService {
       return 1;
     }
     return maxId + 1;
+  }
+
+  /// Add task ID to pending create operations
+  Future<void> addPendingCreate(int taskId) async {
+    await _ensureInitialized();
+    try {
+      final pending = await getPendingCreates();
+      if (!pending.contains(taskId)) {
+        pending.add(taskId);
+        final pendingString = pending.join(',');
+        await _metadataBox!.put('_pendingCreates', pendingString);
+        _logger.i('Added task $taskId to pending creates: $pendingString');
+      }
+    } catch (e) {
+      _logger.e('Error adding pending create: $e');
+    }
+  }
+
+  /// Add task ID to pending update operations
+  Future<void> addPendingUpdate(int taskId) async {
+    await _ensureInitialized();
+    try {
+      final pending = await getPendingUpdates();
+      if (!pending.contains(taskId)) {
+        pending.add(taskId);
+        final pendingString = pending.join(',');
+        await _metadataBox!.put('_pendingUpdates', pendingString);
+        _logger.i('Added task $taskId to pending updates: $pendingString');
+      }
+    } catch (e) {
+      _logger.e('Error adding pending update: $e');
+    }
+  }
+
+  /// Add task ID to pending delete operations
+  Future<void> addPendingDelete(int taskId) async {
+    await _ensureInitialized();
+    try {
+      final pending = await getPendingDeletes();
+      if (!pending.contains(taskId)) {
+        pending.add(taskId);
+        final pendingString = pending.join(',');
+        await _metadataBox!.put('_pendingDeletes', pendingString);
+        _logger.i('Added task $taskId to pending deletes: $pendingString');
+      }
+    } catch (e) {
+      _logger.e('Error adding pending delete: $e');
+    }
+  }
+
+  /// Get list of task IDs pending create
+  Future<List<int>> getPendingCreates() async {
+    await _ensureInitialized();
+    try {
+      final dynamic value = _metadataBox!.get('_pendingCreates');
+      if (value is String && value.isNotEmpty) {
+        return value.split(',').map((id) => int.parse(id)).toList();
+      }
+      return [];
+    } catch (e) {
+      _logger.e('Error reading pending creates: $e');
+      return [];
+    }
+  }
+
+  /// Get list of task IDs pending update
+  Future<List<int>> getPendingUpdates() async {
+    await _ensureInitialized();
+    try {
+      final dynamic value = _metadataBox!.get('_pendingUpdates');
+      if (value is String && value.isNotEmpty) {
+        return value.split(',').map((id) => int.parse(id)).toList();
+      }
+      return [];
+    } catch (e) {
+      _logger.e('Error reading pending updates: $e');
+      return [];
+    }
+  }
+
+  /// Get list of task IDs pending delete
+  Future<List<int>> getPendingDeletes() async {
+    await _ensureInitialized();
+    try {
+      final dynamic value = _metadataBox!.get('_pendingDeletes');
+      if (value is String && value.isNotEmpty) {
+        return value.split(',').map((id) => int.parse(id)).toList();
+      }
+      return [];
+    } catch (e) {
+      _logger.e('Error reading pending deletes: $e');
+      return [];
+    }
+  }
+
+  /// Clear pending operations after successful sync
+  Future<void> clearPendingOperations() async {
+    await _ensureInitialized();
+    try {
+      await _metadataBox!.delete('_pendingCreates');
+      await _metadataBox!.delete('_pendingUpdates');
+      await _metadataBox!.delete('_pendingDeletes');
+      _logger.i('Cleared all pending operations');
+    } catch (e) {
+      _logger.e('Error clearing pending operations: $e');
+    }
+  }
+
+  /// Remove specific task from pending lists
+  Future<void> removePendingOperation(int taskId) async {
+    await _ensureInitialized();
+    try {
+      final creates = await getPendingCreates();
+      final updates = await getPendingUpdates();
+      final deletes = await getPendingDeletes();
+
+      creates.remove(taskId);
+      updates.remove(taskId);
+      deletes.remove(taskId);
+
+      if (creates.isNotEmpty) {
+        await _metadataBox!.put('_pendingCreates', creates.join(','));
+      } else {
+        await _metadataBox!.delete('_pendingCreates');
+      }
+
+      if (updates.isNotEmpty) {
+        await _metadataBox!.put('_pendingUpdates', updates.join(','));
+      } else {
+        await _metadataBox!.delete('_pendingUpdates');
+      }
+
+      if (deletes.isNotEmpty) {
+        await _metadataBox!.put('_pendingDeletes', deletes.join(','));
+      } else {
+        await _metadataBox!.delete('_pendingDeletes');
+      }
+
+      _logger.i('Removed task $taskId from all pending operations');
+    } catch (e) {
+      _logger.e('Error removing pending operation: $e');
+    }
+  }
+
+  /// Check if there are any pending operations
+  Future<bool> hasPendingOperations() async {
+    final creates = await getPendingCreates();
+    final updates = await getPendingUpdates();
+    final deletes = await getPendingDeletes();
+    return creates.isNotEmpty || updates.isNotEmpty || deletes.isNotEmpty;
   }
 }

@@ -56,6 +56,30 @@ class ToastService {
     );
   }
 
+  /// Show an info toast notification.
+  ///
+  /// [message] - The message to display in the toast
+  /// [title] - Optional title for the toast (defaults to "Info")
+  /// [duration] - How long the toast should be displayed (defaults to 3 seconds)
+  void showInfo({
+    required String message,
+    String? title,
+    Duration duration = const Duration(seconds: 3),
+  }) {
+    final context = _getContext();
+    if (context == null) return;
+
+    toastification.show(
+      context: context,
+      title: Text(title ?? 'Info'),
+      description: Text(message),
+      style: ToastificationStyle.flatColored,
+      type: ToastificationType.info,
+      autoCloseDuration: duration,
+      alignment: Alignment.topRight,
+    );
+  }
+
   /// Get the current BuildContext from the navigator key.
   ///
   /// Returns null if no context is available.

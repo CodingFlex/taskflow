@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:stacked/stacked.dart';
 import 'package:taskflow/app/app.bottomsheets.dart';
 import 'package:taskflow/app/app.locator.dart';
@@ -21,6 +22,7 @@ enum TaskFilter { all, completed, pending }
 
 /// Manages home screen state including task filtering, sorting, search, and connectivity
 class HomeViewModel extends BaseViewModel {
+  final _logger = Logger();
   final _bottomSheetService = locator<BottomSheetService>();
   final _taskRepository = locator<TaskRepository>();
   final _toastService = locator<ToastService>();
@@ -46,7 +48,7 @@ class HomeViewModel extends BaseViewModel {
   TaskCategory? get selectedCategory => _selectedCategory;
   String? get errorMessage => _errorMessage;
   bool get isOnline => _connectionStatus == InternetStatus.connected;
-  
+
   /// Check if pagination is enabled (for API mode)
   bool get usePagination => _taskRepository.shouldUsePagination;
 
@@ -235,7 +237,10 @@ class HomeViewModel extends BaseViewModel {
     }
   }
 
-  Future<void> loadTasks({bool forceRefresh = false}) async {
+  Future<void> loadTasks({
+    bool forceRefresh = false,
+    bool syncFirst = false,
+  }) async {
     final shouldToggleBusy = !forceRefresh;
     if (shouldToggleBusy) {
       setBusy(true);
@@ -243,6 +248,11 @@ class HomeViewModel extends BaseViewModel {
     _errorMessage = null;
 
     try {
+      // Sync offline changes first if requested
+      if (syncFirst && isOnline) {
+        await _syncOfflineChanges();
+      }
+
       _tasks = await _taskRepository.getTasks(forceRefresh: forceRefresh);
     } on ApiException catch (e) {
       _errorMessage = e.userMessage;
@@ -361,24 +371,77 @@ class HomeViewModel extends BaseViewModel {
   }
 
   void _onInternetStatusChanged(InternetStatus status) {
-    _statusDebounceTimer?.cancel();
+    _logger.i('Internet status changed: $status');
 
-    _statusDebounceTimer = Timer(_statusStabilizationDuration, () {
-      if (_lastStableStatus == status) return;
+    // Store the old status before updating
+    final previousStatus = _connectionStatus;
 
-      final wasOnline = isOnline;
-      _connectionStatus = status;
-      _lastStableStatus = status;
-
-      rebuildUi();
-
-      if (wasOnline != isOnline) {
-        _showStatusToast(status);
-      }
-    });
-
+    // Update current status immediately for UI
     _connectionStatus = status;
     rebuildUi();
+
+    // Cancel existing debounce timer
+    _statusDebounceTimer?.cancel();
+
+    // Debounce to avoid rapid state changes
+    _statusDebounceTimer = Timer(_statusStabilizationDuration, () {
+      _logger.i(
+        'Debounce completed. Previous: $previousStatus, Current: $status',
+      );
+
+      // Skip if status hasn't actually changed
+      if (_lastStableStatus == status) {
+        _logger.i('Status unchanged, skipping');
+        return;
+      }
+
+      final wasOnline = previousStatus == InternetStatus.connected;
+      final isNowOnline = status == InternetStatus.connected;
+
+      _lastStableStatus = status;
+
+      _logger.i(
+        'Status transition: wasOnline=$wasOnline, isNowOnline=$isNowOnline',
+      );
+
+      // Show toast and sync when connection status changes
+      if (wasOnline != isNowOnline) {
+        _showStatusToast(status);
+
+        // Sync offline changes when coming back online
+        if (isNowOnline && !wasOnline) {
+          _logger.i('Coming back online - triggering sync');
+          _syncOfflineChanges();
+        }
+      }
+    });
+  }
+
+  /// Syncs any pending offline changes to the API
+  Future<void> _syncOfflineChanges() async {
+    try {
+      _logger.i('Triggering offline changes sync...');
+      final hadPendingChanges = await _taskRepository.syncOfflineChanges();
+
+      if (hadPendingChanges) {
+        _logger.i('Offline changes synced successfully');
+        _toastService.showSuccess(
+          message: ksOfflineChangesSynced,
+          duration: const Duration(seconds: 3),
+        );
+        // Refresh task list to show updated data
+        await loadTasks(forceRefresh: true, syncFirst: false);
+      } else {
+        _logger.i('No pending changes to sync');
+        // Don't show toast when there are no changes to avoid annoying users
+      }
+    } catch (e) {
+      _logger.e('Sync failed: $e');
+      _toastService.showError(
+        message: 'Failed to sync offline changes',
+        duration: const Duration(seconds: 2),
+      );
+    }
   }
 
   Future<void> syncWithServer() async {
@@ -402,7 +465,8 @@ class HomeViewModel extends BaseViewModel {
   bool get isSyncing => busy('sync');
 
   void initialize() {
-    loadTasks();
+    // Sync offline changes on app start if online
+    loadTasks(syncFirst: true);
 
     _internetSubscription = InternetConnection.createInstance(
       checkInterval: const Duration(seconds: 2),

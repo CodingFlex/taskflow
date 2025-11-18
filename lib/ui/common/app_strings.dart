@@ -79,6 +79,7 @@ const String ksTaskDeletedSuccess = 'Task deleted successfully';
 const String ksTaskMarkedCompleted = 'Task marked as completed';
 const String ksTaskMarkedPending = 'Task marked as pending';
 const String ksSyncCompletedSuccess = 'Sync completed successfully';
+const String ksOfflineChangesSynced = 'Offline changes synced successfully';
 const String ksBackOnline = 'Back online';
 
 // Toast messages - Error

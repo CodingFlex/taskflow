@@ -219,7 +219,7 @@ class _CategoryStatItem extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       decoration: BoxDecoration(
         color: isDark ? kcDarkGreyColor2 : Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -228,26 +228,35 @@ class _CategoryStatItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: category.color,
-                    ),
-                  ),
-                  horizontalSpaceSmall,
-                  Text(
-                    category.displayName,
-                    style: AppTextStyles.body(context),
-                  ),
-                ],
+              Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: category.color,
+                ),
               ),
-              Text('$count', style: AppTextStyles.heading3(context)),
+              const SizedBox(width: 8),
+              Expanded(
+                flex: 3,
+                child: Text(
+                  category.displayName,
+                  style: AppTextStyles.body(context),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Flexible(
+                flex: 1,
+                child: Text(
+                  '$count',
+                  style: AppTextStyles.heading3(context),
+                  overflow: TextOverflow.visible,
+                  textAlign: TextAlign.end,
+                ),
+              ),
             ],
           ),
           verticalSpaceSmall,
