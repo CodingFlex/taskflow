@@ -4,7 +4,6 @@ import 'package:sizer/sizer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
-import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:intl/intl.dart';
 
 class DateInputField extends StatelessWidget {
@@ -144,8 +143,8 @@ class DateInputField extends StatelessWidget {
             onTap: () => _showDatePicker(context),
             child: Container(
               height: height ?? 48,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              constraints: const BoxConstraints(minWidth: 0),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              constraints: const BoxConstraints(maxWidth: 250),
               decoration: BoxDecoration(
                 color: isDark ? kcDarkGreyColor2 : Colors.white,
                 borderRadius: BorderRadius.circular(borderRadius),
@@ -164,7 +163,7 @@ class DateInputField extends StatelessWidget {
                     color: isDark ? Colors.white70 : kcPrimaryColor,
                     size: 18,
                   ),
-                  horizontalSpaceSmall,
+                  const SizedBox(width: 6),
                   Flexible(
                     child: Text(
                       hasDate ? value.text : placeholder,

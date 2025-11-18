@@ -17,24 +17,28 @@ class CategorySelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+      spacing: 10,
+      runSpacing: 10,
       children: TaskCategory.values.map((category) {
         final isSelected = selectedCategory == category;
         return GestureDetector(
           onTap: () => onCategorySelected(category),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
               color: isSelected
                   ? category.color
                   : (Theme.of(context).brightness == Brightness.dark
                         ? kcDarkGreyColor2
-                        : Colors.grey.shade200),
-              borderRadius: BorderRadius.circular(8),
+                        : Colors.grey.shade100),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: isSelected ? category.color : Colors.transparent,
-                width: 2,
+                color: isSelected
+                    ? category.color
+                    : (Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey.shade700
+                          : Colors.grey.shade300),
+                width: 1.5,
               ),
             ),
             child: Row(
@@ -42,7 +46,7 @@ class CategorySelector extends StatelessWidget {
               children: [
                 Icon(
                   FontAwesomeIcons.tag,
-                  size: 12,
+                  size: 13,
                   color: isSelected ? Colors.white : category.color,
                 ),
                 const SizedBox(width: 6),
