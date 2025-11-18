@@ -6,6 +6,7 @@ import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taskflow/viewmodels/splash_viewmodel.dart';
 
+/// Initial splash screen with animated TaskFlow branding
 class SplashView extends StackedView<SplashViewModel> {
   const SplashView({super.key});
 

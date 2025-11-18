@@ -5,11 +5,8 @@ import 'package:taskflow/services/task_service.dart';
 import 'package:taskflow/services/storage_service.dart';
 import 'package:taskflow/services/api_exceptions.dart';
 
-// / Repository pattern implementation for task management
-// / Implements offline-first architecture per PRD requirements
-// / - Local storage is the source of truth
-// / - API calls demonstrate CRUD capability but don't affect local data
-// / - All operations work offline
+/// Repository implementing offline-first architecture
+/// Local storage is source of truth; API calls are for demo purposes only
 class TaskRepository {
   final TaskService _taskService;
   final StorageService _storageService;
@@ -19,6 +16,8 @@ class TaskRepository {
     : _taskService = taskService ?? locator<TaskService>(),
       _storageService = storageService ?? locator<StorageService>();
 
+  /// Fetches all tasks using offline-first approach
+  /// Returns local cache immediately, then syncs with API in background
   Future<List<Task>> getTasks({bool forceRefresh = false}) async {
     try {
       final localTasks = await _storageService.getTasks();
@@ -34,6 +33,8 @@ class TaskRepository {
       _logger.i(
         '✅ API responded with ${remote.length} tasks (UI remains offline cache)',
       );
+
+      // Intentionally not saving API response to maintain offline-first demo
       // await _storageService.saveTasks(remote);
 
       return await _storageService.getTasks();
@@ -75,6 +76,7 @@ class TaskRepository {
     }
   }
 
+  /// Retrieves a single task by ID from local storage
   Future<Task?> getTaskById(int id) async {
     try {
       final localTask = await _storageService.getTaskById(id);
@@ -86,6 +88,8 @@ class TaskRepository {
       _logger.i('🔄 Task $id not in local storage, fetching from API...');
       await _taskService.fetchTask(id);
       _logger.i('✅ Task $id fetched from API (local cache unchanged)');
+
+      // Intentionally not saving to demonstrate offline-first architecture
       // await _storageService.saveTask(task);
 
       return localTask;
@@ -98,6 +102,8 @@ class TaskRepository {
     }
   }
 
+  /// Creates a new task locally, then syncs with API
+  /// Task is immediately available even if API fails
   Future<Task> createTask(Task task) async {
     try {
       final assignedTask = task.id == 0
@@ -110,6 +116,8 @@ class TaskRepository {
       try {
         final apiTask = await _taskService.createTask(assignedTask);
         _logger.d('☁️ API payload received for ${apiTask.title}');
+
+        // Intentionally not merging API response - local data is source of truth
         // await _storageService.updateTask(apiTask);
 
         _logger.i('☁️ Task creation acknowledged by API');
@@ -134,6 +142,7 @@ class TaskRepository {
     }
   }
 
+  /// Updates existing task locally, then syncs with API
   Future<Task> updateTask(Task task) async {
     try {
       await _storageService.updateTask(task);
@@ -142,6 +151,8 @@ class TaskRepository {
       try {
         final apiTask = await _taskService.updateTask(task);
         _logger.d('☁️ API payload received for ${apiTask.title}');
+
+        // Intentionally not merging API response - local data is source of truth
         // await _storageService.updateTask(apiTask);
 
         _logger.i('☁️ Task update acknowledged by API  ');
@@ -166,6 +177,7 @@ class TaskRepository {
     }
   }
 
+  /// Deletes task from local storage, then syncs with API
   Future<bool> deleteTask(int taskId) async {
     try {
       await _storageService.deleteTask(taskId);
@@ -190,6 +202,7 @@ class TaskRepository {
     }
   }
 
+  /// Clears all tasks from local storage
   Future<void> clearLocalData() async {
     try {
       await _storageService.clearAllTasks();
@@ -209,6 +222,7 @@ class TaskRepository {
     }
   }
 
+  /// Manual sync with server (triggered by pull-to-refresh)
   Future<void> syncWithServer() async {
     try {
       _logger.i('🔄 Starting manual sync with server...');
@@ -217,6 +231,8 @@ class TaskRepository {
       _logger.i(
         '✅ Sync simulated: ${serverTasks.length} tasks returned by API',
       );
+
+      // Intentionally not syncing - demonstrates offline-first where local is authoritative
       // await _storageService.saveTasks(serverTasks);
     } on ApiException catch (e) {
       _logger.e('❌ Sync failed: ${e.message}');
@@ -237,6 +253,7 @@ class TaskRepository {
     }
   }
 
+  /// Fetches tasks from API in background
   void _fetchAndCacheTasksInBackground() {
     _taskService
         .fetchTasks()
@@ -244,6 +261,8 @@ class TaskRepository {
           _logger.i(
             '🔄 Background sync completed: ${tasks.length} API tasks (cache unchanged)',
           );
+
+          // Intentionally not caching - maintains user's local changes as primary
           // await _storageService.saveTasks(tasks);
         })
         .catchError((error) {
@@ -251,6 +270,7 @@ class TaskRepository {
         });
   }
 
+  /// Returns task statistics from local storage
   Future<Map<String, int>> getTaskStatistics() async {
     try {
       final info = await _storageService.getStorageInfo();

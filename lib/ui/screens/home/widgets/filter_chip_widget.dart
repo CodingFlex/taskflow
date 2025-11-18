@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 
+/// Custom filter chip with active/inactive states for task filtering
 class FilterChipWidget extends StatelessWidget {
   final String label;
   final bool isSelected;

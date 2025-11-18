@@ -7,6 +7,7 @@ import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
 
+/// Displays individual task with animated checkbox, category, and date tags
 class TaskCard extends StatelessWidget {
   final Task task;
   final VoidCallback? onTap;
@@ -207,6 +208,7 @@ class _CreatedDateTag extends StatelessWidget {
 
   const _CreatedDateTag({required this.createdAt});
 
+  /// Compares calendar dates ignoring time
   bool _isSameDay(DateTime date1, DateTime date2) {
     return date1.year == date2.year &&
         date1.month == date2.month &&
@@ -218,6 +220,7 @@ class _CreatedDateTag extends StatelessWidget {
     return _isSameDay(date, yesterday);
   }
 
+  /// Calculates difference in calendar days, not 24-hour periods
   int _daysDifference(DateTime date1, DateTime date2) {
     final date1Only = DateTime(date1.year, date1.month, date1.day);
     final date2Only = DateTime(date2.year, date2.month, date2.day);

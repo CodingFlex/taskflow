@@ -1,13 +1,10 @@
-// lib/services/storage_service.dart
-
 import 'dart:math' as math;
 
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:logger/logger.dart';
 import '../models/task.dart';
 
-/// Storage service using Hive for local data persistence
-/// Handles all local database operations for tasks
+/// Manages local task storage using Hive database
 class StorageService {
   static const String _taskBoxName = 'tasks_box';
 

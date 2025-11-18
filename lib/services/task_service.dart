@@ -4,8 +4,7 @@ import 'package:taskflow/helpers/helpers/url_provider.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/services/api_exceptions.dart';
 
-/// JSONPlaceholder demo service; offline Hive data remains source of truth.
-
+/// Handles API calls to JSONPlaceholder for task operations (demo purposes)
 class TaskService {
   final ApiClient _apiClient;
   final URLProvider _urlProvider;

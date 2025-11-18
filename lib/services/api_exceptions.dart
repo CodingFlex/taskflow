@@ -1,7 +1,6 @@
-// lib/services/api_exceptions.dart
-
 import 'package:dio/dio.dart';
 
+/// Handles API errors and transforms them into user-friendly messages
 class ApiException implements Exception {
   final String message;
   final int? statusCode;
@@ -65,7 +64,6 @@ class ApiException implements Exception {
         break;
 
       case DioExceptionType.unknown:
-      default:
         message = 'An unexpected error occurred: ${error.message}';
         type = ErrorType.unknown;
         break;

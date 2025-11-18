@@ -7,6 +7,7 @@ import 'package:taskflow/services/api_exceptions.dart';
 import 'package:taskflow/ui/common/toast.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+/// Manages task creation/editing screen with form validation and task operations
 class TaskDetailsViewModel extends BaseViewModel {
   final int? taskId;
   final _navigationService = locator<NavigationService>();

@@ -15,6 +15,7 @@ import 'package:taskflow/viewmodels/home_viewmodel.dart'
 import 'package:stacked/stacked.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// Main home screen displaying tasks with search, filters, and connectivity status
 class HomeView extends StackedView<HomeViewModel> {
   const HomeView({super.key});
 

@@ -6,6 +6,7 @@ import 'package:taskflow/services/biometrics_service.dart';
 import 'package:taskflow/ui/common/toast.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+/// Manages biometric authentication screen state and auto-triggers authentication
 class BiometricViewModel extends BaseViewModel {
   final _biometricsService = locator<BiometricsService>();
   final _navigationService = locator<NavigationService>();

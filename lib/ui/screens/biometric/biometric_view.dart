@@ -8,6 +8,7 @@ import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:taskflow/viewmodels/biometric_viewmodel.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// Biometric authentication screen with auto-trigger and skip option
 class BiometricView extends StackedView<BiometricViewModel> {
   const BiometricView({super.key});
 

@@ -17,6 +17,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 enum TaskFilter { all, completed, pending }
 
+/// Manages home screen state including task filtering, sorting, search, and connectivity
 class HomeViewModel extends BaseViewModel {
   final _bottomSheetService = locator<BottomSheetService>();
   final _taskRepository = locator<TaskRepository>();

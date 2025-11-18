@@ -12,6 +12,7 @@ import 'package:taskflow/ui/screens/task_details/widgets/category_selector.dart'
 import 'package:taskflow/viewmodels/task_details_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
+/// Task creation and editing screen with form inputs and validation
 class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
   final int? taskId;
   final String? heroTag;
