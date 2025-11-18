@@ -51,7 +51,7 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
                 Container(
                   margin: const EdgeInsets.only(right: 8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: IconButton(
@@ -66,57 +66,70 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
               ]
             : null,
       ),
-      body: Hero(
-        tag: heroTag ?? (taskId != null ? 'task_$taskId' : 'add_task_fab'),
-        child: Material(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          child: KeyboardUnfocusWrapper(
-            child: Skeletonizer(
-              enabled: viewModel.isBusy,
-              effect: const ShimmerEffect(
-                baseColor: Color(0xFFE5E7EB),
-                highlightColor: Color(0xFFF6F7FB),
-                duration: Duration(milliseconds: 1200),
-              ),
-              enableSwitchAnimation: true,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _TitleSection(viewModel: viewModel),
-                    verticalSpaceMedium,
-                    _CategorySection(viewModel: viewModel),
-                    verticalSpaceMedium,
-                    _DueDateSection(viewModel: viewModel),
-                    if (viewModel.isEditMode) ...[
-                      verticalSpaceMedium,
-                      _CompletionToggleSection(viewModel: viewModel),
-                    ],
-                    verticalSpaceMedium,
-                    _DescriptionSection(viewModel: viewModel),
-                    verticalSpaceMedium,
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: Center(
-                        child: TaskflowButton(
-                          title: viewModel.isEditMode ? ksUpdate : ksCreate,
-                          onTap: viewModel.saveTask,
-                          state: viewModel.isSaving
-                              ? TaskflowButtonState.loading
-                              : (viewModel.canSave
-                                    ? TaskflowButtonState.enabled
-                                    : TaskflowButtonState.disabled),
-                          width: screenWidth(context) * 0.8,
+      body: Stack(
+        children: [
+          Hero(
+            tag: heroTag ?? (taskId != null ? 'task_$taskId' : 'add_task_fab'),
+            child: Material(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: KeyboardUnfocusWrapper(
+                child: Skeletonizer(
+                  enabled: viewModel.isBusy,
+                  effect: const ShimmerEffect(
+                    baseColor: Color(0xFFE5E7EB),
+                    highlightColor: Color(0xFFF6F7FB),
+                    duration: Duration(milliseconds: 1200),
+                  ),
+                  enableSwitchAnimation: true,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _TitleSection(viewModel: viewModel),
+                        verticalSpaceMedium,
+                        _CategorySection(viewModel: viewModel),
+                        verticalSpaceMedium,
+                        _DueDateSection(viewModel: viewModel),
+                        if (viewModel.isEditMode) ...[
+                          verticalSpaceMedium,
+                          _CompletionToggleSection(viewModel: viewModel),
+                        ],
+                        verticalSpaceMedium,
+                        _DescriptionSection(viewModel: viewModel),
+                        verticalSpaceMedium,
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: Center(
+                            child: TaskflowButton(
+                              title: viewModel.isEditMode ? ksUpdate : ksCreate,
+                              onTap: viewModel.saveTask,
+                              state: viewModel.isSaving
+                                  ? TaskflowButtonState.loading
+                                  : (viewModel.canSave
+                                        ? TaskflowButtonState.enabled
+                                        : TaskflowButtonState.disabled),
+                              width: screenWidth(context) * 0.8,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+          if (viewModel.isDeleting)
+            Container(
+              color: Colors.black.withValues(alpha: 0.5),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(kcPrimaryColor),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

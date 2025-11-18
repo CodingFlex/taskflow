@@ -41,6 +41,7 @@ class TaskDetailsViewModel extends BaseViewModel {
   bool get isEditMode => taskId != null;
   bool get canSave => _isFormValid;
   bool get isSaving => busy('save');
+  bool get isDeleting => busy('delete');
 
   String? get titleError => _titleError;
   String? get descriptionError => _descriptionError;
@@ -57,11 +58,9 @@ class TaskDetailsViewModel extends BaseViewModel {
 
   Future<void> initialize() async {
     if (taskId != null) {
-      // If task data is already provided, use it directly (no loading needed)
       if (initialTask != null) {
         _initializeWithTask(initialTask!);
       } else {
-        // Fallback: fetch from API if task wasn't passed
         await _loadTask();
       }
     } else {
@@ -235,7 +234,7 @@ class TaskDetailsViewModel extends BaseViewModel {
   Future<void> _deleteTask() async {
     if (taskId == null) return;
 
-    setBusy(true);
+    setBusyForObject('delete', true);
 
     try {
       final success = await _taskRepository.deleteTask(taskId!);
@@ -249,7 +248,7 @@ class TaskDetailsViewModel extends BaseViewModel {
     } on ApiException catch (e) {
       _toastService.showError(message: e.userMessage);
     } finally {
-      setBusy(false);
+      setBusyForObject('delete', false);
     }
   }
 

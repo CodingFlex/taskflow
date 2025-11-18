@@ -44,7 +44,7 @@ class HomeView extends StackedView<HomeViewModel> {
             child: Container(
               margin: const EdgeInsets.only(right: 8),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Material(
@@ -63,7 +63,7 @@ class HomeView extends StackedView<HomeViewModel> {
           Container(
             margin: const EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: IconButton(
@@ -305,27 +305,30 @@ class _TasksList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (filteredTasks.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              FontAwesomeIcons.magnifyingGlass,
-              size: 64,
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white38
-                  : Colors.black26,
-            ),
-            verticalSpaceMedium,
-            Text(
-              ksNoTasksFound,
-              style: AppTextStyles.body(context).copyWith(
+      return SizedBox(
+        height: MediaQuery.of(context).size.height * 0.5,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                FontAwesomeIcons.magnifyingGlass,
+                size: 64,
                 color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white54
-                    : Colors.black54,
+                    ? Colors.white38
+                    : Colors.black26,
               ),
-            ),
-          ],
+              verticalSpaceMedium,
+              Text(
+                ksNoTasksFound,
+                style: AppTextStyles.body(context).copyWith(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white54
+                      : Colors.black54,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -341,7 +344,7 @@ class _TasksList extends StatelessWidget {
           ),
           verticalSpaceSmall,
           _AnimatedTaskList(tasks: overdueTasks, viewModel: viewModel),
-          verticalSpaceMedium,
+          verticalSpaceSmall,
         ],
         if (otherTasks.isNotEmpty)
           _AnimatedTaskList(tasks: otherTasks, viewModel: viewModel),
@@ -497,7 +500,7 @@ class _ConnectivityIndicator extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(right: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: Colors.white.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
       ),
       child: IconButton(
