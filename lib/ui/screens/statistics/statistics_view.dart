@@ -219,7 +219,7 @@ class _CategoryStatItem extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
       decoration: BoxDecoration(
         color: isDark ? kcDarkGreyColor2 : Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -237,7 +237,7 @@ class _CategoryStatItem extends StatelessWidget {
                   color: category.color,
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               Expanded(
                 flex: 3,
                 child: Text(
@@ -247,7 +247,7 @@ class _CategoryStatItem extends StatelessWidget {
                   maxLines: 1,
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               Flexible(
                 flex: 1,
                 child: Text(

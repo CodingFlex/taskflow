@@ -452,6 +452,19 @@ class HomeViewModel extends BaseViewModel {
 
     setBusyForObject('sync', true);
     try {
+      // First sync any pending offline changes
+      _logger.i('Manual sync: checking for offline changes...');
+      final hadPendingChanges = await _taskRepository.syncOfflineChanges();
+
+      if (hadPendingChanges) {
+        _logger.i('Manual sync: offline changes synced successfully');
+        _toastService.showSuccess(
+          message: ksOfflineChangesSynced,
+          duration: const Duration(seconds: 2),
+        );
+      }
+
+      _logger.i('Manual sync: fetching latest from server...');
       await _taskRepository.syncWithServer();
       await loadTasks(forceRefresh: true);
       _toastService.showSuccess(message: ksSyncCompletedSuccess);
