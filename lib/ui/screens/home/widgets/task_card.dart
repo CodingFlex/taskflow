@@ -4,6 +4,8 @@ import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:sizer/sizer.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
+import 'package:taskflow/ui/common/app_strings.dart';
+import 'package:taskflow/ui/common/date_helpers.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
 
@@ -208,49 +210,9 @@ class _CreatedDateTag extends StatelessWidget {
 
   const _CreatedDateTag({required this.createdAt});
 
-  /// Compares calendar dates ignoring time
-  bool _isSameDay(DateTime date1, DateTime date2) {
-    return date1.year == date2.year &&
-        date1.month == date2.month &&
-        date1.day == date2.day;
-  }
-
-  bool _isYesterday(DateTime date) {
-    final yesterday = DateTime.now().subtract(const Duration(days: 1));
-    return _isSameDay(date, yesterday);
-  }
-
-  /// Calculates difference in calendar days, not 24-hour periods
-  int _daysDifference(DateTime date1, DateTime date2) {
-    final date1Only = DateTime(date1.year, date1.month, date1.day);
-    final date2Only = DateTime(date2.year, date2.month, date2.day);
-    return date2Only.difference(date1Only).inDays;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final daysDiff = _daysDifference(createdAt, now);
-    String text;
-
-    if (_isSameDay(createdAt, now)) {
-      text = 'Created today';
-    } else if (_isYesterday(createdAt)) {
-      text = 'Created yesterday';
-    } else if (daysDiff < 7) {
-      text = 'Created ${daysDiff}d ago';
-    } else {
-      final months = (daysDiff / 30).floor();
-      if (months == 0) {
-        final weeks = (daysDiff / 7).floor();
-        text = 'Created ${weeks}w ago';
-      } else if (months == 1) {
-        text = 'Created 1mo ago';
-      } else {
-        text = 'Created ${months}mo ago';
-      }
-    }
-
+    final text = '$ksCreated ${createdAt.formatRelativeTime()}';
     const color = Colors.grey;
 
     return Container(
@@ -283,47 +245,9 @@ class _CompletedTag extends StatelessWidget {
 
   const _CompletedTag({required this.completedAt});
 
-  bool _isSameDay(DateTime date1, DateTime date2) {
-    return date1.year == date2.year &&
-        date1.month == date2.month &&
-        date1.day == date2.day;
-  }
-
-  bool _isYesterday(DateTime date) {
-    final yesterday = DateTime.now().subtract(const Duration(days: 1));
-    return _isSameDay(date, yesterday);
-  }
-
-  int _daysDifference(DateTime date1, DateTime date2) {
-    final date1Only = DateTime(date1.year, date1.month, date1.day);
-    final date2Only = DateTime(date2.year, date2.month, date2.day);
-    return date2Only.difference(date1Only).inDays;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final daysDiff = _daysDifference(completedAt, now);
-    String text;
-
-    if (_isSameDay(completedAt, now)) {
-      text = 'Completed today';
-    } else if (_isYesterday(completedAt)) {
-      text = 'Completed yesterday';
-    } else if (daysDiff < 7) {
-      text = 'Completed ${daysDiff}d ago';
-    } else {
-      final months = (daysDiff / 30).floor();
-      if (months == 0) {
-        final weeks = (daysDiff / 7).floor();
-        text = 'Completed ${weeks}w ago';
-      } else if (months == 1) {
-        text = 'Completed 1mo ago';
-      } else {
-        text = 'Completed ${months}mo ago';
-      }
-    }
-
+    final text = '$ksCompletedAt ${completedAt.formatRelativeTime()}';
     const color = Colors.green;
 
     return Container(

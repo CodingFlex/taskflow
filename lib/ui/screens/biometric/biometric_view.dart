@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
+import 'package:taskflow/ui/common/app_strings.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:taskflow/viewmodels/biometric_viewmodel.dart';
@@ -32,7 +33,7 @@ class BiometricView extends StackedView<BiometricViewModel> {
                 children: [
                   const Spacer(),
                   Text(
-                    'TaskFlow',
+                    ksAppName,
                     style: GoogleFonts.nunitoSans(
                       fontSize: 48,
                       fontWeight: FontWeight.w900,
@@ -60,13 +61,13 @@ class BiometricView extends StackedView<BiometricViewModel> {
                     ),
                     verticalSpaceLarge,
                     Text(
-                      'Welcome Back!',
+                      ksWelcomeBack,
                       style: AppTextStyles.heading2(context),
                       textAlign: TextAlign.center,
                     ),
                     verticalSpaceSmall,
                     Text(
-                      'Authenticate with ${viewModel.biometricTypeText} to continue',
+                      '$ksAuthenticateWith ${viewModel.biometricTypeText} $ksToContinue',
                       style: AppTextStyles.body(context).copyWith(
                         color: isDark ? Colors.white70 : Colors.black54,
                       ),
@@ -92,7 +93,7 @@ class BiometricView extends StackedView<BiometricViewModel> {
                           size: 20,
                         ),
                         label: const Text(
-                          'Authenticate',
+                          ksAuthenticate,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -108,13 +109,13 @@ class BiometricView extends StackedView<BiometricViewModel> {
                     ),
                     verticalSpaceLarge,
                     Text(
-                      'Biometrics Not Available',
+                      ksBiometricsNotAvailable,
                       style: AppTextStyles.heading2(context),
                       textAlign: TextAlign.center,
                     ),
                     verticalSpaceSmall,
                     Text(
-                      'Your device does not support biometric authentication',
+                      ksBiometricsNotSupported,
                       style: AppTextStyles.body(context).copyWith(
                         color: isDark ? Colors.white70 : Colors.black54,
                       ),
@@ -125,7 +126,7 @@ class BiometricView extends StackedView<BiometricViewModel> {
                   TextButton(
                     onPressed: viewModel.skipBiometrics,
                     child: Text(
-                      'Skip for now',
+                      ksSkipForNow,
                       style: AppTextStyles.body(context).copyWith(
                         color: kcPrimaryColor,
                         fontWeight: FontWeight.w600,

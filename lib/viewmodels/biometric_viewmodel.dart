@@ -3,6 +3,7 @@ import 'package:stacked/stacked.dart';
 import 'package:taskflow/app/app.locator.dart';
 import 'package:taskflow/app/app.router.dart';
 import 'package:taskflow/services/biometrics_service.dart';
+import 'package:taskflow/ui/common/app_strings.dart';
 import 'package:taskflow/ui/common/toast.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -64,7 +65,7 @@ class BiometricViewModel extends BaseViewModel {
       _navigationService.replaceWithHomeView();
     } else {
       _toastService.showError(
-        message: 'Authentication failed. Please try again.',
+        message: ksAuthenticationFailed,
       );
     }
   }

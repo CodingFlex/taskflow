@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
+import 'package:taskflow/ui/common/app_strings.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 
 class SearchField extends StatelessWidget {
@@ -14,7 +15,7 @@ class SearchField extends StatelessWidget {
   const SearchField({
     super.key,
     required this.controller,
-    this.hintText = 'Search...',
+    this.hintText = ksSearchDefaultHint,
     this.onChanged,
     this.prefixIcon = Icons.search_rounded,
     this.borderRadius = 26.0,

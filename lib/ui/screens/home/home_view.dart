@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
+import 'package:taskflow/ui/common/app_strings.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:taskflow/ui/common/search_field.dart';
@@ -29,7 +30,7 @@ class HomeView extends StackedView<HomeViewModel> {
         backgroundColor: kcPrimaryColor,
         elevation: 0,
         title: Text(
-          'TaskFlow',
+          ksAppName,
           style: GoogleFonts.nunitoSans(
             fontSize: 24,
             fontWeight: FontWeight.w900,
@@ -158,7 +159,7 @@ class _ErrorView extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: onRetry,
               icon: const Icon(FontAwesomeIcons.arrowsRotate, size: 16),
-              label: const Text('Try Again'),
+              label: const Text(ksTryAgain),
               style: ElevatedButton.styleFrom(
                 backgroundColor: kcPrimaryColor,
                 foregroundColor: Colors.white,
@@ -182,7 +183,7 @@ class _FilterSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'FILTER BY',
+          ksFilterBy,
           style: AppTextStyles.caption(context).copyWith(
             fontSize: 12,
             fontWeight: FontWeight.w700,
@@ -195,25 +196,25 @@ class _FilterSection extends StatelessWidget {
           child: Row(
             children: [
               FilterChipWidget(
-                label: 'All',
+                label: ksFilterAll,
                 isSelected: viewModel.selectedFilter == TaskFilter.all,
                 onTap: () => viewModel.setFilter(TaskFilter.all),
               ),
               horizontalSpaceSmall,
               FilterChipWidget(
-                label: 'Completed',
+                label: ksFilterCompleted,
                 isSelected: viewModel.selectedFilter == TaskFilter.completed,
                 onTap: () => viewModel.setFilter(TaskFilter.completed),
               ),
               horizontalSpaceSmall,
               FilterChipWidget(
-                label: 'Pending',
+                label: ksFilterPending,
                 isSelected: viewModel.selectedFilter == TaskFilter.pending,
                 onTap: () => viewModel.setFilter(TaskFilter.pending),
               ),
               horizontalSpaceSmall,
               FilterChipWidget(
-                label: 'More',
+                label: ksFilterMore,
                 isSelected: false,
                 onTap: viewModel.showMoreFilters,
                 icon: FontAwesomeIcons.filter,
@@ -311,7 +312,7 @@ class _TasksList extends StatelessWidget {
             ),
             verticalSpaceMedium,
             Text(
-              'No tasks found',
+              ksNoTasksFound,
               style: AppTextStyles.body(context).copyWith(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? Colors.white54
@@ -329,7 +330,7 @@ class _TasksList extends StatelessWidget {
         if (overdueTasks.isNotEmpty) ...[
           _SectionHeader(
             icon: FontAwesomeIcons.circleExclamation,
-            title: 'OVERDUE (${overdueTasks.length})',
+            title: '$ksOverdue (${overdueTasks.length})',
             color: Colors.red,
           ),
           verticalSpaceSmall,
@@ -455,7 +456,7 @@ class _HomeContent extends StatelessWidget {
               color: Colors.transparent,
               child: SearchField(
                 controller: viewModel.searchController,
-                hintText: 'Search tasks...',
+                hintText: ksSearchTasksHint,
                 onChanged: viewModel.onSearchChanged,
               ),
             ),
@@ -525,10 +526,10 @@ class _ConnectivityIndicator extends StatelessWidget {
               ),
         onPressed: isSyncing ? null : () => viewModel.syncWithServer(),
         tooltip: isSyncing
-            ? 'Syncing...'
+            ? ksSyncing
             : viewModel.isOnline
-            ? 'Online - Tap to sync'
-            : 'Offline - Tap to sync',
+            ? ksOnlineTapToSync
+            : ksOfflineTapToSync,
       ),
     );
   }

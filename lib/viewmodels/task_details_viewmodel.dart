@@ -4,6 +4,7 @@ import 'package:taskflow/app/app.locator.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/repositories/task_repository.dart';
 import 'package:taskflow/services/api_exceptions.dart';
+import 'package:taskflow/ui/common/app_strings.dart';
 import 'package:taskflow/ui/common/toast.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -152,7 +153,7 @@ class TaskDetailsViewModel extends BaseViewModel {
       );
 
       await _taskRepository.createTask(newTask);
-      _toastService.showSuccess(message: 'Task created successfully');
+      _toastService.showSuccess(message: ksTaskCreatedSuccess);
       _navigationService.back(result: true);
     } on ApiException catch (e) {
       _toastService.showError(message: e.userMessage);
@@ -175,7 +176,7 @@ class TaskDetailsViewModel extends BaseViewModel {
       );
 
       await _taskRepository.updateTask(updatedTask);
-      _toastService.showSuccess(message: 'Task updated successfully');
+      _toastService.showSuccess(message: ksTaskUpdatedSuccess);
       _navigationService.back(result: true);
     } on ApiException catch (e) {
       _toastService.showError(message: e.userMessage);
@@ -207,10 +208,10 @@ class TaskDetailsViewModel extends BaseViewModel {
       final success = await _taskRepository.deleteTask(taskId!);
 
       if (success) {
-        _toastService.showSuccess(message: 'Task deleted successfully');
+        _toastService.showSuccess(message: ksTaskDeletedSuccess);
         _navigationService.back(result: true);
       } else {
-        _toastService.showError(message: 'Failed to delete task');
+        _toastService.showError(message: ksFailedToDeleteTask);
       }
     } on ApiException catch (e) {
       _toastService.showError(message: e.userMessage);
@@ -225,36 +226,32 @@ class TaskDetailsViewModel extends BaseViewModel {
     final description = descriptionController.text.trim();
 
     if (title.isEmpty) {
-      _toastService.showError(message: 'Please enter a task title');
+      _toastService.showError(message: ksEnterTaskTitleError);
       return false;
     }
 
     if (title.length < 3) {
-      _toastService.showError(message: 'Title must be at least 3 characters');
+      _toastService.showError(message: ksTitleMinLengthError);
       return false;
     }
 
     if (title.length > 100) {
-      _toastService.showError(
-        message: 'Title must be less than 100 characters',
-      );
+      _toastService.showError(message: ksTitleMaxLengthError);
       return false;
     }
 
     if (description.isEmpty) {
-      _toastService.showError(message: 'Please enter a description');
+      _toastService.showError(message: ksEnterDescriptionError);
       return false;
     }
 
     if (description.length > 500) {
-      _toastService.showError(
-        message: 'Description must be less than 500 characters',
-      );
+      _toastService.showError(message: ksDescriptionMaxLengthError);
       return false;
     }
 
     if (_selectedDueDate == null) {
-      _toastService.showError(message: 'Please select a due date');
+      _toastService.showError(message: ksSelectDueDateError);
       return false;
     }
 

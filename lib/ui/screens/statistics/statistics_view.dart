@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
+import 'package:taskflow/ui/common/app_strings.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:taskflow/viewmodels/statistics_viewmodel.dart';
@@ -29,7 +30,7 @@ class StatisticsView extends StackedView<StatisticsViewModel> {
           onPressed: viewModel.navigateBack,
         ),
         title: const Text(
-          'Statistics',
+          ksStatistics,
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w700,
@@ -90,7 +91,7 @@ class _StatsOverview extends StatelessWidget {
       children: [
         Expanded(
           child: _StatCard(
-            title: 'Total Tasks',
+            title: ksTotalTasks,
             value: viewModel.totalTasks.toString(),
             icon: FontAwesomeIcons.listCheck,
             color: kcPrimaryColor,
@@ -99,7 +100,7 @@ class _StatsOverview extends StatelessWidget {
         horizontalSpaceSmall,
         Expanded(
           child: _StatCard(
-            title: 'Completed',
+            title: ksCompletedTasks,
             value: viewModel.completedTasks.toString(),
             icon: FontAwesomeIcons.circleCheck,
             color: Colors.green,
@@ -108,7 +109,7 @@ class _StatsOverview extends StatelessWidget {
         horizontalSpaceSmall,
         Expanded(
           child: _StatCard(
-            title: 'Pending',
+            title: ksPendingTasks,
             value: viewModel.pendingTasks.toString(),
             icon: FontAwesomeIcons.clock,
             color: Colors.orange,
@@ -176,7 +177,7 @@ class _CategoryStats extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Tasks by Category', style: AppTextStyles.heading3(context)),
+        Text(ksTasksByCategory, style: AppTextStyles.heading3(context)),
         verticalSpaceMedium,
         ...TaskCategory.values.map((category) {
           final count = viewModel.getCategoryCount(category);
@@ -279,7 +280,7 @@ class _CompletionChart extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Completion Rate', style: AppTextStyles.heading3(context)),
+          Text(ksCompletionRate, style: AppTextStyles.heading3(context)),
           verticalSpaceMedium,
           Center(
             child: Stack(

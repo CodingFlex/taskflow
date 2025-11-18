@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taskflow/models/task.dart';
+import 'package:taskflow/ui/common/app_strings.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:taskflow/ui/screens/home/widgets/category_filter_chip.dart';
@@ -45,10 +46,10 @@ class MoreFiltersSheet extends StackedView<MoreFiltersSheetModel> {
             ),
           ),
           verticalSpaceLarge,
-          Text('More Filters', style: AppTextStyles.heading2(context)),
+          Text(ksMoreFilters, style: AppTextStyles.heading2(context)),
           verticalSpaceLarge,
           Text(
-            'SORT BY',
+            ksSortBy,
             style: AppTextStyles.caption(context).copyWith(
               fontSize: 12,
               fontWeight: FontWeight.w700,
@@ -61,17 +62,17 @@ class MoreFiltersSheet extends StackedView<MoreFiltersSheetModel> {
             runSpacing: 8,
             children: [
               FilterChipWidget(
-                label: 'Date Created',
+                label: ksSortDateCreated,
                 isSelected: viewModel.sortOption == SortOption.dateCreated,
                 onTap: () => viewModel.setSortOption(SortOption.dateCreated),
               ),
               FilterChipWidget(
-                label: 'Title (A-Z)',
+                label: ksSortTitle,
                 isSelected: viewModel.sortOption == SortOption.title,
                 onTap: () => viewModel.setSortOption(SortOption.title),
               ),
               FilterChipWidget(
-                label: 'Due Date',
+                label: ksSortDueDate,
                 isSelected: viewModel.sortOption == SortOption.dueDate,
                 onTap: () => viewModel.setSortOption(SortOption.dueDate),
               ),
@@ -79,7 +80,7 @@ class MoreFiltersSheet extends StackedView<MoreFiltersSheetModel> {
           ),
           verticalSpaceLarge,
           Text(
-            'CATEGORY',
+            ksCategoryFilter,
             style: AppTextStyles.caption(context).copyWith(
               fontSize: 12,
               fontWeight: FontWeight.w700,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
+import 'package:taskflow/ui/common/app_strings.dart';
 import 'package:taskflow/ui/common/keyboard_unfocus_wrapper.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
@@ -35,7 +36,7 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
           onPressed: viewModel.navigateBack,
         ),
         title: Text(
-          viewModel.isEditMode ? 'Edit Task' : 'New Task',
+          viewModel.isEditMode ? ksEditTask : ksNewTask,
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w700,
@@ -96,7 +97,7 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
                       padding: const EdgeInsets.only(bottom: 20),
                       child: Center(
                         child: TaskflowButton(
-                          title: viewModel.isEditMode ? 'Update' : 'Create',
+                          title: viewModel.isEditMode ? ksUpdate : ksCreate,
                           onTap: viewModel.saveTask,
                           state: viewModel.canSave
                               ? TaskflowButtonState.enabled
@@ -144,7 +145,7 @@ class _CompletionToggleSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Mark as completed',
+                ksMarkAsCompleted,
                 style: AppTextStyles.body(
                   context,
                 ).copyWith(fontWeight: FontWeight.w600),
@@ -152,8 +153,8 @@ class _CompletionToggleSection extends StatelessWidget {
               verticalSpaceTiny,
               Text(
                 isCompleted
-                    ? 'This task is completed'
-                    : 'Toggle to mark this task as completed',
+                    ? ksTaskIsCompleted
+                    : ksToggleTaskCompletion,
                 style: AppTextStyles.caption(context).copyWith(
                   fontSize: 12,
                   color: isDark ? Colors.white70 : Colors.black54,
@@ -191,7 +192,7 @@ class _TitleSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Title *',
+          ksTitleLabel,
           style: AppTextStyles.body(
             context,
           ).copyWith(fontWeight: FontWeight.w600),
@@ -199,7 +200,7 @@ class _TitleSection extends StatelessWidget {
         verticalSpaceSmall,
         TaskflowInputField(
           controller: viewModel.titleController,
-          placeholder: 'Enter task title',
+          placeholder: ksEnterTaskTitle,
           maxLines: 1,
         ),
         verticalSpaceTiny,
@@ -226,7 +227,7 @@ class _CategorySection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Category',
+          ksCategoryLabel,
           style: AppTextStyles.body(
             context,
           ).copyWith(fontWeight: FontWeight.w600),
@@ -253,7 +254,7 @@ class _DueDateSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Due Date',
+          ksDueDateLabel,
           style: AppTextStyles.body(
             context,
           ).copyWith(fontWeight: FontWeight.w600),
@@ -261,7 +262,7 @@ class _DueDateSection extends StatelessWidget {
         verticalSpaceSmall,
         DateInputField(
           controller: viewModel.dueDateController,
-          placeholder: 'Select due date',
+          placeholder: ksSelectDueDate,
           initialDate: viewModel.selectedDueDate,
           onDateSelected: (date) {
             viewModel.setDueDate(date);
@@ -281,7 +282,7 @@ class _DueDateSection extends StatelessWidget {
               ),
               horizontalSpaceSmall,
               Text(
-                'This task is overdue',
+                ksTaskIsOverdue,
                 style: AppTextStyles.caption(
                   context,
                 ).copyWith(color: Colors.red, fontSize: 12),
@@ -305,7 +306,7 @@ class _DescriptionSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Description',
+          ksDescriptionLabel,
           style: AppTextStyles.body(
             context,
           ).copyWith(fontWeight: FontWeight.w600),
@@ -313,7 +314,7 @@ class _DescriptionSection extends StatelessWidget {
         verticalSpaceSmall,
         TaskflowInputField(
           controller: viewModel.descriptionController,
-          placeholder: 'Enter task description',
+          placeholder: ksEnterTaskDescription,
           maxLines: 5,
         ),
         verticalSpaceTiny,

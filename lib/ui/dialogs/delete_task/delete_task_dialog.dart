@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taskflow/ui/common/app_strings.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:taskflow/ui/common/taskflow_button2.dart';
@@ -32,14 +33,14 @@ class DeleteTaskDialog extends StackedView<DeleteTaskDialogModel> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Delete Task?',
+              ksDeleteTaskTitle,
               style: AppTextStyles.heading2(
                 context,
               ).copyWith(fontSize: 24, fontWeight: FontWeight.w800),
             ),
             verticalSpaceMedium,
             Text(
-              'This action cannot be undone.',
+              ksDeleteTaskMessage,
               style: AppTextStyles.body(context).copyWith(fontSize: 16),
             ),
             verticalSpaceLarge,
@@ -47,7 +48,7 @@ class DeleteTaskDialog extends StackedView<DeleteTaskDialogModel> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TaskflowButton2(
-                  title: 'CANCEL',
+                  title: ksCancel,
                   type: TaskflowButton2Type.secondary,
                   onTap: () => viewModel.cancel(completer),
                   width: 100,
@@ -56,7 +57,7 @@ class DeleteTaskDialog extends StackedView<DeleteTaskDialogModel> {
                 ),
                 horizontalSpaceSmall,
                 TaskflowButton2(
-                  title: 'DELETE',
+                  title: ksDelete,
                   type: TaskflowButton2Type.danger,
                   onTap: () {
                     viewModel.delete(completer);

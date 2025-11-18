@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
+import 'package:taskflow/ui/common/app_strings.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 
 class CategoryFilterChip extends StatelessWidget {
@@ -48,7 +49,7 @@ class CategoryFilterChip extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              category?.displayName ?? 'All',
+              category?.displayName ?? ksFilterAll,
               style: AppTextStyles.body(context).copyWith(
                 color: textColor,
                 fontSize: 14,

@@ -7,6 +7,7 @@ import 'package:taskflow/app/app.router.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/repositories/task_repository.dart';
 import 'package:taskflow/services/api_exceptions.dart';
+import 'package:taskflow/ui/common/app_strings.dart';
 import 'package:taskflow/ui/common/toast.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
@@ -206,8 +207,8 @@ class HomeViewModel extends BaseViewModel {
       await _taskRepository.updateTask(updatedTask);
       _toastService.showSuccess(
         message: updatedTask.status == TaskStatus.completed
-            ? 'Task marked as completed'
-            : 'Task marked as pending',
+            ? ksTaskMarkedCompleted
+            : ksTaskMarkedPending,
       );
     } on ApiException catch (e) {
       _updateTaskInList(task);
@@ -236,8 +237,8 @@ class HomeViewModel extends BaseViewModel {
       _errorMessage = e.userMessage;
       _toastService.showError(message: e.userMessage);
     } catch (e) {
-      _errorMessage = 'An unexpected error occurred';
-      _toastService.showError(message: 'Failed to load tasks');
+      _errorMessage = ksUnexpectedError;
+      _toastService.showError(message: ksFailedToLoadTasks);
     } finally {
       if (shouldToggleBusy) {
         setBusy(false);
@@ -265,12 +266,12 @@ class HomeViewModel extends BaseViewModel {
 
     if (status == InternetStatus.connected) {
       _toastService.showSuccess(
-        message: 'Back online',
+        message: ksBackOnline,
         duration: const Duration(seconds: 2),
       );
     } else {
       _toastService.showError(
-        message: 'Connection lost',
+        message: ksConnectionLost,
         duration: const Duration(seconds: 2),
       );
     }
@@ -300,7 +301,7 @@ class HomeViewModel extends BaseViewModel {
   Future<void> syncWithServer() async {
     if (!isOnline) {
       _toastService.showError(
-        message: 'No internet connection. Please check your network.',
+        message: ksNoInternetConnection,
       );
       return;
     }
@@ -309,7 +310,7 @@ class HomeViewModel extends BaseViewModel {
     try {
       await _taskRepository.syncWithServer();
       await loadTasks(forceRefresh: true);
-      _toastService.showSuccess(message: 'Sync completed successfully');
+      _toastService.showSuccess(message: ksSyncCompletedSuccess);
     } on ApiException catch (e) {
       _toastService.showError(message: e.userMessage);
     } finally {
