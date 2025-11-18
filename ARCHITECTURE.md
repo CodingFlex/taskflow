@@ -165,11 +165,11 @@ class TaskRepository {
 ```
 
 ### Benefits
-✅ Instant UI updates  
-✅ Works without internet  
-✅ No loading spinners for writes  
-✅ Resilient to network failures  
-✅ Better user experience  
+- Instant UI updates  
+- Works without internet  
+- No loading spinners for writes  
+- Resilient to network failures  
+- Better user experience  
 
 ## Data Flow
 

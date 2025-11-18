@@ -30,6 +30,10 @@ class TaskDetailsViewModel extends BaseViewModel {
   bool _isFormValid = false;
   bool _listenersAttached = false;
 
+  String? _titleError;
+  String? _descriptionError;
+  String? _dueDateError;
+
   Task? get task => _task;
   TaskCategory? get selectedCategory => _selectedCategory;
   DateTime? get selectedDueDate => _selectedDueDate;
@@ -37,6 +41,10 @@ class TaskDetailsViewModel extends BaseViewModel {
   bool get isEditMode => taskId != null;
   bool get canSave => _isFormValid;
   bool get isSaving => busy('save');
+
+  String? get titleError => _titleError;
+  String? get descriptionError => _descriptionError;
+  String? get dueDateError => _dueDateError;
 
   // Validation getters for UI
   bool get isTitleValid =>
@@ -250,37 +258,34 @@ class TaskDetailsViewModel extends BaseViewModel {
     final title = titleController.text.trim();
     final description = descriptionController.text.trim();
 
+    bool isValid = true;
+
     if (title.isEmpty) {
-      _toastService.showError(message: ksEnterTaskTitleError);
-      return false;
-    }
-
-    if (title.length < 3) {
-      _toastService.showError(message: ksTitleMinLengthError);
-      return false;
-    }
-
-    if (title.length > 100) {
-      _toastService.showError(message: ksTitleMaxLengthError);
-      return false;
+      _titleError = ksEnterTaskTitleError;
+      isValid = false;
+    } else if (title.length < 3) {
+      _titleError = ksTitleMinLengthError;
+      isValid = false;
+    } else if (title.length > 100) {
+      _titleError = ksTitleMaxLengthError;
+      isValid = false;
     }
 
     if (description.isEmpty) {
-      _toastService.showError(message: ksEnterDescriptionError);
-      return false;
-    }
-
-    if (description.length > 500) {
-      _toastService.showError(message: ksDescriptionMaxLengthError);
-      return false;
+      _descriptionError = ksEnterDescriptionError;
+      isValid = false;
+    } else if (description.length > 500) {
+      _descriptionError = ksDescriptionMaxLengthError;
+      isValid = false;
     }
 
     if (_selectedDueDate == null) {
-      _toastService.showError(message: ksSelectDueDateError);
-      return false;
+      _dueDateError = ksSelectDueDateError;
+      isValid = false;
     }
 
-    return true;
+    rebuildUi();
+    return isValid;
   }
 
   void _updateFormValidity() {
@@ -293,6 +298,11 @@ class TaskDetailsViewModel extends BaseViewModel {
         description.isNotEmpty && description.length <= 500;
     final hasDueDate = _selectedDueDate != null;
     final nextState = hasValidTitle && hasValidDescription && hasDueDate;
+
+    // Clear errors when field becomes valid
+    if (hasValidTitle) _titleError = null;
+    if (hasValidDescription) _descriptionError = null;
+    if (hasDueDate) _dueDateError = null;
 
     if (_isFormValid != nextState) {
       _isFormValid = nextState;

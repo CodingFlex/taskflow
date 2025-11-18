@@ -24,10 +24,10 @@ class StorageService {
 
       _taskBox = await Hive.openBox<Task>(_taskBoxName);
 
-      _logger.i('✅ Hive initialized successfully');
-      _logger.i('📦 Tasks in storage: ${_taskBox!.length}');
+      _logger.i('Hive initialized successfully');
+      _logger.i('Tasks in storage: ${_taskBox!.length}');
     } catch (e) {
-      _logger.e('❌ Error initializing Hive: $e');
+      _logger.e('Error initializing Hive: $e');
       rethrow;
     }
   }
@@ -42,9 +42,9 @@ class StorageService {
     await _ensureInitialized();
     try {
       await _taskBox!.put(task.id, task);
-      _logger.i('💾 Task saved: ${task.title} (ID: ${task.id})');
+      _logger.i('Task saved: ${task.title} (ID: ${task.id})');
     } catch (e) {
-      _logger.i('❌ Error saving task: $e');
+      _logger.i('Error saving task: $e');
       rethrow;
     }
   }
@@ -54,9 +54,9 @@ class StorageService {
     try {
       final taskMap = {for (var task in tasks) task.id: task};
       await _taskBox!.putAll(taskMap);
-      _logger.i('💾 Saved ${tasks.length} tasks to storage');
+      _logger.i('Saved ${tasks.length} tasks to storage');
     } catch (e) {
-      _logger.i('❌ Error saving tasks: $e');
+      _logger.i('Error saving tasks: $e');
       rethrow;
     }
   }
@@ -67,10 +67,10 @@ class StorageService {
       final tasks = _taskBox!.values.toList();
 
       tasks.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      _logger.i('📖 Retrieved ${tasks.length} tasks from storage');
+      _logger.i('Retrieved ${tasks.length} tasks from storage');
       return tasks;
     } catch (e) {
-      _logger.i('❌ Error getting tasks: $e');
+      _logger.i('Error getting tasks: $e');
       return [];
     }
   }
@@ -80,13 +80,13 @@ class StorageService {
     try {
       final task = _taskBox!.get(id);
       if (task != null) {
-        _logger.i('📖 Retrieved task: ${task.title} (ID: $id)');
+        _logger.i('Retrieved task: ${task.title} (ID: $id)');
       } else {
-        _logger.i('⚠️ Task not found with ID: $id');
+        _logger.i('Task not found with ID: $id');
       }
       return task;
     } catch (e) {
-      _logger.i('❌ Error getting task: $e');
+      _logger.i('Error getting task: $e');
       return null;
     }
   }
@@ -96,12 +96,12 @@ class StorageService {
     try {
       if (_taskBox!.containsKey(task.id)) {
         await _taskBox!.put(task.id, task);
-        _logger.i('✏️ Task updated: ${task.title} (ID: ${task.id})');
+        _logger.i('Task updated: ${task.title} (ID: ${task.id})');
       } else {
         await saveTask(task);
       }
     } catch (e) {
-      _logger.i('❌ Error updating task: $e');
+      _logger.i('Error updating task: $e');
       rethrow;
     }
   }
@@ -110,9 +110,9 @@ class StorageService {
     await _ensureInitialized();
     try {
       await _taskBox!.delete(id);
-      _logger.i('🗑️ Task deleted (ID: $id)');
+      _logger.i('Task deleted (ID: $id)');
     } catch (e) {
-      _logger.i('❌ Error deleting task: $e');
+      _logger.i('Error deleting task: $e');
       rethrow;
     }
   }
@@ -121,9 +121,9 @@ class StorageService {
     await _ensureInitialized();
     try {
       await _taskBox!.deleteAll(ids);
-      _logger.i('🗑️ Deleted ${ids.length} tasks');
+      _logger.i('Deleted ${ids.length} tasks');
     } catch (e) {
-      _logger.i('❌ Error deleting tasks: $e');
+      _logger.i('Error deleting tasks: $e');
       rethrow;
     }
   }
@@ -133,9 +133,9 @@ class StorageService {
     try {
       final count = _taskBox!.length;
       await _taskBox!.clear();
-      _logger.i('🧹 Cleared $count tasks from storage');
+      _logger.i('Cleared $count tasks from storage');
     } catch (e) {
-      _logger.i('❌ Error clearing tasks: $e');
+      _logger.i('Error clearing tasks: $e');
       rethrow;
     }
   }
@@ -209,9 +209,9 @@ class StorageService {
   Future<void> close() async {
     try {
       await _taskBox?.close();
-      _logger.i('✅ Storage closed successfully');
+      _logger.i('Storage closed successfully');
     } catch (e) {
-      _logger.i('❌ Error closing storage: $e');
+      _logger.i('Error closing storage: $e');
     }
   }
 
@@ -219,9 +219,9 @@ class StorageService {
     await _ensureInitialized();
     try {
       await _taskBox!.clear();
-      _logger.i('🔄 Storage reset successfully');
+      _logger.i('Storage reset successfully');
     } catch (e) {
-      _logger.i('❌ Error resetting storage: $e');
+      _logger.i('Error resetting storage: $e');
       rethrow;
     }
   }

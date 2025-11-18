@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:taskflow/models/task.dart';
+import 'package:taskflow/ui/common/animated_field_error.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/app_strings.dart';
 import 'package:taskflow/ui/common/keyboard_unfocus_wrapper.dart';
@@ -205,6 +206,7 @@ class _TitleSection extends StatelessWidget {
           placeholder: ksEnterTaskTitle,
           maxLines: 1,
         ),
+        AnimatedFieldError(errorMessage: viewModel.titleError),
         verticalSpaceTiny,
         Align(
           alignment: Alignment.centerRight,
@@ -273,6 +275,7 @@ class _DueDateSection extends StatelessWidget {
             viewModel.clearDueDate();
           },
         ),
+        AnimatedFieldError(errorMessage: viewModel.dueDateError),
         if (isOverdue) ...[
           verticalSpaceTiny,
           Row(
@@ -319,6 +322,7 @@ class _DescriptionSection extends StatelessWidget {
           placeholder: ksEnterTaskDescription,
           maxLines: 5,
         ),
+        AnimatedFieldError(errorMessage: viewModel.descriptionError),
         verticalSpaceTiny,
         Align(
           alignment: Alignment.centerRight,

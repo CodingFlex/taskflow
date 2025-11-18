@@ -1,28 +1,28 @@
 # TaskFlow - Offline-First Task Management App
-## 👤  Oluwatunmise Dunmade
+
 
 A Flutter task management application built with offline-first architecture, adaptive theming, and biometric authentication.
 
-## 📱 Features
+## Features
 
 ### Core Features
-- ✅ **Create, Read, Update, Delete (CRUD)** tasks with rich details
-- ✅ **Offline-First Architecture** - App works fully without internet
-- ✅ **Local Data Persistence** using Hive database
-- ✅ **Task Statistics** - View completion metrics and category breakdowns
-- ✅ **Pull-to-Refresh** - Manual sync with API (demo purposes)
-- ✅ **Connectivity Status** - Real-time online/offline indicator
-- ✅ **Biometric Authentication** - Face ID/Fingerprint support with graceful fallback
-- ✅ **Infinite Scroll Pagination** - Smooth scrolling with lazy loading
-- ✅ **Adaptive Theme** - Light and Dark mode with persistent user preference
-- ✅ **Animated UI Components** - Smooth transitions and interactive animations
-- ✅ **Form Validation** - Real-time input validation for task creation/editing
-- ✅ **Hero Animations** - Smooth screen transitions with shared element animations
-- ✅ **Search & Filter** - Search by title, filter by status (All/Completed/Pending)
-- ✅ **Category System** - Organize tasks with Work, Personal, Shopping, Health, and Other categories
-- ✅ **Sort Options** - Sort by Date Created, Due Date, or Title
+- **Create, Read, Update, Delete (CRUD)** tasks with rich details
+- **Offline-First Architecture** - App works fully without internet
+- **Local Data Persistence** using Hive database
+- **Task Statistics** - View completion metrics and category breakdowns
+- **Pull-to-Refresh** - Manual sync with API (demo purposes)
+- **Connectivity Status** - Real-time online/offline indicator
+- **Biometric Authentication** - Face ID/Fingerprint support with graceful fallback
+- **Infinite Scroll Pagination** - Smooth scrolling with lazy loading
+- **Adaptive Theme** - Light and Dark mode with persistent user preference
+- **Animated UI Components** - Smooth transitions and interactive animations
+- **Form Validation** - Real-time input validation for task creation/editing
+- **Hero Animations** - Smooth screen transitions with shared element animations
+- **Search & Filter** - Search by title, filter by status (All/Completed/Pending)
+- **Category System** - Organize tasks with Work, Personal, Shopping, Health, and Other categories
+- **Sort Options** - Sort by Date Created, Due Date, or Title
 
-## 🏗️ Architecture & Design Decisions
+## Architecture & Design Decisions
 
 ### State Management
 **Solution Used: Stacked (MVVM Pattern)**
@@ -60,10 +60,10 @@ lib/
 5. User never experiences downtime or data loss
 
 **Benefits:**
-- ✅ Instant UI updates
-- ✅ Works without internet
-- ✅ No loading spinners for local operations
-- ✅ Better user experience
+- Instant UI updates
+- Works without internet
+- No loading spinners for local operations
+- Better user experience
 
 **Implementation Note:** For demo purposes, API responses are intentionally NOT merged with local storage to showcase the offline-first approach. 
 
@@ -80,7 +80,7 @@ lib/
 - API calls don't affect local data (by design)
 - Background sync for better UX
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Flutter SDK (>=3.5.0)
@@ -189,42 +189,42 @@ The `MainActivity` uses `FlutterFragmentActivity` for biometric support.
    - **Trade-off:** Not server-side pagination; loads all data then paginates in-memory
    - **Reason:** JSONPlaceholder doesn't support pagination; demonstrates the pattern for future API integration
 
-## ✨ Features from Part 5 Implemented
+## Features from Part 5 Implemented
 
 ### 1. Search & Filter
-- ✅ Search tasks by title (with debouncing)
-- ✅ Filter by status (all/completed/pending)
-- ✅ Sort by date created, due date, or title (alphabetically)
-- ✅ Category-based filtering
+- Search tasks by title (with debouncing)
+- Filter by status (all/completed/pending)
+- Sort by date created, due date, or title (alphabetically)
+- Category-based filtering
 
 ### 2. Custom Animations
-- ✅ Animated task completion (checkbox animation using `msh_checkbox`)
-- ✅ Hero animation when navigating to detail screen
-- ✅ Smooth list item insertion/deletion
-- ✅ Pull-to-refresh animation with custom indicator
-- ✅ Skeleton loading animations
+- Animated task completion (checkbox animation using `msh_checkbox`)
+- Hero animation when navigating to detail screen
+- Smooth list item insertion/deletion
+- Pull-to-refresh animation with custom indicator
+- Skeleton loading animations
 
 ### 3. Dark Mode
-- ✅ Toggle between light and dark themes
-- ✅ Persist theme preference (survives app restart)
-- ✅ Smooth theme transition using `adaptive_theme` package
-- ✅ Theme icon in app bar for easy access
+- Toggle between light and dark themes
+- Persist theme preference (survives app restart)
+- Smooth theme transition using `adaptive_theme` package
+- Theme icon in app bar for easy access
 
 ### 4. Form Validation
-- ✅ Validate task title (required, minimum 3 characters)
-- ✅ Show real-time error messages
-- ✅ Disable save button until form is valid
-- ✅ Due date validation (must be in future)
-- ✅ Visual feedback for validation states
+- Validate task title (required, minimum 3 characters)
+- Show real-time error messages
+- Disable save button until form is valid
+- Due date validation (must be in future)
+- Visual feedback for validation states
 
 ### 5. Performance Optimization
-- ✅ Implement lazy loading with infinite scroll pagination
-- ✅ Use const constructors throughout the app
-- ✅ Efficient state management (only notify when needed)
-- ✅ Background API calls (non-blocking UI)
-- ✅ Debounced search to reduce operations
+- Implement lazy loading with infinite scroll pagination
+- Use const constructors throughout the app
+- Efficient state management (only notify when needed)
+- Background API calls (non-blocking UI)
+- Debounced search to reduce operations
 
-## 🐛 Known Issues & Limitations
+## Known Issues & Limitations
 
 ### Known Issues
 1. **Background Sync Timing**
@@ -259,7 +259,7 @@ The `MainActivity` uses `FlutterFragmentActivity` for biometric support.
    - Simple statistics; no advanced insights
 
 
-## 🧪 Testing
+## Testing
 
 ### To Run Tests
 ```bash
@@ -279,7 +279,7 @@ flutter test --coverage
 - Widget tests for UI components
 - Integration tests for critical user flows
 
-## 📱 App Flow
+## App Flow
 
 1. **Splash Screen** → Checks biometric availability
 2. **Biometric Screen** → Optional authentication (skippable)
