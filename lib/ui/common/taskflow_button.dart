@@ -1,3 +1,4 @@
+/// Primary button widget with multiple types (primary, secondary, danger), states (enabled, disabled, loading), and outline variant.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
@@ -71,7 +72,8 @@ class _TaskflowButtonState extends State<TaskflowButton> {
     final bool isDisabled = widget.state == TaskflowButtonState.disabled;
     final bool isLoading = widget.state == TaskflowButtonState.loading;
     final bool isEnabled = widget.state == TaskflowButtonState.enabled;
-    final bool isInteractive = isEnabled; // Only enabled state allows interaction
+    final bool isInteractive =
+        isEnabled; // Only enabled state allows interaction
     final Color fillColor = widget.outline
         ? Colors.transparent
         : (isDisabled || isLoading ? baseColor.withOpacity(0.4) : baseColor);

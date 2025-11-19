@@ -1,3 +1,4 @@
+/// Application-wide color constants and theme definitions for light and dark modes.
 import 'package:flutter/material.dart';
 
 const Color kcPrimaryColor = Color(0xFF4A90E2);

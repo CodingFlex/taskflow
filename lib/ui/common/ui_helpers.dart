@@ -1,3 +1,4 @@
+/// Utility functions and constants for spacing, screen dimensions, and responsive font sizing.
 import 'dart:math';
 
 import 'package:flutter/material.dart';

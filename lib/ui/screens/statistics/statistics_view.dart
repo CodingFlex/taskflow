@@ -9,6 +9,7 @@ import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:taskflow/viewmodels/statistics_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
+/// Statistics screen displaying task overview, completion rates, and category breakdowns.
 class StatisticsView extends StackedView<StatisticsViewModel> {
   final String? heroTag;
   final List<Task>? tasks;
@@ -87,6 +88,7 @@ class StatisticsView extends StackedView<StatisticsViewModel> {
   }
 }
 
+/// Statistics overview section displaying total, completed, and pending task counts in cards.
 class _StatsOverview extends StatelessWidget {
   final StatisticsViewModel viewModel;
 
@@ -127,6 +129,7 @@ class _StatsOverview extends StatelessWidget {
   }
 }
 
+/// Individual statistic card displaying icon, value, and title for a single metric.
 class _StatCard extends StatelessWidget {
   final String title;
   final String value;
@@ -176,6 +179,7 @@ class _StatCard extends StatelessWidget {
   }
 }
 
+/// Category statistics section displaying task counts and progress bars for each category.
 class _CategoryStats extends StatelessWidget {
   final StatisticsViewModel viewModel;
 
@@ -204,6 +208,7 @@ class _CategoryStats extends StatelessWidget {
   }
 }
 
+/// Individual category statistic item with color indicator, count, and progress bar.
 class _CategoryStatItem extends StatelessWidget {
   final TaskCategory category;
   final int count;
@@ -281,6 +286,7 @@ class _CategoryStatItem extends StatelessWidget {
   }
 }
 
+/// Completion rate chart displaying circular progress indicator with percentage.
 class _CompletionChart extends StatelessWidget {
   final StatisticsViewModel viewModel;
 

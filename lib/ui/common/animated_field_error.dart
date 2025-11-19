@@ -4,7 +4,7 @@ import 'package:sizer/sizer.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
 
-/// Animated error message widget that appears below form fields
+/// Animated error message widget that appears below form fields with fade and slide transitions.
 class AnimatedFieldError extends StatelessWidget {
   final String? errorMessage;
   final Color color;

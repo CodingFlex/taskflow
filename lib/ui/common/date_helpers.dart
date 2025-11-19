@@ -1,4 +1,4 @@
-/// Date utility extensions for formatting and comparison
+/// Date utility extensions for formatting, comparison, and relative time calculations.
 extension DateTimeExtensions on DateTime {
   /// Compares calendar dates ignoring time
   bool isSameDay(DateTime other) {

@@ -1,7 +1,7 @@
-/// Single-flavor configuration for Taskflow.
-///
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+/// Single-flavor configuration for Taskflow.
 
 enum Flavor { single }
 

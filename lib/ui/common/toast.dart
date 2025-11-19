@@ -1,9 +1,8 @@
+/// Service for displaying toast notifications (success, error, info) with optional undo functionality for success toasts.
 import 'package:flutter/material.dart';
 import 'package:toastification/toastification.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-/// Service for showing toast notifications
-/// Success toasts support optional undo functionality
 class ToastService {
   /// Show a success toast notification.
   ///

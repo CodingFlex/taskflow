@@ -9,7 +9,7 @@ import 'package:taskflow/ui/common/date_helpers.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
 
-/// Displays individual task with animated checkbox, category, and date tags
+/// Displays individual task card with animated checkbox, category, and date tags.
 class TaskCard extends StatelessWidget {
   final Task task;
   final VoidCallback? onTap;

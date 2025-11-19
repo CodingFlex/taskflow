@@ -3,7 +3,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 
 part 'task_enums.g.dart';
 
-// ==================== TASK STATUS ====================
+// TASK STATUS
 
 @HiveType(typeId: 1)
 enum TaskStatus {
@@ -14,7 +14,7 @@ enum TaskStatus {
   completed,
 }
 
-// ==================== TASK CATEGORY ====================
+// TASK CATEGORY
 
 @HiveType(typeId: 2)
 enum TaskCategory {
@@ -66,7 +66,7 @@ extension TaskCategoryX on TaskCategory {
   }
 }
 
-// ==================== SORT OPTION ====================
+// SORT OPTION
 
 @HiveType(typeId: 3)
 enum SortOption {

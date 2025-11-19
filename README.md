@@ -10,6 +10,7 @@ TaskFlow is an offline-first task manager built with Flutter, Hive, and the Stac
 - Undo/redo for delete and update via a Command Pattern history.
 - Hero animations, Skeletonizer loading states, and RepaintBoundary wrappers around hot widgets (task cards, stat cards) to reduce repaint cost.
 - Adaptive light/dark themes and optional biometric auth on app launch.
+- Comprehensive logging infrastructure using the Logger package for debugging, error tracking, and runtime monitoring across services, repositories, and view models.
 
 ## Part 5 features (details)
 1. **Search & Filter**
@@ -41,10 +42,11 @@ TaskFlow is an offline-first task manager built with Flutter, Hive, and the Stac
 - **Data sync** that queues offline POST/PUT/DELETE operations and replays them when the device reconnects.
 
 ## Architecture & Data Flow
-- **Views** (Flutter widgets) render UI only. They listen to a ViewModel’s state via `StackedView`.
+- **Views** (Flutter widgets) render UI only. They listen to a ViewModel's state via `StackedView`.
 - **ViewModels** hold screen state, handle events, call `TaskRepository`, and expose simple getters (e.g., `filteredTasks`). They use `CommandManager` for undo/redo and `setBusy` for loading indicators.
 - **Repository layer** decides if an operation should hit Hive or the remote API. It also keeps track of offline changes and flushes them when the network becomes available.
 - **Services**: `StorageService` (Hive) and `TaskService` (Dio + JSONPlaceholder) do the actual persistence/network work.
+- **Logging**: Structured logging with the Logger package is integrated throughout the application. All services, repositories, and view models log operations, errors, and state changes with appropriate severity levels (info, warning, error), enabling effective debugging and production monitoring. Logging can be toggled via flavor configuration.
 - **Dependency injection**: `get_it` registers all services, so ViewModels stay easy to test.
 - **Design patterns**: MVVM for separation of concerns, Repository for data abstraction, Command Pattern for undo, and Locator for DI.
 

@@ -1,3 +1,4 @@
+/// Centralized string constants for the entire application, organized by feature area.
 // App name
 const String ksAppName = 'TaskFlow';
 

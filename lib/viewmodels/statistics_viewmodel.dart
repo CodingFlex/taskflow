@@ -7,6 +7,7 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:taskflow/ui/common/toast.dart';
 
+/// Manages statistics screen state including task counts, completion rates, and category breakdowns.
 class StatisticsViewModel extends BaseViewModel {
   final List<Task>? tasks;
   final _navigationService = locator<NavigationService>();

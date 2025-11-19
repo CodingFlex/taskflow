@@ -4,6 +4,7 @@ import 'package:taskflow/models/task.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 
+/// Category selector widget displaying all task categories as selectable chips.
 class CategorySelector extends StatelessWidget {
   final TaskCategory? selectedCategory;
   final Function(TaskCategory) onCategorySelected;

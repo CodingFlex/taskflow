@@ -2,7 +2,7 @@ import 'package:taskflow/commands/command.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/repositories/task_repository.dart';
 
-/// Deletes a task
+/// Command for deleting a task with undo capability.
 class DeleteTaskCommand implements Command {
   final Task deletedTask;
   final TaskRepository _repository;

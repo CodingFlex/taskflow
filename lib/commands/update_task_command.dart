@@ -2,7 +2,7 @@ import 'package:taskflow/commands/command.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/repositories/task_repository.dart';
 
-/// Updates a task
+/// Command for updating a task with undo capability.
 class UpdateTaskCommand implements Command {
   final Task oldTask;
   final Task newTask;

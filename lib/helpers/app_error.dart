@@ -1,3 +1,6 @@
+/// Centralized error handling and logging
+/// Provides standardized error types, converts Dio exceptions to AppError,
+/// and logs errors with appropriate severity levels
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:dio/dio.dart';

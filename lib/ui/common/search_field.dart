@@ -1,3 +1,4 @@
+/// Search input field widget with customizable styling, hint text, and change callbacks.
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:taskflow/ui/common/app_colors.dart';

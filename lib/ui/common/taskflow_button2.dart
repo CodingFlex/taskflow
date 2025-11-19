@@ -1,3 +1,4 @@
+/// Alternative button widget with customizable colors, borders, shadows, and support for primary/secondary/danger types.
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:taskflow/ui/common/app_colors.dart';

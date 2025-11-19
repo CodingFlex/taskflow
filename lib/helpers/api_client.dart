@@ -1,3 +1,7 @@
+/// HTTP client wrapper around Dio that provides a centralized interface for API calls.
+/// Handles request/response logging, authentication headers, error transformation,
+/// and timeout configuration. All HTTP methods (GET, POST, PUT, DELETE, PATCH) are
+/// wrapped with error handling that converts Dio exceptions to ApiException.
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:taskflow/services/api_exceptions.dart';

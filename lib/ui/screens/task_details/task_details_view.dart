@@ -156,6 +156,7 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
   }
 }
 
+/// Completion toggle section with switch to mark task as completed (edit mode only).
 class _CompletionToggleSection extends StatelessWidget {
   final TaskDetailsViewModel viewModel;
 
@@ -208,6 +209,7 @@ class _CompletionToggleSection extends StatelessWidget {
   }
 }
 
+/// Title input section with validation, character counter, and error display.
 class _TitleSection extends StatelessWidget {
   final TaskDetailsViewModel viewModel;
 
@@ -244,6 +246,7 @@ class _TitleSection extends StatelessWidget {
   }
 }
 
+/// Category selection section displaying category selector widget.
 class _CategorySection extends StatelessWidget {
   final TaskDetailsViewModel viewModel;
 
@@ -270,6 +273,7 @@ class _CategorySection extends StatelessWidget {
   }
 }
 
+/// Due date selection section with date picker, validation, and overdue indicator.
 class _DueDateSection extends StatelessWidget {
   final TaskDetailsViewModel viewModel;
 
@@ -324,6 +328,7 @@ class _DueDateSection extends StatelessWidget {
   }
 }
 
+/// Description input section with multi-line text field, validation, and character counter.
 class _DescriptionSection extends StatelessWidget {
   final TaskDetailsViewModel viewModel;
 

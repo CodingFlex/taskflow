@@ -347,9 +347,7 @@ class TaskRepository {
         }
       }
 
-      _logger.i(
-        '=== Sync complete: $totalSynced synced, $totalFailed failed ===',
-      );
+      _logger.i('Sync complete: $totalSynced synced, $totalFailed failed');
 
       if (totalFailed == 0 && totalSynced > 0) {
         await _storageService.clearPendingOperations();
@@ -357,7 +355,7 @@ class TaskRepository {
         return true;
       } else if (totalSynced > 0) {
         _logger.w('Partial sync: some operations failed');
-        return true; // Still return true if at least some synced
+        return true;
       }
 
       return false;

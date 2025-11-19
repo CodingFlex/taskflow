@@ -10,6 +10,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:taskflow/ui/bottom_sheets/more_filters/more_filters_sheet_model.dart';
 
+/// Bottom sheet for advanced task filtering with sort options and category selection.
 class MoreFiltersSheet extends StackedView<MoreFiltersSheetModel> {
   final SheetRequest request;
   final Function(SheetResponse)? completer;

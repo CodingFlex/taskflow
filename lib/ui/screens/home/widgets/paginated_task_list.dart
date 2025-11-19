@@ -8,8 +8,7 @@ import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:taskflow/ui/screens/home/widgets/task_card.dart';
 import 'package:taskflow/viewmodels/home_viewmodel.dart';
 
-/// Simple paginated task list for testing pagination
-/// Loads tasks page by page with a "Load More" button
+/// Paginated task list widget that loads tasks page by page with a "Load More" button.
 class PaginatedTaskList extends StatefulWidget {
   final HomeViewModel viewModel;
   static const int pageSize = 10; // Small page size to see pagination easily

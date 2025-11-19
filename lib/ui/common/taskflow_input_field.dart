@@ -1,3 +1,4 @@
+/// Customizable text input field with support for leading/trailing widgets, validation, password mode, and multi-line input.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';

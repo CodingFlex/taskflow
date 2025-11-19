@@ -7,6 +7,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:taskflow/ui/dialogs/delete_task/delete_task_dialog_model.dart';
 
+/// Confirmation dialog for deleting a task with undo capability.
 class DeleteTaskDialog extends StackedView<DeleteTaskDialogModel> {
   final DialogRequest request;
   final Function(DialogResponse) completer;

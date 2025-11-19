@@ -1,6 +1,5 @@
+/// Wrapper widget that unfocuses the keyboard when tapping outside input fields.
 import 'package:flutter/material.dart';
-
-/// This widget wraps any child and unfocuses the keyboard when tapping
 
 class KeyboardUnfocusWrapper extends StatelessWidget {
   final Widget child;

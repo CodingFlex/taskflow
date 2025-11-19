@@ -131,6 +131,7 @@ class HomeView extends StackedView<HomeViewModel> {
   }
 }
 
+/// Error display widget showing error message with retry button.
 class _ErrorView extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
@@ -179,6 +180,7 @@ class _ErrorView extends StatelessWidget {
   }
 }
 
+/// Filter section displaying horizontal scrollable filter chips (All, Completed, Pending, More).
 class _FilterSection extends StatelessWidget {
   final HomeViewModel viewModel;
 
@@ -234,6 +236,7 @@ class _FilterSection extends StatelessWidget {
   }
 }
 
+/// Tasks section that switches between paginated and regular task lists with animations.
 class _TasksSection extends StatelessWidget {
   final HomeViewModel viewModel;
 
@@ -295,6 +298,7 @@ class _TasksSection extends StatelessWidget {
   }
 }
 
+/// Task list widget that separates overdue tasks from other tasks with section headers.
 class _TasksList extends StatelessWidget {
   final List<Task> overdueTasks;
   final List<Task> otherTasks;
@@ -360,6 +364,7 @@ class _TasksList extends StatelessWidget {
   }
 }
 
+/// Animated task list with staggered fade-in and slide-up animations for each task.
 class _AnimatedTaskList extends StatelessWidget {
   final List<Task> tasks;
   final HomeViewModel viewModel;
@@ -397,6 +402,7 @@ class _AnimatedTaskList extends StatelessWidget {
   }
 }
 
+/// Animated task card wrapper with fade and slide transitions on state changes.
 class _AnimatedTaskCard extends StatelessWidget {
   final Task task;
   final VoidCallback? onTap;
@@ -440,6 +446,7 @@ class _AnimatedTaskCard extends StatelessWidget {
   }
 }
 
+/// Main content wrapper displaying search field, filters, and tasks with loading skeleton overlay.
 class _HomeContent extends StatelessWidget {
   final HomeViewModel viewModel;
 

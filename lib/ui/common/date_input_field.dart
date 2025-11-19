@@ -1,3 +1,4 @@
+/// Date input field widget with modal date picker that displays selected dates in MM/dd/yyyy format.
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sizer/sizer.dart';

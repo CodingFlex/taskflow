@@ -1,3 +1,4 @@
+/// Centralized text style definitions using Google Fonts (Nunito Sans) with responsive sizing and theme-aware colors.
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sizer/sizer.dart';

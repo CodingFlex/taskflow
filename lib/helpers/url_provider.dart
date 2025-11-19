@@ -1,5 +1,6 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+/// Provides API endpoint URLs for task operations using JSONPlaceholder endpoints.
 class URLProvider {
   static URLProvider? _instance;
 

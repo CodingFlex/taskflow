@@ -4,6 +4,7 @@ import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/app_strings.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 
+/// Category filter chip widget with color-coded indicator for filtering tasks by category.
 class CategoryFilterChip extends StatelessWidget {
   final TaskCategory? category;
   final bool isSelected;
