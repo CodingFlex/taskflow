@@ -101,6 +101,7 @@ Unit tests cover model helpers and the HomeViewModel filter/search logic; widget
 - No cloud backup or multi-device sync; Hive stays local.
 - Notifications, recurring tasks, and calendar integrations are not yet implemented.
 - Sync only triggers when connectivity returns or when the user taps the WiFi icon; background services do not fire after app termination.
+- Even with a long (6 s) debounce and a “two consecutive checks” rule, the connectivity listener still depends on the underlying `internet_connection_checker_plus` probes. Extremely flaky networks may still bounce the status, though far less often with the added guards.
 
 ## Notes & Future Enhancements
 - Add timestamp-aware conflict handling before pushing updates to the API.

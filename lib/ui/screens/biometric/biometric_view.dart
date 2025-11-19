@@ -33,7 +33,7 @@ class BiometricView extends StackedView<BiometricViewModel> {
                   const Spacer(),
                   Text(
                     ksAppName,
-                    style: GoogleFonts.nunitoSans(
+                    style: AppTextStyles.heading1(context).copyWith(
                       fontSize: 48,
                       fontWeight: FontWeight.w900,
                       color: kcPrimaryColor,

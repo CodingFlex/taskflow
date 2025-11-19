@@ -41,10 +41,11 @@ class HomeViewModel extends BaseViewModel {
   StreamSubscription<InternetStatus>? _internetSubscription;
 
   Timer? _statusDebounceTimer;
-  DateTime? _lastToastTime;
   InternetStatus? _lastStableStatus;
-  static const _toastCooldownDuration = Duration(seconds: 5);
-  static const _statusStabilizationDuration = Duration(seconds: 3);
+  int _consecutiveOnlineEvents = 0;
+  int _consecutiveOfflineEvents = 0;
+  static const int _requiredStableEvents = 2;
+  static const _statusStabilizationDuration = Duration(seconds: 6);
 
   TaskFilter get selectedFilter => _selectedFilter;
   SortOption get sortOption => _sortOption;
@@ -363,36 +364,19 @@ class HomeViewModel extends BaseViewModel {
     }
   }
 
-  bool _canShowToast() {
-    if (_lastToastTime == null) return true;
-
-    final timeSinceLastToast = DateTime.now().difference(_lastToastTime!);
-    return timeSinceLastToast >= _toastCooldownDuration;
-  }
-
-  void _showStatusToast(InternetStatus status) {
-    if (!_canShowToast()) return;
-
-    _lastToastTime = DateTime.now();
-
-    if (status == InternetStatus.connected) {
-      _toastService.showSuccess(
-        message: ksBackOnline,
-        duration: const Duration(seconds: 2),
-      );
-    } else {
-      _toastService.showError(
-        message: ksConnectionLost,
-        duration: const Duration(seconds: 2),
-      );
-    }
-  }
-
   void _onInternetStatusChanged(InternetStatus status) {
     _logger.i('Internet status changed: $status');
 
     // Store the old status before updating
     final previousStatus = _connectionStatus;
+
+    if (status == InternetStatus.connected) {
+      _consecutiveOnlineEvents++;
+      _consecutiveOfflineEvents = 0;
+    } else {
+      _consecutiveOfflineEvents++;
+      _consecutiveOnlineEvents = 0;
+    }
 
     // Update current status immediately for UI
     _connectionStatus = status;
@@ -407,6 +391,17 @@ class HomeViewModel extends BaseViewModel {
         'Debounce completed. Previous: $previousStatus, Current: $status',
       );
 
+      final hasRequiredStability = status == InternetStatus.connected
+          ? _consecutiveOnlineEvents >= _requiredStableEvents
+          : _consecutiveOfflineEvents >= _requiredStableEvents;
+
+      if (!hasRequiredStability) {
+        _logger.i(
+          'Status change skipped - insufficient consecutive confirmations',
+        );
+        return;
+      }
+
       // Skip if status hasn't actually changed
       if (_lastStableStatus == status) {
         _logger.i('Status unchanged, skipping');
@@ -417,20 +412,16 @@ class HomeViewModel extends BaseViewModel {
       final isNowOnline = status == InternetStatus.connected;
 
       _lastStableStatus = status;
+      _consecutiveOnlineEvents = 0;
+      _consecutiveOfflineEvents = 0;
 
       _logger.i(
         'Status transition: wasOnline=$wasOnline, isNowOnline=$isNowOnline',
       );
 
-      // Show toast and sync when connection status changes
-      if (wasOnline != isNowOnline) {
-        _showStatusToast(status);
-
-        // Sync offline changes when coming back online
-        if (isNowOnline && !wasOnline) {
-          _logger.i('Coming back online - triggering sync');
-          _syncOfflineChanges();
-        }
+      if (!wasOnline && isNowOnline) {
+        _logger.i('Coming back online - triggering sync');
+        _syncOfflineChanges();
       }
     });
   }
@@ -451,7 +442,6 @@ class HomeViewModel extends BaseViewModel {
         await loadTasks(forceRefresh: true, syncFirst: false);
       } else {
         _logger.i('No pending changes to sync');
-        // Don't show toast when there are no changes to avoid annoying users
       }
     } catch (e) {
       _logger.e('Sync failed: $e');
