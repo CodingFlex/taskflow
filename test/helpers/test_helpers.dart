@@ -1,6 +1,7 @@
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:taskflow/app/app.locator.dart';
+import 'package:taskflow/models/task.dart';
 import 'package:taskflow/repositories/task_repository.dart';
 import 'package:taskflow/services/storage_service.dart';
 import 'package:taskflow/services/task_service.dart';
@@ -49,9 +50,13 @@ MockDialogService getAndRegisterDialogService() {
 MockTaskRepository getAndRegisterTaskRepository() {
   _removeRegistrationIfExists<TaskRepository>();
   final service = MockTaskRepository();
-
+  when(
+    service.getTasks(forceRefresh: anyNamed('forceRefresh')),
+  ).thenAnswer((_) async => []);
   when(service.getTasks()).thenAnswer((_) async => []);
-  when(service.syncWithServer()).thenAnswer((_) async => []);
+  when(service.shouldUsePagination).thenReturn(false);
+  when(service.syncOfflineChanges()).thenAnswer((_) async => false);
+  when(service.syncWithServer()).thenAnswer((_) async {});
 
   locator.registerSingleton<TaskRepository>(service);
   return service;
@@ -71,6 +76,21 @@ MockStorageService getAndRegisterStorageService() {
 MockTaskService getAndRegisterTaskService() {
   _removeRegistrationIfExists<TaskService>();
   final service = MockTaskService();
+  final sampleTask = Task(
+    id: 1,
+    title: 'Sample task',
+    description: '',
+    createdAt: DateTime.now(),
+  );
+  when(service.fetchTasks()).thenAnswer((_) async => []);
+  when(service.fetchTask(any)).thenAnswer((_) async => sampleTask);
+  when(service.createTask(any)).thenAnswer(
+    (invocation) async => invocation.positionalArguments.first as Task,
+  );
+  when(service.updateTask(any)).thenAnswer(
+    (invocation) async => invocation.positionalArguments.first as Task,
+  );
+  when(service.deleteTask(any)).thenAnswer((_) async {});
   locator.registerSingleton<TaskService>(service);
   return service;
 }
@@ -85,8 +105,9 @@ MockToastService getAndRegisterToastService() {
 MockCommandManager getAndRegisterCommandManager() {
   _removeRegistrationIfExists<CommandManager>();
   final service = MockCommandManager();
-
   when(service.canUndo).thenReturn(false);
+  when(service.executeCommand(any)).thenAnswer((_) async {});
+  when(service.undo()).thenAnswer((_) async => false);
 
   locator.registerSingleton<CommandManager>(service);
   return service;
