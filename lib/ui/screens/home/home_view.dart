@@ -8,6 +8,7 @@ import 'package:taskflow/ui/common/app_strings.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:taskflow/ui/common/search_field.dart';
+import 'package:taskflow/ui/common/keyboard_unfocus_wrapper.dart';
 import 'package:taskflow/ui/screens/home/widgets/task_card.dart';
 import 'package:taskflow/ui/screens/home/widgets/filter_chip_widget.dart';
 import 'package:taskflow/ui/screens/home/widgets/paginated_task_list.dart';
@@ -52,7 +53,7 @@ class HomeView extends StackedView<HomeViewModel> {
                 color: Colors.transparent,
                 child: IconButton(
                   icon: const Icon(
-                    FontAwesomeIcons.chartBar,
+                    FontAwesomeIcons.chartLine,
                     color: Colors.white,
                     size: 18,
                   ),
@@ -69,7 +70,7 @@ class HomeView extends StackedView<HomeViewModel> {
             ),
             child: IconButton(
               icon: Icon(
-                isDark ? FontAwesomeIcons.sun : FontAwesomeIcons.moon,
+                isDark ? Icons.light_mode : Icons.dark_mode,
                 color: Colors.white,
                 size: 18,
               ),
@@ -79,37 +80,8 @@ class HomeView extends StackedView<HomeViewModel> {
         ],
       ),
       body: SafeArea(
-        child: CustomRefreshIndicator(
-          onRefresh: viewModel.refreshTasks,
+        child: KeyboardUnfocusWrapper(
           child: _HomeContent(viewModel: viewModel),
-          builder: (context, child, controller) {
-            return AnimatedBuilder(
-              animation: controller,
-              builder: (context, _) {
-                final pullDistance = controller.value * 80;
-                return Stack(
-                  alignment: Alignment.topCenter,
-                  children: [
-                    Transform.translate(
-                      offset: Offset(0, pullDistance),
-                      child: child,
-                    ),
-                    if (!controller.isIdle)
-                      Positioned(
-                        top: 12,
-                        child: Opacity(
-                          opacity: controller.value.clamp(0.0, 1.0),
-                          child: const CircularProgressIndicator(
-                            color: kcPrimaryColor,
-                            strokeWidth: 3,
-                          ),
-                        ),
-                      ),
-                  ],
-                );
-              },
-            );
-          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -467,23 +439,64 @@ class _HomeContent extends StatelessWidget {
       );
     }
 
-    final content = SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SearchField(
-            controller: viewModel.searchController,
-            hintText: ksSearchTasksHint,
-            onChanged: viewModel.onSearchChanged,
+    final content = Column(
+      children: [
+        // Fixed search and filter section
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SearchField(
+                controller: viewModel.searchController,
+                hintText: ksSearchTasksHint,
+                onChanged: viewModel.onSearchChanged,
+              ),
+              verticalSpaceMedium,
+              _FilterSection(viewModel: viewModel),
+            ],
           ),
-          verticalSpaceMedium,
-          _FilterSection(viewModel: viewModel),
-          verticalSpaceMedium,
-          _TasksSection(viewModel: viewModel),
-        ],
-      ),
+        ),
+        // Scrollable tasks section with pull-to-refresh
+        Expanded(
+          child: CustomRefreshIndicator(
+            onRefresh: viewModel.refreshTasks,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: _TasksSection(viewModel: viewModel),
+            ),
+            builder: (context, child, controller) {
+              return AnimatedBuilder(
+                animation: controller,
+                builder: (context, _) {
+                  final pullDistance = controller.value * 80;
+                  return Stack(
+                    alignment: Alignment.topCenter,
+                    children: [
+                      Transform.translate(
+                        offset: Offset(0, pullDistance),
+                        child: child,
+                      ),
+                      if (!controller.isIdle)
+                        Positioned(
+                          top: 12,
+                          child: Opacity(
+                            opacity: controller.value.clamp(0.0, 1.0),
+                            child: const CircularProgressIndicator(
+                              color: kcPrimaryColor,
+                              strokeWidth: 3,
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      ],
     );
 
     if (viewModel.isBusy) {
@@ -530,7 +543,7 @@ class _ConnectivityIndicator extends StatelessWidget {
             : Icon(
                 viewModel.isOnline
                     ? FontAwesomeIcons.wifi
-                    : FontAwesomeIcons.circleXmark,
+                    : Icons.signal_wifi_off,
                 color: viewModel.isOnline ? Colors.white : Colors.red,
                 size: 18,
               ),

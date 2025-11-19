@@ -36,6 +36,7 @@ class TaskRepository {
       }
 
       await _taskService.fetchTasks();
+      // Note: In a real implementation, we would save via _storageService.saveTasks() here, but since API is for demo only, we skip it
       return await _storageService.getTasks();
     } on ApiException catch (e) {
       _logger.w('API Error (${e.statusCode}): ${e.message}');
@@ -149,6 +150,7 @@ class TaskRepository {
 
       _logger.i('Task $id not in local storage, fetching from API');
       await _taskService.fetchTask(id);
+      // Note: In a real implementation, we would save via _storageService.saveTask() here, but since API is for demo only, we skip it
       _logger.i('Task $id fetched from API');
 
       return localTask;
@@ -176,6 +178,8 @@ class TaskRepository {
         final apiTask = await _taskService.createTask(assignedTask);
         _logger.d('API payload received for ${apiTask.title}');
         _logger.i('Task creation acknowledged by API');
+        // Refresh to sync server state (response won't be saved since API is for demo only)
+        await getTasks(forceRefresh: true);
       } on ApiException catch (e) {
         _logger.w('API sync failed for task creation: ${e.message}');
         _logger.w('Marking task ${assignedTask.id} for POST sync');
@@ -208,6 +212,8 @@ class TaskRepository {
         final apiTask = await _taskService.updateTask(task);
         _logger.d('API payload received for ${apiTask.title}');
         _logger.i('Task update acknowledged by API');
+        // Refresh to sync server state (response won't be saved since API is for demo only)
+        await getTasks(forceRefresh: true);
       } on ApiException catch (e) {
         _logger.w('API sync failed for task update: ${e.message}');
         _logger.w('Marking task ${task.id} for PUT sync');
@@ -239,6 +245,8 @@ class TaskRepository {
       try {
         await _taskService.deleteTask(taskId);
         _logger.i('Task deletion acknowledged by API');
+        // Refresh to sync server state (response won't be saved since API is for demo only)
+        await getTasks(forceRefresh: true);
       } on ApiException catch (e) {
         _logger.w('API sync failed for task deletion: ${e.message}');
         _logger.w('Marking task $taskId for DELETE sync');
@@ -391,6 +399,7 @@ class TaskRepository {
       _logger.i('Starting manual sync with server');
 
       final serverTasks = await _taskService.fetchTasks();
+      // Note: In a real implementation, we would save via _storageService.saveTasks() here, but since API is for demo only, we skip it
       _logger.i('Sync simulated: ${serverTasks.length} tasks returned by API');
     } on ApiException catch (e) {
       _logger.e('Sync failed: ${e.message}');
@@ -415,6 +424,7 @@ class TaskRepository {
     _taskService
         .fetchTasks()
         .then((tasks) {
+          // Note: In a real implementation, we would save via _storageService.saveTasks() here, but since API is for demo only, we skip it
           _logger.i('Background sync completed: ${tasks.length} API tasks');
         })
         .catchError((error) {
