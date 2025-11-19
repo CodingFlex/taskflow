@@ -84,6 +84,7 @@ class StackedRouter extends _i1.RouterBase {
           taskId: args.taskId,
           heroTag: args.heroTag,
           task: args.task,
+          onTaskChanged: args.onTaskChanged,
         ),
         settings: data,
       );
@@ -182,6 +183,7 @@ class TaskDetailsViewArguments {
     this.taskId,
     this.heroTag,
     this.task,
+    this.onTaskChanged,
   });
 
   final _i7.Key? key;
@@ -192,9 +194,11 @@ class TaskDetailsViewArguments {
 
   final _i8.Task? task;
 
+  final void Function()? onTaskChanged;
+
   @override
   String toString() {
-    return '{"key": "$key", "taskId": "$taskId", "heroTag": "$heroTag", "task": "$task"}';
+    return '{"key": "$key", "taskId": "$taskId", "heroTag": "$heroTag", "task": "$task", "onTaskChanged": "$onTaskChanged"}';
   }
 
   @override
@@ -203,12 +207,17 @@ class TaskDetailsViewArguments {
     return other.key == key &&
         other.taskId == taskId &&
         other.heroTag == heroTag &&
-        other.task == task;
+        other.task == task &&
+        other.onTaskChanged == onTaskChanged;
   }
 
   @override
   int get hashCode {
-    return key.hashCode ^ taskId.hashCode ^ heroTag.hashCode ^ task.hashCode;
+    return key.hashCode ^
+        taskId.hashCode ^
+        heroTag.hashCode ^
+        task.hashCode ^
+        onTaskChanged.hashCode;
   }
 }
 
@@ -298,6 +307,7 @@ extension NavigatorStateExtension on _i9.NavigationService {
     int? taskId,
     String? heroTag,
     _i8.Task? task,
+    void Function()? onTaskChanged,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -311,6 +321,7 @@ extension NavigatorStateExtension on _i9.NavigationService {
         taskId: taskId,
         heroTag: heroTag,
         task: task,
+        onTaskChanged: onTaskChanged,
       ),
       id: routerId,
       preventDuplicates: preventDuplicates,
@@ -402,6 +413,7 @@ extension NavigatorStateExtension on _i9.NavigationService {
     int? taskId,
     String? heroTag,
     _i8.Task? task,
+    void Function()? onTaskChanged,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -415,6 +427,7 @@ extension NavigatorStateExtension on _i9.NavigationService {
         taskId: taskId,
         heroTag: heroTag,
         task: task,
+        onTaskChanged: onTaskChanged,
       ),
       id: routerId,
       preventDuplicates: preventDuplicates,
