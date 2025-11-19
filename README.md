@@ -1,8 +1,8 @@
 # TaskFlow
 
-TaskFlow is an offline-first task manager built with Flutter, Hive, and the Stacked MVVM framework. It keeps local data authoritative, syncs with the JSONPlaceholder API for demo purposes, and adds polish such as biometric auth, animations, and undo/redo for critical actions. JSONPlaceholder provides the fake REST backend used in this project.[^jsonplaceholder]
+TaskFlow is an offline-first task manager built with Flutter, Hive, and the Stacked MVVM framework. It keeps local data authoritative, syncs with the JSONPlaceholder API for demo purposes, and adds polish such as biometric auth, animations, and undo/redo for critical actions. JSONPlaceholder provides the fake REST backend used in this project
 
-[^jsonplaceholder]: JSONPlaceholder – free fake online REST API for testing <https://jsonplaceholder.typicode.com>
+
 
 ## Highlights
 - Offline CRUD with Hive; API sync happens opportunistically when connectivity returns.
