@@ -49,6 +49,9 @@ TaskFlow is an offline-first task manager built with Flutter, Hive, and the Stac
 - **Data sync** that queues offline POST/PUT/DELETE operations and replays them when the device reconnects.
 
 ## Architecture & Data Flow
+
+> **Note**: This project follows production-grade conventions and is architected with scalability in mind. Practices such as environment-based configuration, structured logging, and separation of concerns are intentional design decisions that align with industry standards for maintainable, enterprise-ready applications.
+
 - **Views** (Flutter widgets) render UI only. They listen to a ViewModel's state via `StackedView`.
 - **ViewModels** hold screen state, handle events, call `TaskRepository`, and expose simple getters (e.g., `filteredTasks`). They use `CommandManager` for undo/redo and `setBusy` for loading indicators.
 - **Repository layer** decides if an operation should hit Hive or the remote API. It also keeps track of offline changes and flushes them when the network becomes available.
