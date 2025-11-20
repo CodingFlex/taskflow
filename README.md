@@ -151,7 +151,7 @@ lib/
 ## How to run the app
 1. **Clone & install**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/CodingFlex/taskflow.git
    cd taskflow
    flutter pub get
    flutter pub run build_runner build --delete-conflicting-outputs
