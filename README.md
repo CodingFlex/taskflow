@@ -149,6 +149,11 @@ lib/
 - `setBusy` / `setBusyForObject` provide loading flags per widget (e.g., Save button vs Global skeleton).
 
 ## How to run the app
+
+### Prerequisites
+   - Flutter SDK 3.38.2 (or compatible)
+   - Dart 3.10.0 (or compatible)
+
 1. **Clone & install**
    ```bash
    git clone https://github.com/CodingFlex/taskflow.git
