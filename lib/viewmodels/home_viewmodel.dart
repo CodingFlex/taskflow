@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:stacked/stacked.dart';
 import 'package:taskflow/app/app.bottomsheets.dart';
 import 'package:taskflow/app/app.locator.dart';
@@ -15,6 +14,7 @@ import 'package:taskflow/ui/common/app_strings.dart';
 import 'package:taskflow/ui/common/toast.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:taskflow/helpers/logger_helper.dart';
 
 import 'package:taskflow/ui/screens/statistics/statistics_view.dart';
 import 'package:taskflow/ui/screens/task_details/task_details_view.dart';
@@ -24,7 +24,7 @@ enum TaskFilter { all, completed, pending }
 
 /// Manages home screen state including task filtering, sorting, search, and connectivity
 class HomeViewModel extends BaseViewModel {
-  final _logger = Logger();
+  final _logger = createLogger();
   final _bottomSheetService = locator<BottomSheetService>();
   final _taskRepository = locator<TaskRepository>();
   final _toastService = locator<ToastService>();
@@ -44,8 +44,10 @@ class HomeViewModel extends BaseViewModel {
   InternetStatus? _lastStableStatus;
   int _consecutiveOnlineEvents = 0;
   int _consecutiveOfflineEvents = 0;
-  static const int _requiredStableEvents = 2;
-  static const _statusStabilizationDuration = Duration(seconds: 6);
+  int _capturedConsecutiveOnlineEvents = 0;
+  int _capturedConsecutiveOfflineEvents = 0;
+  static const int _requiredStableEvents = 1;
+  static const _statusStabilizationDuration = Duration(seconds: 3);
 
   TaskFilter get selectedFilter => _selectedFilter;
   SortOption get sortOption => _sortOption;
@@ -367,9 +369,6 @@ class HomeViewModel extends BaseViewModel {
   void _onInternetStatusChanged(InternetStatus status) {
     _logger.i('Internet status changed: $status');
 
-    // Store the old status before updating
-    final previousStatus = _connectionStatus;
-
     if (status == InternetStatus.connected) {
       _consecutiveOnlineEvents++;
       _consecutiveOfflineEvents = 0;
@@ -378,55 +377,72 @@ class HomeViewModel extends BaseViewModel {
       _consecutiveOnlineEvents = 0;
     }
 
-    // Update current status immediately for UI
     _connectionStatus = status;
     rebuildUi();
 
-    // Cancel existing debounce timer
     _statusDebounceTimer?.cancel();
 
-    // Debounce to avoid rapid state changes
-    _statusDebounceTimer = Timer(_statusStabilizationDuration, () {
+    _capturedConsecutiveOnlineEvents = _consecutiveOnlineEvents;
+    _capturedConsecutiveOfflineEvents = _consecutiveOfflineEvents;
+    final capturedStatus = status;
+
+    _statusDebounceTimer = Timer(_statusStabilizationDuration, () async {
+      final wasOnline = _lastStableStatus == InternetStatus.connected;
+      final isNowOnline = capturedStatus == InternetStatus.connected;
+
       _logger.i(
-        'Debounce completed. Previous: $previousStatus, Current: $status',
+        'Debounce completed: wasOnline=$wasOnline, isNowOnline=$isNowOnline, '
+        'consecutiveOnline=$_capturedConsecutiveOnlineEvents, '
+        'consecutiveOffline=$_capturedConsecutiveOfflineEvents',
       );
 
-      final hasRequiredStability = status == InternetStatus.connected
-          ? _consecutiveOnlineEvents >= _requiredStableEvents
-          : _consecutiveOfflineEvents >= _requiredStableEvents;
+      final hasRequiredStability = capturedStatus == InternetStatus.connected
+          ? _capturedConsecutiveOnlineEvents >= _requiredStableEvents
+          : _capturedConsecutiveOfflineEvents >= _requiredStableEvents;
 
       if (!hasRequiredStability) {
         _logger.i(
-          'Status change skipped - insufficient consecutive confirmations',
+          'Status change skipped - insufficient consecutive confirmations (required: $_requiredStableEvents, got: ${capturedStatus == InternetStatus.connected ? _capturedConsecutiveOnlineEvents : _capturedConsecutiveOfflineEvents})',
         );
         return;
       }
 
-      // Skip if status hasn't actually changed
-      if (_lastStableStatus == status) {
+      if (_lastStableStatus == capturedStatus) {
         _logger.i('Status unchanged, skipping');
         return;
       }
 
-      final wasOnline = previousStatus == InternetStatus.connected;
-      final isNowOnline = status == InternetStatus.connected;
-
-      _lastStableStatus = status;
+      // Update stable status BEFORE checking for pending operations
+      final previousStableStatus = _lastStableStatus;
+      _lastStableStatus = capturedStatus;
       _consecutiveOnlineEvents = 0;
       _consecutiveOfflineEvents = 0;
 
       _logger.i(
-        'Status transition: wasOnline=$wasOnline, isNowOnline=$isNowOnline',
+        'Status transition confirmed: ${previousStableStatus?.name ?? "unknown"} -> ${capturedStatus.name}',
       );
 
-      if (!wasOnline && isNowOnline) {
-        _logger.i('Coming back online - triggering sync');
-        _syncOfflineChanges();
+      // Check if transitioning from offline to online
+      final wasActuallyOffline =
+          previousStableStatus == InternetStatus.disconnected;
+
+      if (wasActuallyOffline && isNowOnline) {
+        _logger.i('Coming back online - checking for pending operations...');
+        final hasPending = await _taskRepository.hasPendingOperations();
+        _logger.i('Pending operations check result: $hasPending');
+
+        if (hasPending) {
+          _logger.i('Pending operations found - triggering auto-sync');
+          _syncOfflineChanges().catchError((error) {
+            _logger.e('Error in automatic sync: $error');
+          });
+        } else {
+          _logger.i('No pending operations, skipping sync');
+        }
       }
     });
   }
 
-  /// Syncs any pending offline changes to the API
   Future<void> _syncOfflineChanges() async {
     try {
       _logger.i('Triggering offline changes sync...');
@@ -438,13 +454,12 @@ class HomeViewModel extends BaseViewModel {
           message: ksOfflineChangesSynced,
           duration: const Duration(seconds: 3),
         );
-        // Refresh task list to show updated data
         await loadTasks(forceRefresh: true, syncFirst: false);
       } else {
         _logger.i('No pending changes to sync');
       }
-    } catch (e) {
-      _logger.e('Sync failed: $e');
+    } catch (e, stackTrace) {
+      _logger.e('Sync failed: $e', error: e, stackTrace: stackTrace);
       _toastService.showError(
         message: 'Failed to sync offline changes',
         duration: const Duration(seconds: 2),
@@ -460,7 +475,6 @@ class HomeViewModel extends BaseViewModel {
 
     setBusyForObject('sync', true);
     try {
-      // First sync any pending offline changes
       _logger.i('Manual sync: checking for offline changes...');
       final hadPendingChanges = await _taskRepository.syncOfflineChanges();
 
@@ -486,16 +500,15 @@ class HomeViewModel extends BaseViewModel {
   bool get isSyncing => busy('sync');
 
   void initialize() {
-    // Sync offline changes on app start if online
+    // Don't set _lastStableStatus here - let it remain null initially
+    // This allows the first status change to be properly detected
     loadTasks(syncFirst: true);
 
     _internetSubscription = InternetConnection.createInstance(
       checkInterval: const Duration(seconds: 2),
       customCheckOptions: [
         InternetCheckOption(uri: Uri.parse('https://icanhazip.com/')),
-        InternetCheckOption(
-          uri: Uri.parse('https://jsonplaceholder.typicode.com'),
-        ),
+        InternetCheckOption(uri: Uri.parse('https://google.com')),
       ],
     ).onStatusChange.listen(_onInternetStatusChanged);
   }

@@ -1,10 +1,11 @@
 import 'package:local_auth/local_auth.dart';
 import 'package:logger/logger.dart';
+import 'package:taskflow/helpers/logger_helper.dart';
 
 /// Handles biometric authentication (Face ID/Fingerprint) for the app
 class BiometricsService {
   final LocalAuthentication _auth = LocalAuthentication();
-  final Logger _logger = Logger();
+  final Logger _logger = createLogger();
 
   Future<bool> isBiometricsAvailable() async {
     try {

@@ -3,13 +3,14 @@ import 'dart:math' as math;
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:logger/logger.dart';
 import '../models/task.dart';
+import '../helpers/logger_helper.dart';
 
 /// Manages local task storage using Hive database
 class StorageService {
   static const String _taskBoxName = 'tasks_box';
   static const String _metadataBoxName = 'metadata_box';
 
-  final Logger _logger = Logger();
+  final Logger _logger = createLogger();
   Box<Task>? _taskBox;
   Box<dynamic>? _metadataBox;
 

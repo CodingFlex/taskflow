@@ -1,10 +1,11 @@
 import 'package:logger/logger.dart';
 import 'package:taskflow/commands/command.dart';
+import 'package:taskflow/helpers/logger_helper.dart';
 
 /// Manages command history and provides undo functionality
 /// Keeps last 5 operations in memory (not persistent across restarts)
 class CommandManager {
-  final Logger _logger = Logger();
+  final Logger _logger = createLogger();
   final List<Command> _history = [];
   static const int _maxHistorySize = 5;
 

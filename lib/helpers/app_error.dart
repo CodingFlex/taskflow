@@ -2,8 +2,8 @@
 /// Provides standardized error types, converts Dio exceptions to AppError,
 /// and logs errors with appropriate severity levels
 import 'package:flutter/foundation.dart';
-import 'package:logger/logger.dart';
 import 'package:dio/dio.dart';
+import 'package:taskflow/helpers/logger_helper.dart';
 
 class AppError {
   final String message;
@@ -19,7 +19,7 @@ class AppError {
   });
 
   void log() {
-    final logger = Logger();
+    final logger = createLogger();
     switch (type) {
       case ErrorType.network:
         logger.e(

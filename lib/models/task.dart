@@ -59,15 +59,29 @@ abstract class Task with _$Task {
 
   bool get isOverdue {
     if (dueDate == null || completed) return false;
-    return dueDate!.isBefore(DateTime.now());
+    // A task is overdue only if due date is before today (not including today)
+    final today = DateTime.now();
+    final dueDateOnly = DateTime(dueDate!.year, dueDate!.month, dueDate!.day);
+    final todayOnly = DateTime(today.year, today.month, today.day);
+    return dueDateOnly.isBefore(todayOnly);
   }
 
-  int get daysOverdue =>
-      isOverdue ? DateTime.now().difference(dueDate!).inDays : 0;
+  int get daysOverdue {
+    if (!isOverdue || dueDate == null) return 0;
+    // Calculate calendar days difference, ignoring time
+    final today = DateTime.now();
+    final dueDateOnly = DateTime(dueDate!.year, dueDate!.month, dueDate!.day);
+    final todayOnly = DateTime(today.year, today.month, today.day);
+    return todayOnly.difference(dueDateOnly).inDays;
+  }
 
   int get daysUntilDue {
     if (dueDate == null || isOverdue) return 0;
-    return dueDate!.difference(DateTime.now()).inDays;
+    // Calculate calendar days difference, ignoring time
+    final today = DateTime.now();
+    final dueDateOnly = DateTime(dueDate!.year, dueDate!.month, dueDate!.day);
+    final todayOnly = DateTime(today.year, today.month, today.day);
+    return dueDateOnly.difference(todayOnly).inDays;
   }
 
   int get ageInDays => DateTime.now().difference(createdAt).inDays;

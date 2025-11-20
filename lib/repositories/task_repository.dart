@@ -6,13 +6,14 @@ import 'package:taskflow/models/paginated_result.dart';
 import 'package:taskflow/services/task_service.dart';
 import 'package:taskflow/services/storage_service.dart';
 import 'package:taskflow/services/api_exceptions.dart';
+import 'package:taskflow/helpers/logger_helper.dart';
 
 /// Repository implementing offline-first architecture
 /// Local storage is source of truth; API calls are for demo purposes only
 class TaskRepository {
   final TaskService _taskService;
   final StorageService _storageService;
-  final Logger _logger = Logger();
+  final Logger _logger = createLogger();
 
   /// Toggle pagination: false = Hive (all at once), true = API (client-side pagination)
   static const bool _usePagination = false;
@@ -265,6 +266,11 @@ class TaskRepository {
   }
 
   /// Syncs all local tasks to the API when connectivity is restored
+  /// Check if there are any pending operations to sync
+  Future<bool> hasPendingOperations() async {
+    return await _storageService.hasPendingOperations();
+  }
+
   /// Calls this method when user comes back online after offline operations
   /// Returns true if there were pending changes that got synced
   Future<bool> syncOfflineChanges() async {

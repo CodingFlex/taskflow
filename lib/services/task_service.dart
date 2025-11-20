@@ -3,12 +3,13 @@ import 'package:taskflow/helpers/api_client.dart';
 import 'package:taskflow/helpers/url_provider.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/services/api_exceptions.dart';
+import 'package:taskflow/helpers/logger_helper.dart';
 
 /// Handles API calls to JSONPlaceholder for task operations (demo purposes)
 class TaskService {
   final ApiClient _apiClient;
   final URLProvider _urlProvider;
-  final Logger _logger = Logger();
+  final Logger _logger = createLogger();
 
   TaskService() : _apiClient = ApiClient(), _urlProvider = URLProvider();
 

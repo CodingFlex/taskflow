@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:taskflow/services/api_exceptions.dart';
 import 'package:taskflow/helpers/flavor_config.dart';
+import 'package:taskflow/helpers/logger_helper.dart';
 
 class ApiClient {
   final Dio _dio;
@@ -16,7 +17,7 @@ class ApiClient {
   static const _receiveTimeoutMs = 20000;
   static const _sendTimeoutMs = 20000;
 
-  ApiClient({this.maxRetries = 2}) : _dio = Dio(), _logger = Logger() {
+  ApiClient({this.maxRetries = 2}) : _dio = Dio(), _logger = createLogger() {
     _initializeDio();
   }
 
