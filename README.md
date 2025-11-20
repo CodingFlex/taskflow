@@ -188,6 +188,7 @@ Unit tests cover model helpers and the HomeViewModel filter/search logic; widget
 - Notifications, recurring tasks, and calendar integrations are not yet implemented.
 - Sync only triggers when connectivity returns or when the user taps the WiFi icon; background services do not fire after app termination.
 - The connectivity listener still depends on the underlying `internet_connection_checker_plus` probes. Extremely flaky networks may still bounce the status, though far less often with the added guards.
+- Toast notifications can fire repeatedly during rapid state changes (e.g., network connectivity transitions, sync operations). Implementing a rate limiter or debounce mechanism would prevent notification spam and provide a cleaner user experience.
 
 ## Notes & Future Enhancements
 - Add timestamp-aware conflict handling before pushing updates to the API.
