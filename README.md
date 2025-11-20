@@ -156,9 +156,13 @@ lib/
 2. **Environment file**  
    Create a `.env` file at the project root before running the app:
    ```
-   API_BASE_URL=https://jsonplaceholder.typicode.com
+   BASE_URL=https://jsonplaceholder.typicode.com
    ```
    Additional secrets can live here as needed.
+   
+   **Alternative**: If you don't want to create a `.env` file, you can manually enter the base URL in:
+   - `lib/helpers/url_provider.dart` (line 14): Replace the empty string fallback with your URL
+   - `lib/helpers/flavor_config.dart` (line 22): Replace the empty string fallback with your URL
 3. **Run**
    ```bash
    flutter run
