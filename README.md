@@ -57,6 +57,86 @@ TaskFlow is an offline-first task manager built with Flutter, Hive, and the Stac
 - **Dependency injection**: `get_it` registers all services, so ViewModels stay easy to test.
 - **Design patterns**: MVVM for separation of concerns, Repository for data abstraction, Command Pattern for undo, and Locator for DI.
 
+### Project Structure
+```
+lib/
+├── main.dart
+├── app/
+│   ├── app.bottomsheets.dart
+│   ├── app.dialogs.dart
+│   ├── app.locator.dart
+│   └── app.router.dart
+├── commands/
+│   ├── command.dart
+│   ├── command_manager.dart
+│   ├── delete_task_command.dart
+│   └── update_task_command.dart
+├── helpers/
+│   ├── api_client.dart
+│   ├── app_error.dart
+│   ├── flavor_config.dart
+│   ├── logger_helper.dart
+│   └── url_provider.dart
+├── models/
+│   ├── task.dart
+│   ├── task_enums.dart
+│   └── paginated_result.dart
+├── repositories/
+│   └── task_repository.dart
+├── services/
+│   ├── api_exceptions.dart
+│   ├── biometrics_service.dart
+│   ├── storage_service.dart
+│   └── task_service.dart
+├── ui/
+│   ├── bottom_sheets/
+│   │   └── more_filters/
+│   │       ├── more_filters_sheet.dart
+│   │       └── more_filters_sheet_model.dart
+│   ├── common/
+│   │   ├── animated_field_error.dart
+│   │   ├── app_colors.dart
+│   │   ├── app_strings.dart
+│   │   ├── date_helpers.dart
+│   │   ├── date_input_field.dart
+│   │   ├── keyboard_unfocus_wrapper.dart
+│   │   ├── search_field.dart
+│   │   ├── taskflow_button.dart
+│   │   ├── taskflow_button2.dart
+│   │   ├── taskflow_input_field.dart
+│   │   ├── text_styles.dart
+│   │   ├── toast.dart
+│   │   └── ui_helpers.dart
+│   ├── dialogs/
+│   │   └── delete_task/
+│   │       ├── delete_task_dialog.dart
+│   │       └── delete_task_dialog_model.dart
+│   └── screens/
+│       ├── biometric/
+│       │   └── biometric_view.dart
+│       ├── home/
+│       │   ├── home_view.dart
+│       │   └── widgets/
+│       │       ├── category_filter_chip.dart
+│       │       ├── filter_chip_widget.dart
+│       │       ├── paginated_task_list.dart
+│       │       └── task_card.dart
+│       ├── splash/
+│       │   └── splash_view.dart
+│       ├── statistics/
+│       │   └── statistics_view.dart
+│       └── task_details/
+│           ├── task_details_view.dart
+│           └── widgets/
+│               └── category_selector.dart
+└── viewmodels/
+    ├── biometric_viewmodel.dart
+    ├── home_viewmodel.dart
+    ├── splash_viewmodel.dart
+    ├── statistics_viewmodel.dart
+    └── task_details_viewmodel.dart
+```
+
 ## State management
 - Powered by **Stacked** (an MVVM take). Each screen has a ViewModel that:
   - Exposes derived UI state (`filteredTasks`, `isSyncing`, inline validation errors).
@@ -93,10 +173,7 @@ TaskFlow is an offline-first task manager built with Flutter, Hive, and the Stac
   ```bash
   flutter test test/ui
   ```
-- **Full sweep**
-  ```bash
-  flutter test
-  ```
+
 Unit tests cover model helpers and the HomeViewModel filter/search logic; widget tests ensure the primary screens render correctly under mocked services.
 
 ## Trade-offs
@@ -110,7 +187,7 @@ Unit tests cover model helpers and the HomeViewModel filter/search logic; widget
 - No cloud backup or multi-device sync; Hive stays local.
 - Notifications, recurring tasks, and calendar integrations are not yet implemented.
 - Sync only triggers when connectivity returns or when the user taps the WiFi icon; background services do not fire after app termination.
-- Even with a long (6 s) debounce and a “two consecutive checks” rule, the connectivity listener still depends on the underlying `internet_connection_checker_plus` probes. Extremely flaky networks may still bounce the status, though far less often with the added guards.
+- The connectivity listener still depends on the underlying `internet_connection_checker_plus` probes. Extremely flaky networks may still bounce the status, though far less often with the added guards.
 
 ## Notes & Future Enhancements
 - Add timestamp-aware conflict handling before pushing updates to the API.

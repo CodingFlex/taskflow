@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
@@ -46,7 +45,7 @@ class CategorySelector extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  FontAwesomeIcons.tag,
+                  Icons.label,
                   size: 13,
                   color: isSelected ? Colors.white : category.color,
                 ),

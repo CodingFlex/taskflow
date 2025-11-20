@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sizer/sizer.dart';
 import 'package:taskflow/app/app.locator.dart';
 import 'package:taskflow/models/task.dart';
@@ -29,7 +28,7 @@ void main() {
 
     testWidgets('renders back button', (tester) async {
       await tester.pumpWidget(buildTestableWidget(const StatisticsView()));
-      expect(find.byIcon(FontAwesomeIcons.arrowLeft), findsOneWidget);
+      expect(find.byIcon(Icons.arrow_back), findsOneWidget);
     });
 
     testWidgets('renders stats overview cards', (tester) async {
@@ -45,9 +44,9 @@ void main() {
       await tester.pumpWidget(buildTestableWidget(const StatisticsView()));
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(FontAwesomeIcons.listCheck), findsOneWidget);
-      expect(find.byIcon(FontAwesomeIcons.circleCheck), findsOneWidget);
-      expect(find.byIcon(FontAwesomeIcons.clock), findsOneWidget);
+      expect(find.byIcon(Icons.checklist), findsOneWidget);
+      expect(find.byIcon(Icons.check_circle), findsOneWidget);
+      expect(find.byIcon(Icons.access_time), findsOneWidget);
     });
 
     testWidgets('renders category stats section', (tester) async {

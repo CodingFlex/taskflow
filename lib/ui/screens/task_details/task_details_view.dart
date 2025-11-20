@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/ui/common/animated_field_error.dart';
@@ -42,7 +41,7 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
         backgroundColor: kcPrimaryColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(FontAwesomeIcons.arrowLeft, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: viewModel.navigateBack,
         ),
         title: Text(
@@ -63,7 +62,7 @@ class TaskDetailsView extends StackedView<TaskDetailsViewModel> {
                   ),
                   child: IconButton(
                     icon: const Icon(
-                      FontAwesomeIcons.trash,
+                      Icons.delete,
                       color: Colors.red,
                       size: 18,
                     ),
@@ -309,7 +308,7 @@ class _DueDateSection extends StatelessWidget {
           Row(
             children: [
               const Icon(
-                FontAwesomeIcons.circleExclamation,
+                Icons.error_outline,
                 color: Colors.red,
                 size: 16,
               ),

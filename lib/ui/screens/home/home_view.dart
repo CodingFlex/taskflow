@@ -1,6 +1,5 @@
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
@@ -53,7 +52,7 @@ class HomeView extends StackedView<HomeViewModel> {
                 color: Colors.transparent,
                 child: IconButton(
                   icon: const Icon(
-                    FontAwesomeIcons.chartLine,
+                    Icons.bar_chart,
                     color: Colors.white,
                     size: 18,
                   ),
@@ -88,7 +87,7 @@ class HomeView extends StackedView<HomeViewModel> {
         heroTag: 'add_task_fab',
         onPressed: viewModel.navigateToAddTask,
         backgroundColor: kcPrimaryColor,
-        child: const Icon(FontAwesomeIcons.plus, color: Colors.white),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -119,7 +118,7 @@ class _ErrorView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              FontAwesomeIcons.triangleExclamation,
+              Icons.warning,
               size: 64,
               color: Theme.of(context).brightness == Brightness.dark
                   ? Colors.white38
@@ -138,7 +137,7 @@ class _ErrorView extends StatelessWidget {
             verticalSpaceMedium,
             ElevatedButton.icon(
               onPressed: onRetry,
-              icon: const Icon(FontAwesomeIcons.arrowsRotate, size: 16),
+              icon: const Icon(Icons.refresh, size: 16),
               label: const Text(ksTryAgain),
               style: ElevatedButton.styleFrom(
                 backgroundColor: kcPrimaryColor,
@@ -198,7 +197,7 @@ class _FilterSection extends StatelessWidget {
                 label: ksFilterMore,
                 isSelected: false,
                 onTap: viewModel.showMoreFilters,
-                icon: FontAwesomeIcons.filter,
+                icon: Icons.filter_list,
               ),
             ],
           ),
@@ -295,7 +294,7 @@ class _TasksList extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                FontAwesomeIcons.magnifyingGlass,
+                Icons.search,
                 size: 64,
                 color: Theme.of(context).brightness == Brightness.dark
                     ? Colors.white38
@@ -321,7 +320,7 @@ class _TasksList extends StatelessWidget {
       children: [
         if (overdueTasks.isNotEmpty) ...[
           _SectionHeader(
-            icon: FontAwesomeIcons.circleExclamation,
+            icon: Icons.error_outline,
             title: '$ksOverdue (${overdueTasks.length})',
             color: Colors.red,
           ),
@@ -541,9 +540,7 @@ class _ConnectivityIndicator extends StatelessWidget {
                 ),
               )
             : Icon(
-                viewModel.isOnline
-                    ? FontAwesomeIcons.wifi
-                    : Icons.signal_wifi_off,
+                viewModel.isOnline ? Icons.wifi : Icons.signal_wifi_off,
                 color: viewModel.isOnline ? Colors.white : Colors.red,
                 size: 18,
               ),

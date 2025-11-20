@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
@@ -28,7 +27,7 @@ class StatisticsView extends StackedView<StatisticsViewModel> {
         backgroundColor: kcPrimaryColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(FontAwesomeIcons.arrowLeft, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: viewModel.navigateBack,
         ),
         title: const Text(
@@ -102,7 +101,7 @@ class _StatsOverview extends StatelessWidget {
           child: _StatCard(
             title: ksTotalTasks,
             value: viewModel.totalTasks.toString(),
-            icon: FontAwesomeIcons.listCheck,
+            icon: Icons.checklist,
             color: kcPrimaryColor,
           ),
         ),
@@ -111,7 +110,7 @@ class _StatsOverview extends StatelessWidget {
           child: _StatCard(
             title: ksCompletedTasks,
             value: viewModel.completedTasks.toString(),
-            icon: FontAwesomeIcons.circleCheck,
+            icon: Icons.check_circle,
             color: Colors.green,
           ),
         ),
@@ -120,7 +119,7 @@ class _StatsOverview extends StatelessWidget {
           child: _StatCard(
             title: ksPendingTasks,
             value: viewModel.pendingTasks.toString(),
-            icon: FontAwesomeIcons.clock,
+            icon: Icons.access_time,
             color: Colors.orange,
           ),
         ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sizer/sizer.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
@@ -14,7 +13,7 @@ class AnimatedFieldError extends StatelessWidget {
     super.key,
     this.errorMessage,
     this.color = Colors.red,
-    this.icon = FontAwesomeIcons.circleExclamation,
+    this.icon = Icons.error_outline,
   });
 
   @override

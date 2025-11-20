@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow/models/task.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/app_strings.dart';
@@ -101,7 +100,7 @@ class _PaginatedTaskListState extends State<PaginatedTaskList> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(
-              FontAwesomeIcons.triangleExclamation,
+              Icons.warning,
               size: 48,
               color: Colors.red,
             ),
@@ -110,7 +109,7 @@ class _PaginatedTaskListState extends State<PaginatedTaskList> {
             verticalSpaceMedium,
             ElevatedButton.icon(
               onPressed: _loadFirstPage,
-              icon: const Icon(FontAwesomeIcons.arrowsRotate, size: 16),
+              icon: const Icon(Icons.refresh, size: 16),
               label: const Text('Retry'),
             ),
           ],
@@ -126,7 +125,7 @@ class _PaginatedTaskListState extends State<PaginatedTaskList> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                FontAwesomeIcons.magnifyingGlass,
+                Icons.search,
                 size: 64,
                 color: Theme.of(context).brightness == Brightness.dark
                     ? Colors.white38
@@ -160,7 +159,7 @@ class _PaginatedTaskListState extends State<PaginatedTaskList> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(
-                FontAwesomeIcons.listCheck,
+                Icons.checklist,
                 size: 14,
                 color: kcPrimaryColor,
               ),
@@ -215,7 +214,7 @@ class _PaginatedTaskListState extends State<PaginatedTaskList> {
             Center(
               child: OutlinedButton.icon(
                 onPressed: _loadNextPage,
-                icon: const Icon(FontAwesomeIcons.arrowDown, size: 14),
+                icon: const Icon(Icons.arrow_downward, size: 14),
                 label: const Text('Load More'),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: kcPrimaryColor,

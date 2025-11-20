@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sizer/sizer.dart';
 import 'package:taskflow/app/app.locator.dart';
 import 'package:taskflow/models/task.dart';
@@ -108,14 +107,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(FontAwesomeIcons.trash), findsOneWidget);
+      expect(find.byIcon(Icons.delete), findsOneWidget);
     });
 
     testWidgets('does not render delete button in create mode', (tester) async {
       await tester.pumpWidget(buildTestableWidget(const TaskDetailsView()));
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(FontAwesomeIcons.trash), findsNothing);
+      expect(find.byIcon(Icons.delete), findsNothing);
     });
 
     testWidgets('renders completion toggle in edit mode', (tester) async {

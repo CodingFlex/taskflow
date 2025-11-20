@@ -1,6 +1,5 @@
 /// Date input field widget with modal date picker that displays selected dates in MM/dd/yyyy format.
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sizer/sizer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
@@ -160,7 +159,7 @@ class DateInputField extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    FontAwesomeIcons.calendarDays,
+                    Icons.calendar_today,
                     color: isDark ? Colors.white70 : kcPrimaryColor,
                     size: 18,
                   ),

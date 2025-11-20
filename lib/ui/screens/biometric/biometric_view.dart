@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:taskflow/ui/common/app_colors.dart';
 import 'package:taskflow/ui/common/app_strings.dart';
 import 'package:taskflow/ui/common/text_styles.dart';
 import 'package:taskflow/ui/common/ui_helpers.dart';
 import 'package:taskflow/viewmodels/biometric_viewmodel.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// Biometric authentication screen with auto-trigger and skip option
 class BiometricView extends StackedView<BiometricViewModel> {
@@ -51,9 +49,7 @@ class BiometricView extends StackedView<BiometricViewModel> {
                         color: kcPrimaryColor.withOpacity(0.1),
                       ),
                       child: Icon(
-                        viewModel.hasFaceId
-                            ? FontAwesomeIcons.faceSmile
-                            : FontAwesomeIcons.fingerprint,
+                        viewModel.hasFaceId ? Icons.face : Icons.fingerprint,
                         size: 60,
                         color: kcPrimaryColor,
                       ),
@@ -86,9 +82,7 @@ class BiometricView extends StackedView<BiometricViewModel> {
                           ),
                         ),
                         icon: Icon(
-                          viewModel.hasFaceId
-                              ? FontAwesomeIcons.faceSmile
-                              : FontAwesomeIcons.fingerprint,
+                          viewModel.hasFaceId ? Icons.face : Icons.fingerprint,
                           size: 20,
                         ),
                         label: const Text(
@@ -102,7 +96,7 @@ class BiometricView extends StackedView<BiometricViewModel> {
                     ),
                   ] else ...[
                     Icon(
-                      FontAwesomeIcons.circleExclamation,
+                      Icons.error_outline,
                       size: 80,
                       color: isDark ? Colors.white38 : Colors.black26,
                     ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:sizer/sizer.dart';
 import 'package:taskflow/models/task.dart';
@@ -116,7 +115,7 @@ class TaskCard extends StatelessWidget {
                   ),
                   if (task.isOverdue)
                     const Icon(
-                      FontAwesomeIcons.circleExclamation,
+                      Icons.error_outline,
                       color: Colors.red,
                       size: 20,
                     ),
@@ -146,7 +145,7 @@ class _CategoryTag extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(FontAwesomeIcons.tag, size: 10, color: category.color),
+          Icon(Icons.label, size: 10, color: category.color),
           const SizedBox(width: 4),
           Text(
             category.displayName,
@@ -196,7 +195,7 @@ class _DueDateTag extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(FontAwesomeIcons.calendar, size: 10, color: color),
+          Icon(Icons.calendar_today, size: 10, color: color),
           const SizedBox(width: 4),
           Text(
             text,
@@ -231,7 +230,7 @@ class _CreatedDateTag extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(FontAwesomeIcons.clock, size: 10, color: color),
+          const Icon(Icons.access_time, size: 10, color: color),
           const SizedBox(width: 4),
           Text(
             text,
@@ -266,7 +265,7 @@ class _CompletedTag extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(FontAwesomeIcons.check, size: 10, color: color),
+          const Icon(Icons.check, size: 10, color: color),
           const SizedBox(width: 4),
           Text(
             text,
